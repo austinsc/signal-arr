@@ -1,0 +1,15 @@
+{
+  "name": "signal-arr",
+  "version": "0.0.0",
+  "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test --compilers js:babel/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/RoviSys/signal-arr"
+  },
+  "author": "",
+  "license": "MIT"
+}
