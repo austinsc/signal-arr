@@ -9,7 +9,8 @@ export default class WebSocketTransport extends Transport {
 
   start() {
     return new Promise((resolve, reject) => {
-      reject();
+      return reject();
+
       if(!w3cwebsocket) {
         return reject(new Error('The type `WebSocket` could not be resolved.'));
       }

@@ -36,11 +36,12 @@ export default class Client extends EventEmitter {
       if(this.state !== CLIENT_STATES.disconnected) {
         return reject('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
       }
-
-      // Notify event listeners that we are starting
       this.emit(CLIENT_EVENTS.onStarting);
-      this.connection._connect(this);
-      this.emit(CLIENT_EVENTS.onStarted);
+      this._negotiate()
+        .then(() => {
+          this.connection._connect(this);
+          this.emit(CLIENT_EVENTS.onStarted);
+        });
     });
   }
 
@@ -110,7 +111,7 @@ export default class Client extends EventEmitter {
   _negotiate() {
     return request
       .get(`${this.config.url}/negotiate`)
-      .query('clientProtocol', 1.5)
+      .query({clientProtocol: 1.5})
       .use(PromiseMaker)
       .promise()
       .then(data => {

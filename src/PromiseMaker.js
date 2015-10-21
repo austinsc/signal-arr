@@ -6,7 +6,7 @@ export default function PromiseMaker(req) {
         if(err) {
           reject(err);
         } else {
-          resolve(res.res.body);
+          resolve(res.body || res.res.body);
         }
       });
     });

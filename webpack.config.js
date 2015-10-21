@@ -55,7 +55,7 @@ module.exports = {
       loader: 'file?name=[name].[hash:6].[ext]'
     }]
   },
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
   profile: true,
   node: {
     console: true

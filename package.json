@@ -48,7 +48,7 @@
     "lodash.mapvalues": "^3.0.1",
     "lodash.sum": "^3.6.2",
     "logdown": "^1.2.4",
-    "superagent": "^1.4.0",
+    "superagent": "fiatjaf/superagent",
     "websocket": "^1.0.22"
   }
 }
