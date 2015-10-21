@@ -4,6 +4,7 @@ var path = require('path');
 var webpack = require('webpack');
 module.exports = {
   resolve: {
+    root: path.join(__dirname, 'src'),
     extensions: ['', '.js', '.jsx', '.less'],
     alias: {
       img: 'img',
@@ -31,7 +32,10 @@ module.exports = {
       test: /\.js$/i,
       loader: 'babel?optional=runtime&stage=0',
       exclude: [/node_modules/, /bower_components/]
-    }, {
+    }, /*{
+      test: /\.test\.js/i,
+      loader: 'mocha!babel?optional=runtime&stage=0'
+    }, */{
       test: /\.json$/i,
       loader: 'json'
     }, {
@@ -57,7 +61,8 @@ module.exports = {
     console: true
   },
   entry: {
-    main: 'index.js'
+    main: 'index.js',
+    //tests: path.join(__dirname, 'test')
   },
   output: {
     path: path.join(__dirname, 'lib'),

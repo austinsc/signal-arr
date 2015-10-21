@@ -2,6 +2,7 @@
 module.exports = function(grunt) {
   var _ = require('lodash');
   var path = require('path');
+  var wp = require('./webpack.config.js');
   require('time-grunt')(grunt);
   require('./tasks/webpack')(grunt);
   require('./tasks/signalr-proxy')(grunt);
@@ -44,7 +45,10 @@ module.exports = function(grunt) {
     },
 
     // webpack build to disk tasks
-    'webpack': {options: require('./webpack.config.js')},
+    'webpack': {
+      all: wp,
+      watch: _.merge({}, wp, {watch: true, keepalive: true})
+    },
 
     // local webpack frontend server
     'webpack-dev-server': {
@@ -95,5 +99,5 @@ module.exports = function(grunt) {
   grunt.registerTask('docs', ['connect']);
   grunt.registerTask('lint', ['eslint']);
   grunt.registerTask('clean', ['clean:all']);
-  grunt.registerTask('build', ['env:production', 'webpack']);
+  grunt.registerTask('build', ['env:production', 'webpack:all']);
 };
