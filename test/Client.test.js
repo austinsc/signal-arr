@@ -1,18 +1,14 @@
-//import {describe, it} from 'mocha';
 import {expect} from 'chai';
 import Client, {CLIENT_CONFIG_DEFAULTS} from '../src/Client';
-import {STATES} from '../src/Constants';
 
 describe('Client', function() {
-  this.timeout(15000);
-
   it('Initializes with the default configuration', function() {
     const client = new Client();
     expect(client.config).to.be.deep.equal(CLIENT_CONFIG_DEFAULTS);
   });
 
   it('Negotiates the connection', function(done) {
-    const client = new Client({url: 'http://signalr.pwnt.co/signalr'});
+    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client._negotiate()
       .then(connection => {
         expect(connection).to.not.be.empty;
@@ -25,7 +21,7 @@ describe('Client', function() {
   });
 
   it('Connects', function(done) {
-    const client = new Client({url: 'http://signalr.pwnt.co/signalr'});
+    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client._negotiate()
       .then(connection => connection._findTransport())
       .then(() => done())

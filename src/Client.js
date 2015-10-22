@@ -32,17 +32,16 @@ export default class Client extends EventEmitter {
    */
   start(options) {
     this.config = Object.assign(this.config, options);
-    return new Promise((resolve, reject) => {
-      if(this.state !== CLIENT_STATES.disconnected) {
-        return reject('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
-      }
-      this.emit(CLIENT_EVENTS.onStarting);
-      this._negotiate()
-        .then(() => {
-          this.connection._connect(this);
-          this.emit(CLIENT_EVENTS.onStarted);
-        });
-    });
+    if(this.state !== CLIENT_STATES.disconnected) {
+      throw new Error('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
+    }
+    this.emit(CLIENT_EVENTS.onStarting);
+    return this._negotiate()
+      .then(connection => connection._connect())
+      .then(() => {
+        this.emit(CLIENT_EVENTS.onStarted);
+        return this;
+      });
   }
 
   /**
@@ -114,12 +113,9 @@ export default class Client extends EventEmitter {
       .query({clientProtocol: 1.5})
       .use(PromiseMaker)
       .promise()
-      .then(data => {
-        this.connection = this.config.hubClient
-          ? new HubConnection(this, data)
-          : new Connection(this, data);
-        return (this.connection);
-      });
-
+      .then(data => this.connection = this.config.hubClient
+        ? new HubConnection(this, data)
+        : new Connection(this, data)
+    );
   }
 }

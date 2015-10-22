@@ -22,9 +22,8 @@ export default class LongPollingTransport extends Transport {
     this._logger.info(`*${this.constructor.name}* starting...`);
 
     return this._connect()
-      .then(this._startConnection.bind(this));
-      //.then(this._poll.bind(this))
-      //.then(inspect);
+      //.then(this._startConnection.bind(this))
+      .then(this._poll.bind(this));
   }
 
   _connect() {
@@ -41,8 +40,7 @@ export default class LongPollingTransport extends Transport {
     return this._current
       .use(PromiseMaker)
       .promise()
-      .then(expandResponse)
-      .then(r => this._lastResponse = r);
+      .then(this.connection._processMessages.bind(this.connection));
   }
 
   _startConnection() {
@@ -59,15 +57,30 @@ export default class LongPollingTransport extends Transport {
   }
 
   _poll() {
-    this._current = request
-      .post(this.connection._client.config.url + '/poll')
-      .query({clientProtocol: 1.5})
+    this._currentTimeoutId = setTimeout(() => {
+      this._current = request
+        .post(this.connection._client.config.url + '/poll')
+        .query({clientProtocol: 1.5})
+        .query({connectionToken: this.connection._connectionToken})
+        .query({transport: 'longPolling'})
+        .query({connectionData: this.connection._data || ''})
+        .send({messageId: this.connection._lastMessage().messageId})
+        .end(res => {
+          if(res) {
+            this.connection._processMessages(res.body);
+          }
+          this._poll();
+        });
+    }, 250);
+  }
+
+  _send(data) {
+    return request
+      .post(this.connection._client.config.url + '/send')
       .query({connectionToken: this.connection._connectionToken})
       .query({transport: 'longPolling'})
-      .query({connectionData: this.connection._data || ''})
-      .send({messageId: this._lastResponse.messageId});
-
-    return this._current
+      .send(`data=${JSON.stringify(data)}`)
+      .set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
       .use(PromiseMaker)
       .promise();
   }

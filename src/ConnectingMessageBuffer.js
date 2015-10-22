@@ -1,4 +1,4 @@
-import {STATES} from './Constants';
+import {CLIENT_STATES} from './Constants';
 
 export default class ConnectingMessageBuffer {
   constructor(client, drainCallback) {
@@ -8,7 +8,7 @@ export default class ConnectingMessageBuffer {
   }
 
   tryBuffer(message) {
-    if(this.client.state === STATES.connecting) {
+    if(this.client.state === CLIENT_STATES.connecting) {
       this.buffer.push(message);
       return true;
     }
@@ -17,7 +17,7 @@ export default class ConnectingMessageBuffer {
 
   drain() {
     // Ensure that the connection is connected when we drain (do not want to drain while a connection is not active)
-    if(this.client.state === STATES.connected) {
+    if(this.client.state === CLIENT_STATES.connected) {
       while(this.buffer.length > 0) {
         this.drainCallback(buffer.shift());
       }

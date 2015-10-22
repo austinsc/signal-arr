@@ -1,9 +1,12 @@
 import async from 'async';
 import Logdown from 'logdown';
 import request from 'superagent';
+import last from 'lodash.last';
+import takeRight from 'lodash.takeright';
 import PromiseMaker from './PromiseMaker';
-import {CLIENT_EVENTS, CLIENT_STATES} from './Constants';
+import {expandResponse} from './Utilities';
 import {AvailableTransports} from './transports';
+import {CLIENT_EVENTS, CLIENT_STATES} from './Constants';
 import ConnectingMessageBuffer from './ConnectingMessageBuffer';
 
 export const CONNECTION_CONFIG_DEFAULTS = {
@@ -35,50 +38,23 @@ export default class Connection {
     this._connectingMessageBuffer = new ConnectingMessageBuffer(client, client.emit.bind(client, CLIENT_EVENTS.onReceived));
     this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
     this._lastActiveAt = new Date().getTime();
+    this._lastMessages = [];
   }
 
   _supportsKeepAlive() {
     return this._keepAliveData.activated && this._client.transport.supportsKeepAlive;
   }
 
-  //TODO: WIP
-  //startHeartBeat() {
-  //  this._lastActiveAt = new Date().getTime();
-  //  beat();
-  //}
-  //
-  //beat(){
-  //  if(this._supportsKeepAlive()) {
-  //    // TODO: Implement monitorKeepAlive
-  //  }
-  //  startHeartBeat();
-  //
-  //
-  //}
-
   _connect() {
     this._client._setState(CLIENT_STATES.connecting);
 
-    this._findTransport()
+    return this._findTransport()
       .then(transport => {
         this._logger.info(`Using the *${transport.constructor.name}*.`);
         this.transport = transport;
-      })
-      .then(transport => {
-        // TODO:
-        //if(this._supportsKeepAlive()) {
-        //  Logic.monitorKeepAlive(this);
-        //}
-        //
-        //Logic.startHeartbeat(this);
-        //
-        //// Used to ensure low activity clients maintain their authentication.
-        //// Must be configured once a transport has been decided to perform valid ping requests.
-        //this._.configurePingInterval(this);
         this._client._setState(CLIENT_STATES.connected);
         this._connectingMessageBuffer.drain();
       })
-      .catch(err => this._logger.error(err))
   }
 
   _findTransport() {
@@ -102,12 +78,17 @@ export default class Connection {
     );
   }
 
-//
-//_send(data) {
-//
-//}
-//
-//_abort(async = true) {
-//
-//}
+  _processMessages(compressedResponse) {
+    const expandedResponse = expandResponse(compressedResponse);
+    if(expandedResponse.messages.length) {
+      this.emit(CLIENT_EVENTS.onReceiving);
+    }
+    this._lastMessages.push(expandedResponse);
+    this._lastMessages = takeRight(this._lastMessages, 5);
+    expandedResponse.messages.forEach(m => this.emit(CLIENT_EVENTS.onReceived, m));
+  }
+
+  _lastMessage() {
+    return last(this._lastMessages);
+  }
 }
