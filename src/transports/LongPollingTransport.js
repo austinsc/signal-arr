@@ -22,9 +22,9 @@ export default class LongPollingTransport extends Transport {
     this._logger.info(`*${this.constructor.name}* starting...`);
 
     return this._connect()
-      .then(this._startConnection.bind(this))
-      .then(this._poll.bind(this))
-      .then(inspect);
+      .then(this._startConnection.bind(this));
+      //.then(this._poll.bind(this))
+      //.then(inspect);
   }
 
   _connect() {

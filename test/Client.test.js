@@ -12,7 +12,7 @@ describe('Client', function() {
   });
 
   it('Negotiates the connection', function(done) {
-    const client = new Client({url: 'http://localhost:5004/signalr'});
+    const client = new Client({url: 'http://signalr.pwnt.co/signalr'});
     client._negotiate()
       .then(connection => {
         expect(connection).to.not.be.empty;
@@ -25,7 +25,7 @@ describe('Client', function() {
   });
 
   it('Connects', function(done) {
-    const client = new Client({url: 'http://localhost:5004/signalr'});
+    const client = new Client({url: 'http://signalr.pwnt.co/signalr'});
     client._negotiate()
       .then(connection => connection._findTransport())
       .then(() => done())
