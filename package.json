@@ -6,7 +6,8 @@
   "scripts": {
     "test": "./node_modules/.bin/babel-istanbul cover ./node_modules/.bin/_mocha -- test --compilers js:babel/register && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "xest": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "yest": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register"
+    "yest": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register",
+    "browser-test": "./node_modules/.bin/webpack-dev-server --config ./webpack.tests.config.js "
   },
   "repository": {
     "type": "git",
