@@ -4,8 +4,9 @@
   "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "otest": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register"
+    "test": "./node_modules/.bin/babel-istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "xest": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "yest": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,7 @@
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-eslint": "^4.0.5",
+    "babel-istanbul": "^0.3.20",
     "babel-loader": "^5.0.0",
     "babel-plugin-react-transform": "^1.1.1",
     "babel-runtime": "^5.8.25",
