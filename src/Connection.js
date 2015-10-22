@@ -72,7 +72,7 @@ export default class Connection {
           this._logger.info(`Negotiating the transport...`);
           async.detectSeries(availableTransports.map(x => new x(this)),
             (t, c) => t.start().then(() => c(t)).catch(() => c()),
-            transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
+              transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
         }
       }
     );
@@ -80,12 +80,10 @@ export default class Connection {
 
   _processMessages(compressedResponse) {
     const expandedResponse = expandResponse(compressedResponse);
-    if(expandedResponse.messages.length) {
-      this.emit(CLIENT_EVENTS.onReceiving);
-    }
+    this._client.emit(CLIENT_EVENTS.onReceiving);
     this._lastMessages.push(expandedResponse);
     this._lastMessages = takeRight(this._lastMessages, 5);
-    expandedResponse.messages.forEach(m => this.emit(CLIENT_EVENTS.onReceived, m));
+    this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
   }
 
   _lastMessage() {

@@ -58,13 +58,22 @@ export default class LongPollingTransport extends Transport {
 
   _poll() {
     this._currentTimeoutId = setTimeout(() => {
+      const {messageId, groupsToken} = this.connection._lastMessages;
       this._current = request
         .post(this.connection._client.config.url + '/poll')
         .query({clientProtocol: 1.5})
         .query({connectionToken: this.connection._connectionToken})
         .query({transport: 'longPolling'})
-        .query({connectionData: this.connection._data || ''})
-        .send({messageId: this.connection._lastMessage().messageId})
+        .query({connectionData: this.connection._data || ''});
+
+      if(groupsToken) {
+        this._current = this._current
+          .send({messageId, groupsToken});
+      } else {
+        this._current = this._current
+          .send({messageId});
+      }
+      this._current = this._current
         .end(res => {
           if(res) {
             this.connection._processMessages(res.body);
