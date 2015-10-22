@@ -1,4 +1,4 @@
-import {w3cwebsocket} from 'websocket';
+//import {w3cwebsocket} from 'websocket/lib/browser';
 import Transport from './Transport';
 
 export default class WebSocketTransport extends Transport {
@@ -11,7 +11,7 @@ export default class WebSocketTransport extends Transport {
     return new Promise((resolve, reject) => {
       return reject();
 
-      if(!w3cwebsocket) {
+      if(!WebSocket) {
         return reject(new Error('The type `WebSocket` could not be resolved.'));
       }
       if(this._socket) {
@@ -22,7 +22,7 @@ export default class WebSocketTransport extends Transport {
       const url = this.connection._client.config.url.replace(/http(s)?:/, 'ws:');
 
       this._logger.info(`Connecting to ${url}`);
-      this._socket = new w3cwebsocket(url);
+      this._socket = new WebSocket(url);
 
       this._socket.onopen = () => {
         this._logger.info(`*${this.constructor.name}* connection opened.`);

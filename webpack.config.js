@@ -62,7 +62,7 @@ module.exports = {
   },
   entry: {
     main: 'index.js',
-    //tests: path.join(__dirname, 'test')
+    test: 'mocha!' + path.join(__dirname, 'test', 'index.js')
   },
   output: {
     path: path.join(__dirname, 'lib'),

@@ -46,7 +46,8 @@ module.exports = function(grunt) {
 
     // webpack build to disk tasks
     'webpack': {
-      all: wp,
+      test: require('./webpack.tests.config'),
+      build: wp,
       watch: _.merge({}, wp, {watch: true, keepalive: true})
     },
 
