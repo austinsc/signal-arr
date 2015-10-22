@@ -1,8 +1,8 @@
 sudo: false
 language: node_js
 node_js:
-- iojs
 - node
+script: npm test --coverage
 cache:
   directories:
   - node_modules

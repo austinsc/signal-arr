@@ -4,7 +4,7 @@
   "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/istanbul test ./node_modules/mocha/bin/_mocha -- --compilers js:babel/register && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "otest": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- test --compilers js:babel/register"
   },
   "repository": {
