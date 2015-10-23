@@ -1,6 +1,6 @@
 # signal-arr
 
-![signal-arr](https://raw.githubusercontent.com/RoviSys/signal-arr/master/docs/signal-arr.svg)
+![signal-arr](https://cdn.rawgit.com/RoviSys/signal-arr/master/docs/signal-arr.svg)
 
 ![awesome](https://img.shields.io/badge/Awesome-Yes-brightgreen.svg?style=flat-square)
 [![NPM version](http://img.shields.io/npm/v/signal-arr.svg?style=flat-square)](http://npmjs.org/signal-arr)
