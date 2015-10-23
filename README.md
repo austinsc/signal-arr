@@ -18,7 +18,7 @@
  </g>
 </svg>
 
-![Awesome](https://img.shields.io/badge/Awesome-Yes-brightgreen.svg)
+![Awesome](https://img.shields.io/badge/Awesome-Yes-brightgreen.svg?style=flat-square)
 [![NPM version](http://img.shields.io/npm/v/signal-arr.svg?style=flat-square)](http://npmjs.org/signal-arr)
 [![License](http://img.shields.io/github/license/RoviSys/signal-arr.svg?style=flat-square)](https://github.com/RoviSys/signal-arr/blob/master/LICENSE.txt)
 [![Build Status](http://img.shields.io/travis/RoviSys/signal-arr/master.svg?style=flat-square)](https://travis-ci.org/RoviSys/signal-arr)
