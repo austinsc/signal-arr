@@ -1,7 +1,5 @@
 # signal-arr
 
-![signal-arr](https://cdn.rawgit.com/RoviSys/signal-arr/master/docs/signal-arr.svg)
-
 ![awesome](https://img.shields.io/badge/Awesome-Yes-brightgreen.svg?style=flat-square)
 [![NPM version](http://img.shields.io/npm/v/signal-arr.svg?style=flat-square)](http://npmjs.org/signal-arr)
 [![License](http://img.shields.io/github/license/RoviSys/signal-arr.svg?style=flat-square)](https://github.com/RoviSys/signal-arr/blob/master/LICENSE.txt)
@@ -10,6 +8,8 @@
 [![Dependency Status](http://img.shields.io/david/RoviSys/signal-arr.svg?style=flat-square)](https://david-dm.org/RoviSys/signal-arr#info=dependencies)
 [![Dependency Status](http://img.shields.io/david/dev/RoviSys/signal-arr.svg?style=flat-square)](https://david-dm.org/RoviSys/signal-arr#info=devDependencies)
 [![Chat](http://img.shields.io/badge/chat_room-%23signal--arr-blue.svg?style=flat-square)](https://gitter.im/RoviSys/signal-arr)
+
+![signal-arr](https://cdn.rawgit.com/RoviSys/signal-arr/master/docs/signal-arr.svg)
 
 > A modern replacement for the built-in SignalR Javascript Client library. Built with  [ES6+](http://babeljs.io/docs/learn-es2015/),
 > [WebPack](http://webpack.github.io), [Babel](http://babeljs.io/), [Mocha](http://mochajs.org/), and [Chai](http://chaijs.com/)
