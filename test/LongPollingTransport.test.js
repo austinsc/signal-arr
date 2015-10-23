@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 import Client, {CLIENT_CONFIG_DEFAULTS} from '../src/Client';
 import Connection from '../src/Connection';
+import {CLIENT_STATES, CLIENT_EVENTS} from '../src/Constants';
 
 describe('LongPollingTransport', function() {
   this.timeout(15000);
@@ -56,5 +57,27 @@ describe('LongPollingTransport', function() {
         expect(true).to.be.equal(false);
         done();
       })
+  });
+  it('Can successfully reconnect to server', function(done){
+    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+    let testMessage = {
+      C: 25,
+      M: {type: 1, value: 'Red Beards Treasure'},
+      S: true,
+      T: true,
+      L: 1000,
+      G: 'help'
+    };
+    client.start()
+      .then(client => {
+        console.log(`State of client before forced message ${client.state}`);
+        client.connection._lastMessages.push(testMessage);
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        console.log(`State of client after forced message: ${client.state}`);
+        expect(client.state).to.be.equal(CLIENT_STATES.reconnecting);
+      })
+      .then(() => done());
+    //client.connection.transport._current.abort();
+
   })
 });
