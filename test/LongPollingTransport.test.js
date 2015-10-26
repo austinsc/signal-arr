@@ -73,12 +73,12 @@ describe('LongPollingTransport', function() {
       .then(client => {
         console.log(`State of client after connection: ${client.state}`);
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
-        console.log(`Abort request after connected? ${client.connection._abortRequest}`);
+        console.log(`Aborted request after connected: ${client.connection._abortRequest}`);
         setTimeout(() => {
           client.connection.transport.stop();
           expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
           console.log(`State of client after disconnection: ${client.state}`);
-          console.log(`Abort request after dc? ${client.connection._abortRequest}`);
+          console.log(`Aborted request after disconnect: ${client.connection._abortRequest}`);
           setTimeout(() => done(), 1000);
       }, 500);
   })

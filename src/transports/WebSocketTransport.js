@@ -1,5 +1,6 @@
 //import {w3cwebsocket} from 'websocket/lib/browser';
 import Transport from './Transport';
+import {expect} from 'chai';
 
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
@@ -9,7 +10,6 @@ export default class WebSocketTransport extends Transport {
 
   start() {
     return new Promise((resolve, reject) => {
-      return reject();
 
       if(!WebSocket) {
         return reject(new Error('The type `WebSocket` could not be resolved.'));
