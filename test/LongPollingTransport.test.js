@@ -66,5 +66,22 @@ describe('LongPollingTransport', function() {
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
       })
       .then(()=> done());
+  });
+  it('Successfully disconnected from server', function(done) {
+    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+    client.start()
+      .then(client => {
+        console.log(`State of client after connection: ${client.state}`);
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        client.connection.stop();
+        console.log(`State of client after disconnection: ${client.state}`);
+        expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
+      })
+      .then(() => done())
+      .catch(err => {
+        console.error('ERROR', err);
+        expect(true).to.be.equal(false);
+        done();
+      })
   })
 });

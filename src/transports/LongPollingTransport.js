@@ -91,13 +91,10 @@ export default class LongPollingTransport extends Transport {
       }
       this._current = this._current
         .end((err, res) => {
-          if(err && shouldReconnect && this.connection._reconnectTries <= 300){
+          if(err && shouldReconnect){
             return this._reconnect()
               .then(this._poll)
           }
-          if(this.connection._reconnectTries >= 300)
-            return this.stop();
-
           if(res) {
             if(this.connection._client.state === CLIENT_STATES.reconnecting){
               this.connection._client.state = CLIENT_STATES.connected;
@@ -127,7 +124,7 @@ export default class LongPollingTransport extends Transport {
   }
 
   /**
-   * Initiates a reconnection to th' ship in th' case that th' connection be too slow or has be lost completely.
+   * Initiates a reconnection to th' ship in th' case that th' connection be too slow or be lost completely.
    *  @returns {Promise} that resolves once th' client has be successfully reconnected.
    */
   _reconnect() {
@@ -151,16 +148,17 @@ export default class LongPollingTransport extends Transport {
   stop() {
     this.connection._client.emit(CLIENT_EVENTS.onDisconnecting);
     this._logger.info(`Disconnecting from ${this.connection.url}.`);
-
-
-
+    this.connection.transport = null;
     delete this.connection.messageId;
     delete this.connection._connectionToken;
     delete this.connection._lastActiveAt;
     delete this.connection._lastMessageAt;
     delete this.connection._lastMessages;
+    delete this.connection.config;
+    delete this._current;
     this.connection._client.state = CLIENT_STATES.disconnected;
     this.connection._client.emit(CLIENT_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');
+
   }
 }
