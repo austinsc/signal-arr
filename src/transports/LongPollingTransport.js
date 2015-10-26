@@ -20,8 +20,8 @@ export default class LongPollingTransport extends Transport {
   }
 
   /**
-   * Initiates the long polling transport protocol for the current connection.
-   * @returns {Promise} that resolves once the long polling transport has started successfully and has begun polling.
+   * Initiates th' long pollin' transport protocol fer th' current connection.
+   * @returns {Promise} That resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
    */
   start() {
     if(this._pollTimeoutId) {
@@ -37,8 +37,8 @@ export default class LongPollingTransport extends Transport {
   }
 
   /**
-   * Initiates the long polling transport protocol for the current connection.
-   * @returns {Promise} that resolves once the long polling transport has started successfully and has begun polling.
+   * Initiates th' long pollin' transport protocol fer th' current connection.
+   * @returns {Promise} that resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
    */
   _connect() {
     const url = this.connection._client.config.url + '/connect';
@@ -55,10 +55,6 @@ export default class LongPollingTransport extends Transport {
       .then(this.connection._processMessages.bind(this.connection));
   }
 
-  /**
-   * Initiates the long polling transport protocol for the current connection.
-   * @returns {Promise} that resolves once the long polling transport has started successfully and has begun polling.
-   */
   _startConnection() {
     this._current = request
       .post(this.connection._client.config.url + '/start')
@@ -73,9 +69,9 @@ export default class LongPollingTransport extends Transport {
   }
 
   /**
-   * Initiates a poll to the server and hold the poll open until the server is able to send new information.
-   * @returns {Promise} that resolves if the client must reconnect due to bad connection.
-   *                    Else, the method is called recursively after it recieves new information from the server.
+   * Initiates a poll to th' ship 'n hold th' poll open 'til th' ship be able to send new information.
+   * @returns {Promise} That resolves if th' client must reconnect due to bad connection.
+   * Else, th' method be called recursively after it recieves new information from th' ship.
    */
   _poll() {
     this._currentTimeoutId = setTimeout(() => {
@@ -95,10 +91,13 @@ export default class LongPollingTransport extends Transport {
       }
       this._current = this._current
         .end((err, res) => {
-          if(err && shouldReconnect){
+          if(err && shouldReconnect && this.connection._reconnectTries <= 300){
             return this._reconnect()
               .then(this._poll)
           }
+          if(this.connection._reconnectTries >= 300)
+            return this.stop();
+
           if(res) {
             if(this.connection._client.state === CLIENT_STATES.reconnecting){
               this.connection._client.state = CLIENT_STATES.connected;
@@ -112,9 +111,9 @@ export default class LongPollingTransport extends Transport {
   }
 
   /**
-   * Initiates the long polling transport protocol for the current connection.
-   *  @params {data} data contains the information that the client wishes to send to the server.
-   *  @returns {Promise} that resolves once the message has been sent.
+   * Initiates th' long pollin' transport protocol fer th' current connection.
+   *  @params {data} data contains th' information that th' client wishes to send to th' ship.
+   *  @returns {Promise} that resolves once th' message has be sent..
    */
   _send(data) {
     return request
@@ -128,14 +127,15 @@ export default class LongPollingTransport extends Transport {
   }
 
   /**
-   * Initiates a reconnection to the server in the case that the connection is too slow or has been lost completely.
-   *  @returns {Promise} that resolves once the client has been successfully reconnected.
+   * Initiates a reconnection to th' ship in th' case that th' connection be too slow or has be lost completely.
+   *  @returns {Promise} that resolves once th' client has be successfully reconnected.
    */
   _reconnect() {
     const url = this.connection._client.config.url + '/connect';
     this.connection.client.emit(CLIENT_EVENTS.onReconnecting);
     this.connection.client.state = CLIENT_STATES.reconnecting;
     this._logger.info(`Attempting to reconnect to ${url}`);
+    this.connection._reconnectTries++;
     this._current = request
       .post(url)
       .query({clientProtocol: 1.5})
@@ -146,5 +146,21 @@ export default class LongPollingTransport extends Transport {
       .use(PromiseMaker)
       .promise()
       .then(this.connection._processMessages.bind(this.connection));
+  }
+
+  stop() {
+    this.connection._client.emit(CLIENT_EVENTS.onDisconnecting);
+    this._logger.info(`Disconnecting from ${this.connection.url}.`);
+
+
+
+    delete this.connection.messageId;
+    delete this.connection._connectionToken;
+    delete this.connection._lastActiveAt;
+    delete this.connection._lastMessageAt;
+    delete this.connection._lastMessages;
+    this.connection._client.state = CLIENT_STATES.disconnected;
+    this.connection._client.emit(CLIENT_EVENTS.onDisconnected);
+    this._logger.info('Successfully disconnected.');
   }
 }

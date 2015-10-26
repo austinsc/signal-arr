@@ -12,12 +12,20 @@ export default class Transport {
     this._logger = new Logdown({prefix: `${this.name}`});
   }
 
+  /**
+   * Initiates a new transport and begins the connection process.
+   *  @returns {Promise} that will reject due to the method needing to be overridden.
+   */
   start() {
     return new Promise((resolve, reject) => {
       reject(new Error('Not Implemented: The `start()` function on the `Transport` class must be overridden in a derived type.'));
     });
   }
 
+  /**
+   * Haults the current connection and safely disconnects.
+   *  @returns {Promise} that will reject due to the method needing to be overridden.
+   */
   stop() {
     return new Promise((resolve, reject) => {
       reject(new Error('Not Implemented: The `stop()` function on the `Transport` class must be overridden in a derived type.'));
