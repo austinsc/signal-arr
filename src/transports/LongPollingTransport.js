@@ -74,14 +74,16 @@ export default class LongPollingTransport extends Transport {
    * Else, th' method be called recursively after it recieves new information from th' ship.
    */
   _poll() {
-    this._currentTimeoutId = setTimeout(() => {
+    const poll = () => {
       const {messageId, groupsToken, shouldReconnect} = this.connection._lastMessages;
       this._current = request
+
         .post(this.connection._client.config.url + '/poll')
         .query({clientProtocol: 1.5})
         .query({connectionToken: this.connection._connectionToken})
         .query({transport: 'longPolling'})
         .query({connectionData: this.connection._data || ''});
+
       if(groupsToken) {
         this._current = this._current
           .send({messageId, groupsToken});
@@ -89,22 +91,27 @@ export default class LongPollingTransport extends Transport {
         this._current = this._current
           .send({messageId});
       }
+
       this._current = this._current
+
         .end((err, res) => {
-          if(err && shouldReconnect){
+          if(err && shouldReconnect) {
             return this._reconnect()
               .then(this._poll)
           }
           if(res) {
-            if(this.connection._client.state === CLIENT_STATES.reconnecting){
+            if(this.connection._client.state === CLIENT_STATES.reconnecting) {
               this.connection._client.state = CLIENT_STATES.connected;
               this.connection._client.emit(CLIENT_EVENTS.onReconnected);
             }
             this.connection._processMessages(res.body);
           }
-          this._poll();
+          if(!this.connection._abortRequest)
+            this._poll();
         });
-    }, 250);
+
+    };
+    this._currentTimeoutId = setTimeout(poll.bind(this), 250);
   }
 
   /**
@@ -146,7 +153,9 @@ export default class LongPollingTransport extends Transport {
   }
 
   stop() {
-    window.clearTimeout(this._currentTimeoutId);
+    clearTimeout(this._currentTimeoutId);
+    this.connection._abortRequest = true;
+    this._current.abort();
     this.connection._client.emit(CLIENT_EVENTS.onDisconnecting);
     this._logger.info(`Disconnecting from ${this.connection._client.config.url}.`);
     this.connection.transport = null;
@@ -159,5 +168,7 @@ export default class LongPollingTransport extends Transport {
     this.connection._client.state = CLIENT_STATES.disconnected;
     this.connection._client.emit(CLIENT_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');
+
+
   }
 }
