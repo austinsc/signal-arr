@@ -57,6 +57,34 @@ export default class Connection {
       })
   }
 
+  _timestampLatestMessage()
+  {
+    this._lastMessageAt = new Date().getTime();
+  }
+
+  _beat(){
+
+  }
+
+  _checkKeepAlive(){
+    let currentKeepAliveData =  this._keepAliveData, timeElapsed;
+
+    if(this._client.state === CLIENT_STATES.connected){
+      timeElapsed = new Date().getTime() - this._lastMessageAt;
+      if(timeElapsed >= this._keepAliveData.timeout){
+        this.info('Current keep alive has timed out. Notifying the current transport that the connection has been lost.');
+        this._client.state = CLIENT_STATES.disconnected;
+      }
+
+
+    }
+  }
+
+  _startHeartBeat(){
+    this._lastActiveAt = new Date().getTime();
+    _beat();
+  }
+
   _findTransport() {
     return new Promise((resolve, reject) => {
         const availableTransports = AvailableTransports();
@@ -82,6 +110,7 @@ export default class Connection {
     const expandedResponse = expandResponse(compressedResponse);
     this._client.emit(CLIENT_EVENTS.onReceiving);
     this._lastMessages.push(expandedResponse);
+    this._timestampLatestMessage();
     this._lastMessages = takeRight(this._lastMessages, 5);
     this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
   }
