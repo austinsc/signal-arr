@@ -11,7 +11,7 @@ describe('WebSocketTransport', function() {
     client.start()
       .then(client => {
         expect(client.connection.transport.name).to.be.equal('webSockets');
-        console.log(client.connection._lastMessages);
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
       })
       .then(() => done())
       .catch(err => {
