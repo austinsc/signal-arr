@@ -73,11 +73,11 @@ describe('LongPollingTransport', function() {
       .then(client => {
         console.log(`State of client after connection: ${client.state}`);
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
-        client.connection.stop();
+        client.connection.transport.stop();
         console.log(`State of client after disconnection: ${client.state}`);
         expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
+        done();
       })
-      .then(() => done())
       .catch(err => {
         console.error('ERROR', err);
         expect(true).to.be.equal(false);
