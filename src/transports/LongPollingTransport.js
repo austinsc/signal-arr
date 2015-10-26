@@ -159,6 +159,7 @@ export default class LongPollingTransport extends Transport {
     this.connection._client.state = CLIENT_STATES.disconnected;
     this.connection._client.emit(CLIENT_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');
+    window.clearTimeout(this._currentTimeoutId);
 
   }
 }
