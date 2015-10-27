@@ -18,6 +18,15 @@ export default class LongPollingTransport extends Transport {
    * Initiates th' long pollin' transport protocol fer th' current connection.
    * @returns {Promise} That resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
    */
+
+  _queryData(current) {
+    return current
+        .query({clientProtocol: 1.5})
+        .query({connectionToken: this._connection._connectionToken})
+        .query({transport: 'longPolling'})
+        .query({connectionData: this._connection._data || ''});
+  }
+
   start() {
     if(this._pollTimeoutId) {
       throw new Error('A polling session has already been initialized. Call `stop()` before attempting to `start()` again.');
@@ -39,11 +48,8 @@ export default class LongPollingTransport extends Transport {
     const url = this._client.config.url + '/connect';
     this._logger.info(`Connecting to ${url}`);
     this._current = request
-      .post(url)
-      .query({clientProtocol: 1.5})
-      .query({connectionToken: this._connection._connectionToken})
-      .query({transport: 'longPolling'})
-      .query({connectionData: this._connection._data || ''});
+      .post(url);
+    this._current = this._queryData(this._current);
     return this._current
       .use(PromiseMaker)
       .promise()
@@ -52,12 +58,8 @@ export default class LongPollingTransport extends Transport {
 
   _startConnection() {
     this._current = request
-      .post(this._client.config.url + '/start')
-      .query({clientProtocol: 1.5})
-      .query({connectionToken: this._connection._connectionToken})
-      .query({transport: 'longPolling'})
-      .query({connectionData: this._connection._data || ''});
-
+      .post(this._client.config.url + '/start');
+    this._current = this._queryData(this._current);
     return this._current
       .use(PromiseMaker)
       .promise();
@@ -72,11 +74,8 @@ export default class LongPollingTransport extends Transport {
     const poll = () => {
       const {messageId, groupsToken, shouldReconnect} = this._connection._lastMessages;
       this._current = request
-        .post(this._client.config.url + '/poll')
-        .query({clientProtocol: 1.5})
-        .query({connectionToken: this._connection._connectionToken})
-        .query({transport: 'longPolling'})
-        .query({connectionData: this._connection._data || ''});
+        .post(this._client.config.url + '/poll');
+      this._current = this._queryData(this._current);
       if(groupsToken) {
         this._current = this._current
           .send({messageId, groupsToken});
@@ -97,7 +96,7 @@ export default class LongPollingTransport extends Transport {
             }
             this._connection._processMessages(res.body);
           }
-          if(!this._connection._abortRequest) {
+          if(!this._connection.transport._abortRequest) {
             this._poll();
           }
         });
@@ -133,11 +132,8 @@ export default class LongPollingTransport extends Transport {
     this._logger.info(`Attempting to reconnect to ${url}`);
     this._connection._reconnectTries++;
     this._current = request
-      .post(url)
-      .query({clientProtocol: 1.5})
-      .query({connectionToken: this._connection._connectionToken})
-      .query({transport: 'longPolling'})
-      .query({connectionData: this._connection._data || ''});
+      .post(url);
+    this._current = this._queryData(this._current);
     return this._current
       .use(PromiseMaker)
       .promise()
@@ -146,7 +142,7 @@ export default class LongPollingTransport extends Transport {
 
   stop() {
     clearTimeout(this._currentTimeoutId);
-    this._connection._abortRequest = true;
+    this._connection.transport._abortRequest = true;
     if(this._current) {
       this._current.abort();
     }

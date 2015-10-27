@@ -36,7 +36,6 @@ export default class Connection {
     this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
     this._lastActiveAt = new Date().getTime();
     this._lastMessages = [];
-    this._abortRequest = false;
   }
 
   _supportsKeepAlive() {

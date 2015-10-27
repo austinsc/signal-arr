@@ -10,7 +10,10 @@ export default class Transport {
     this.name = name;
     this._client = connection._client;
     this._connection = connection;
+
+
     this._logger = new Logdown({prefix: `${this.name}`});
+    this._abortRequest = false;
   }
 
   /**
