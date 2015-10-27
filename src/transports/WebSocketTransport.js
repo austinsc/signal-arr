@@ -46,7 +46,7 @@ export default class WebSocketTransport extends Transport {
         }
       };
       this._socket.onmessage = e => {
-        this._connection._processMessages(e.data);
+        this._processMessages(e.data);
       };
       this._socket.onerror = e => {
         this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);

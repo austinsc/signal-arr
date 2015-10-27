@@ -53,7 +53,7 @@ export default class LongPollingTransport extends Transport {
     return this._current
       .use(PromiseMaker)
       .promise()
-      .then(this._connection._processMessages.bind(this._connection));
+      .then(this._processMessages.bind(this));
   }
 
   _startConnection() {
@@ -72,7 +72,7 @@ export default class LongPollingTransport extends Transport {
    */
   _poll() {
     const poll = () => {
-      const {messageId, groupsToken, shouldReconnect} = this._connection._lastMessages;
+      const {messageId, groupsToken, shouldReconnect} = this._lastMessages;
       this._current = request
         .post(this._client.config.url + '/poll');
       this._current = this._queryData(this._current);
@@ -94,7 +94,7 @@ export default class LongPollingTransport extends Transport {
               this._client._setState(CLIENT_STATES.connected);
               this._client.emit(CLIENT_EVENTS.onReconnected);
             }
-            this._connection._processMessages(res.body);
+            this._processMessages(res.body);
           }
           if(!this._connection.transport._abortRequest) {
             this._poll();
@@ -137,7 +137,7 @@ export default class LongPollingTransport extends Transport {
     return this._current
       .use(PromiseMaker)
       .promise()
-      .then(this._connection._processMessages.bind(this._connection));
+      .then(this._processMessages.bind(this));
   }
 
   stop() {

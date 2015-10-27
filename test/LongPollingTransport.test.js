@@ -25,21 +25,21 @@ describe('LongPollingTransport', function() {
       .then(client => client._connection.transport._send({type: 1, value: 'Jack Sparrow!'}))
       .then(() => done());
   });
-
-  it('Can process recieved message', function() {
-    const connection = new Connection(createClient());
-    const testMessage = {
-      C: 25,
-      M: {type: 1, value: 'poopypants'},
-      S: true,
-      T: false,
-      L: 1000,
-      G: 'help'
-    };
-
-    connection._processMessages(testMessage);
-    expect(connection._lastMessages).to.have.length(1);
-  });
+  //
+  //it('Can process recieved message', function() {
+  //  const connection = new Connection(createClient());
+  //  const testMessage = {
+  //    C: 25,
+  //    M: {type: 1, value: 'poopypants'},
+  //    S: true,
+  //    T: false,
+  //    L: 1000,
+  //    G: 'help'
+  //  };
+  //
+  //  connection._processMessages(testMessage);
+  //  expect(connection._lastMessages).to.have.length(1);
+  //});
 
   it('Has a valid GroupsToken', function(done) {
     createClient()

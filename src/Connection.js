@@ -1,7 +1,5 @@
 import async from 'async';
 import Logdown from 'logdown';
-import takeRight from 'lodash.takeright';
-import {expandResponse} from './Utilities';
 import {AvailableTransports} from './transports';
 import {CLIENT_EVENTS, CLIENT_STATES} from './Constants';
 import ConnectingMessageBuffer from './ConnectingMessageBuffer';
@@ -35,7 +33,7 @@ export default class Connection {
     this._connectingMessageBuffer = new ConnectingMessageBuffer(client, client.emit.bind(client, CLIENT_EVENTS.onReceived));
     this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
     this._lastActiveAt = new Date().getTime();
-    this._lastMessages = [];
+
   }
 
   _supportsKeepAlive() {
@@ -60,10 +58,6 @@ export default class Connection {
     }
   }
 
-  _timestampLatestMessage() {
-    this._lastMessageAt = new Date().getTime();
-  }
-
   _findTransport() {
     return new Promise((resolve, reject) => {
         const availableTransports = AvailableTransports();
@@ -85,14 +79,5 @@ export default class Connection {
         }
       }
     );
-  }
-
-  _processMessages(compressedResponse) {
-    const expandedResponse = expandResponse(compressedResponse);
-    this._client.emit(CLIENT_EVENTS.onReceiving);
-    this._lastMessages.push(expandedResponse);
-    this._timestampLatestMessage();
-    this._lastMessages = takeRight(this._lastMessages, 5);
-    this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
   }
 }

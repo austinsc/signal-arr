@@ -1,4 +1,7 @@
 import Logdown from 'logdown';
+import {expandResponse} from '../Utilities';
+import {CLIENT_EVENTS, CLIENT_STATES} from '../Constants';
+import takeRight from 'lodash.takeright';
 
 export default class Transport {
   /**
@@ -10,10 +13,9 @@ export default class Transport {
     this.name = name;
     this._client = connection._client;
     this._connection = connection;
-
-
     this._logger = new Logdown({prefix: `${this.name}`});
     this._abortRequest = false;
+    this._lastMessages = [];
   }
 
   /**
@@ -41,4 +43,25 @@ export default class Transport {
       reject(new Error('Not Implemented: The `send()` function on the `Transport` class must be overridden in a derived type.'));
     });
   }
+  _processMessages(compressedResponse) {
+    const expandedResponse = expandResponse(compressedResponse);
+    this._client.emit(CLIENT_EVENTS.onReceiving);
+    this._lastMessages.push(expandedResponse);
+    this._timestampLatestMessage();
+    this._lastMessages = takeRight(this._lastMessages, 5);
+    this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
+  }
+
+  _timestampLatestMessage() {
+    this._lastMessageAt = new Date().getTime();
+  }
+
+
+
+
+
+
+
+
+
 }
