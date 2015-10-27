@@ -12,6 +12,7 @@ export default class LongPollingTransport extends Transport {
 
   constructor(connection) {
     super('longPolling', connection);
+    this._maxReconnectedTimeout = 3600000;
   }
 
   /**
@@ -32,11 +33,13 @@ export default class LongPollingTransport extends Transport {
       throw new Error('A polling session has already been initialized. Call `stop()` before attempting to `start()` again.');
     }
     this._logger.info(`*${this.constructor.name}* starting...`);
-    this._connection._reconnectTries = 0;
-    this._connection._reconnectTimeoutId = null;
     return this._connect()
       //.then(this._startConnection.bind(this))
-      .then(() => this._client.state = CLIENT_STATES.connected)
+      .then(() => {
+        this._client.state = CLIENT_STATES.connected;
+        this._reconnectTries = 0;
+        this._reconnectTimeoutId = null;
+      })
       .then(this._poll.bind(this));
   }
 
@@ -87,12 +90,14 @@ export default class LongPollingTransport extends Transport {
         .end((err, res) => {
           if(err && shouldReconnect) {
             return this._reconnect()
+            //return setTimeout(_reconnect(), Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1), this._maxReconnectedTimeout))
               .then(this._poll);
           }
           if(res) {
             if(this._client.state === CLIENT_STATES.reconnecting) {
               this._client.state = CLIENT_STATES.connected;
               this._client.emit(CLIENT_EVENTS.onReconnected);
+              this._reconnectTries = 0;
             }
             this._processMessages(res.body);
           }
@@ -130,7 +135,7 @@ export default class LongPollingTransport extends Transport {
     this._connection.client.emit(CLIENT_EVENTS.onReconnecting);
     this._connection.client.state = CLIENT_STATES.reconnecting;
     this._logger.info(`Attempting to reconnect to ${url}`);
-    this._connection._reconnectTries++;
+    this._reconnectTries++;
     this._current = request
       .post(url);
     this._current = this._queryData(this._current);
@@ -142,6 +147,7 @@ export default class LongPollingTransport extends Transport {
 
   stop() {
     clearTimeout(this._currentTimeoutId);
+    clearTimeout(this._reconnectTimeoutId);
     this._connection._transport._abortRequest = true;
     if(this._current) {
       this._current.abort();
