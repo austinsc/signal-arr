@@ -13,7 +13,7 @@ describe('WebSocketTransport', function() {
     createClient()
       .start()
       .then(client => {
-        expect(client._connection.transport.name).to.be.equal('webSockets');
+        expect(client._connection._transport.name).to.be.equal('webSockets');
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
         done();
         return client;
@@ -41,7 +41,7 @@ describe('WebSocketTransport', function() {
       .then(client => {
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
         setTimeout(() => {
-          client._connection.transport._send({type: 1, value: 'Jack Sparrow!'});
+          client._connection._transport._send({type: 1, value: 'Jack Sparrow!'});
           done();
         }, 1000);
       });

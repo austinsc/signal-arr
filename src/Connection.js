@@ -46,15 +46,15 @@ export default class Connection {
     return this._findTransport()
       .then(transport => {
         this._logger.info(`Using the *${transport.constructor.name}*.`);
-        this.transport = transport;
+        this._transport = transport;
         this._client._setState(CLIENT_STATES.connected);
         this._connectingMessageBuffer.drain();
       });
   }
 
   _disconnect() {
-    if(this.transport) {
-      this.transport.stop();
+    if(this._transport) {
+      this._transport.stop();
     }
   }
 

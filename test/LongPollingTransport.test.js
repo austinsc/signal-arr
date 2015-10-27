@@ -23,8 +23,10 @@ describe('LongPollingTransport', function() {
   it('Sends the test message', function(done) {
     createClient()
       .start()
-      .then(client => client._connection.transport._send({type: 1, value: 'Jack Sparrow!'}))
-      .then(() => done());
+      .then(client => {
+        client._connection._transport._send({type: 1, value: 'Jack Sparrow!'})
+        done();
+      })
   });
 
   it('Can process recieved message', function() {
@@ -46,7 +48,7 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        client._connection.transport._send({type: 4, value: 'Black Beards Crew'});
+        client._connection._transport._send({type: 4, value: 'Black Beards Crew'});
         done();
       })
 

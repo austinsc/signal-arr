@@ -96,7 +96,7 @@ export default class LongPollingTransport extends Transport {
             }
             this._processMessages(res.body);
           }
-          if(!this._connection.transport._abortRequest) {
+          if(!this._connection._transport._abortRequest) {
             this._poll();
           }
         });
@@ -142,7 +142,7 @@ export default class LongPollingTransport extends Transport {
 
   stop() {
     clearTimeout(this._currentTimeoutId);
-    this._connection.transport._abortRequest = true;
+    this._connection._transport._abortRequest = true;
     if(this._current) {
       this._current.abort();
     }
