@@ -35,11 +35,11 @@ export default class Client extends EventEmitter {
     if(this.state !== CLIENT_STATES.disconnected) {
       throw new Error('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
     }
-    this.emit(CLIENT_EVENTS.onStarting);
+    this.emit(CLIENT_EVENTS.onConnecting);
     return this._negotiate()
       .then(connection => connection._connect())
       .then(() => {
-        this.emit(CLIENT_EVENTS.onStarted);
+        this.emit(CLIENT_EVENTS.onConnected);
         return this;
       });
   }
@@ -93,12 +93,12 @@ export default class Client extends EventEmitter {
     this.on(CLIENT_EVENTS.onReconnected, callback);
   }
 
-  starting(callback) {
-    this.on(CLIENT_EVENTS.onStarting, callback);
+  connecting(callback) {
+    this.on(CLIENT_EVENTS.onConnecting, callback);
   }
 
-  started(callback) {
-    this.on(CLIENT_EVENTS.onStarted, callback);
+  connected(callback) {
+    this.on(CLIENT_EVENTS.onConnected, callback);
   }
 
   _setState(newState) {

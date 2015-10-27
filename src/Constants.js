@@ -8,8 +8,8 @@ export const CLIENT_STATES = {
 export const CLIENT_EVENTS = {
   onError: 'onError',
   onConnectionSlow: 'onConnectionSlow',
-  onStarting: 'onStarting',
-  onStarted: 'onStarted',
+  onConnecting: 'onConnecting',
+  onConnected: 'onConnected',
   onReceiving: 'onReceiving',
   onReceived: 'onReceived',
   onReconnecting: 'onReconnecting',
