@@ -140,7 +140,7 @@ export default class LongPollingTransport extends Transport {
       .post(url);
     this._current = this._queryData(this._current);
 
-    if(Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1) >= this._maxReconnectedTimeout)){
+    if((Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1)) >= this._maxReconnectedTimeout)){
       this.stop();
     }
     return this._current
