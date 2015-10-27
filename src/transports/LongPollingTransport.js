@@ -90,7 +90,7 @@ export default class LongPollingTransport extends Transport {
         .end((err, res) => {
           if(err && shouldReconnect) {
             return this._reconnect()
-            //return setTimeout(_reconnect(), Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1), this._maxReconnectedTimeout))
+            //return
               .then(this._poll);
           }
           if(res) {
@@ -139,10 +139,15 @@ export default class LongPollingTransport extends Transport {
     this._current = request
       .post(url);
     this._current = this._queryData(this._current);
+    this._reconnectTimeoutId = setTimeout(_reconnect(), Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1), this._maxReconnectedTimeout));
+    if(Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1) >= this._maxReconnectedTimeout)){
+      this.stop();
+    }
     return this._current
       .use(PromiseMaker)
       .promise()
       .then(this._processMessages.bind(this));
+
   }
 
   stop() {
