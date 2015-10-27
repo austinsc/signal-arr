@@ -80,13 +80,13 @@ describe('LongPollingTransport', function() {
           console.log(`State of client after disconnection: ${client.state}`);
           console.log(`Aborted request after disconnect: ${client.connection._abortRequest}`);
           setTimeout(() => done(), 1000);
-      }, 500);
+        }, 500);
+      })
+      .catch(err => {
+        console.error('ERROR', err);
+        expect(true).to.be.equal(false);
+        done();
+      })
   })
-    .catch(err => {
-      console.error('ERROR', err);
-      expect(true).to.be.equal(false);
-      done();
-    })
-})
-})
-;
+});
+

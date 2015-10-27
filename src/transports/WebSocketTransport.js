@@ -5,6 +5,7 @@ import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
+
   constructor(connection) {
     super('webSockets', connection);
   }
@@ -27,7 +28,7 @@ export default class WebSocketTransport extends Transport {
       this._logger.info(`Connecting to ${url}`);
       this._socket = new WebSocket(url);
 
-       this._socket.onopen = () => {
+      this._socket.onopen = () => {
         this.connection._openedWebSocket = true;
         this._logger.info(`*${this.constructor.name}* connection opened.`);
         this.connection._client._setState(CLIENT_STATES.connected);
@@ -37,19 +38,18 @@ export default class WebSocketTransport extends Transport {
     });
   }
 
-  _messageObserver(){
+  _messageObserver() {
 
 
   }
 
-  _reconnect(){
-
+  _reconnect() {
 
 
   }
 
-  stop(){
-    if(this._socket && this.connection._openedWebSocket){
+  stop() {
+    if(this._socket && this.connection._openedWebSocket) {
       this._socket.close();
       this.connection._abortRequest = true;
     }
