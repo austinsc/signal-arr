@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 import Client, {CLIENT_CONFIG_DEFAULTS} from '../src/Client';
 import Connection from '../src/Connection';
+import Transport from '../src/transports/Transport';
 import {CLIENT_STATES, CLIENT_EVENTS} from '../src/Constants';
 
 function createClient() {
@@ -25,27 +26,30 @@ describe('LongPollingTransport', function() {
       .then(client => client._connection.transport._send({type: 1, value: 'Jack Sparrow!'}))
       .then(() => done());
   });
-  //
-  //it('Can process recieved message', function() {
-  //  const connection = new Connection(createClient());
-  //  const testMessage = {
-  //    C: 25,
-  //    M: {type: 1, value: 'poopypants'},
-  //    S: true,
-  //    T: false,
-  //    L: 1000,
-  //    G: 'help'
-  //  };
-  //
-  //  connection._processMessages(testMessage);
-  //  expect(connection._lastMessages).to.have.length(1);
-  //});
+
+  it('Can process recieved message', function() {
+    const transport = new Transport('longPolling', new Connection(createClient()));
+    const testMessage = {
+      C: 25,
+      M: {type: 1, value: 'Arrrg me mateys!'},
+      S: true,
+      T: false,
+      L: 1000,
+      G: 'help'
+    };
+
+    transport._processMessages(testMessage);
+    expect(transport._lastMessages).to.have.length(1);
+  });
 
   it('Has a valid GroupsToken', function(done) {
     createClient()
       .start()
-      .then(client => client._connection.transport._send({type: 4, value: 'Black Beards Crew'}))
-      .then(() => done());
+      .then(client => {
+        client._connection.transport._send({type: 4, value: 'Black Beards Crew'});
+        done();
+      })
+
   });
 
   it('Successfully disconnected from server', function(done) {
