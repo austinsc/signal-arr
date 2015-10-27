@@ -58,30 +58,27 @@ export default class Connection {
       })
   }
 
-  _timestampLatestMessage()
-  {
+  _timestampLatestMessage() {
     this._lastMessageAt = new Date().getTime();
   }
 
-  _beat(){
+  _beat() {
 
   }
 
-  _checkKeepAlive(){
-    let currentKeepAliveData =  this._keepAliveData, timeElapsed;
+  _checkKeepAlive() {
+    let currentKeepAliveData = this._keepAliveData, timeElapsed;
 
-    if(this._client.state === CLIENT_STATES.connected){
+    if(this._client.state === CLIENT_STATES.connected) {
       timeElapsed = new Date().getTime() - this._lastMessageAt;
-      if(timeElapsed >= this._keepAliveData.timeout){
+      if(timeElapsed >= this._keepAliveData.timeout) {
         this.info('Current keep alive has timed out. Notifying the current transport that the connection has been lost.');
         this._client.state = CLIENT_STATES.disconnected;
       }
-
-
     }
   }
 
-  _startHeartBeat(){
+  _startHeartBeat() {
     this._lastActiveAt = new Date().getTime();
     _beat();
   }
@@ -90,9 +87,10 @@ export default class Connection {
     return new Promise((resolve, reject) => {
         const availableTransports = AvailableTransports();
         if(this._client.config.transport && this._client.config.transport !== 'auto') {
-          if(availableTransports[this._client.config.transport]) {
+          const transportConstructor = availableTransports.filter(x => x.name === this._client.config.transport)[0];
+          if(transportConstructor) {
             // If the transport specified in the config is found in the available transports, use it
-            resolve(new availableTransports[this._client.config.transport](this));
+            resolve(new transportConstructor(this));
           } else {
             reject(new Error(`The transport specified (${this._client.config.transport}) was not found among the available transports [${availableTransports.map(x => `'${x.name}'`).join(' ')}].`))
           }

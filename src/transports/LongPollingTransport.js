@@ -46,7 +46,7 @@ export default class LongPollingTransport extends Transport {
     this._current = request
       .post(url)
       .query({clientProtocol: 1.5})
-      .query({connectionToken: encodeURIComponent(this.connection._connectionToken)})
+      .query({connectionToken: this.connection._connectionToken})
       .query({transport: 'longPolling'})
       .query({connectionData: this.connection._data || ''});
     return this._current
@@ -59,7 +59,7 @@ export default class LongPollingTransport extends Transport {
     this._current = request
       .post(this.connection._client.config.url + '/start')
       .query({clientProtocol: 1.5})
-      .query({connectionToken: encodeURIComponent(this.connection._connectionToken)})
+      .query({connectionToken: this.connection._connectionToken})
       .query({transport: 'longPolling'})
       .query({connectionData: this.connection._data || ''});
 
@@ -79,7 +79,7 @@ export default class LongPollingTransport extends Transport {
       this._current = request
         .post(this.connection._client.config.url + '/poll')
         .query({clientProtocol: 1.5})
-        .query({connectionToken: encodeURIComponent(this.connection._connectionToken)})
+        .query({connectionToken: this.connection._connectionToken})
         .query({transport: 'longPolling'})
         .query({connectionData: this.connection._data || ''});
       if(groupsToken) {
@@ -118,7 +118,7 @@ export default class LongPollingTransport extends Transport {
   _send(data) {
     return request
       .post(this.connection._client.config.url + '/send')
-      .query({connectionToken: encodeURIComponent(this.connection._connectionToken)})
+      .query({connectionToken: this.connection._connectionToken})
       .query({transport: 'longPolling'})
       .send(`data=${JSON.stringify(data)}`)
       .set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
@@ -139,7 +139,7 @@ export default class LongPollingTransport extends Transport {
     this._current = request
       .post(url)
       .query({clientProtocol: 1.5})
-      .query({connectionToken: encodeURIComponent(this.connection._connectionToken)})
+      .query({connectionToken: this.connection._connectionToken})
       .query({transport: 'longPolling'})
       .query({connectionData: this.connection._data || ''});
     return this._current
@@ -151,7 +151,9 @@ export default class LongPollingTransport extends Transport {
   stop() {
     clearTimeout(this._currentTimeoutId);
     this.connection._abortRequest = true;
-    this._current.abort();
+    if(this._current) {
+      this._current.abort();
+    }
     this.connection._client.emit(CLIENT_EVENTS.onDisconnecting);
     this._logger.info(`Disconnecting from ${this.connection._client.config.url}.`);
     this.connection.transport = null;
