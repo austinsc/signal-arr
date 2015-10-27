@@ -54,7 +54,6 @@ describe('LongPollingTransport', function() {
       .then(client => {
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
         setTimeout(() => {
-          debugger;
           client.connection.transport.stop();
           expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
           setTimeout(() => done(), 1000);
