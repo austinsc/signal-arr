@@ -37,7 +37,7 @@ export default class Connection {
   }
 
   _supportsKeepAlive() {
-    return this._keepAliveData.activated && this._client.transport.supportsKeepAlive;
+    return this._keepAliveData.activated && this._transport.supportsKeepAlive;
   }
 
   _connect() {

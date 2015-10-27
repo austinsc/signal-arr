@@ -148,13 +148,6 @@ export default class LongPollingTransport extends Transport {
     }
     this._client.emit(CLIENT_EVENTS.onDisconnecting);
     this._logger.info(`Disconnecting from ${this._client.config.url}.`);
-    //this._connection.transport = null;
-    //delete this._connection.messageId;
-    //delete this._connection._connectionToken;
-    //delete this._connection._lastActiveAt;
-    //delete this._connection._lastMessageAt;
-    //delete this._connection._lastMessages;
-    //delete this._connection.config;
     this._client._setState(CLIENT_STATES.disconnected);
     this._client.emit(CLIENT_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');
