@@ -70,15 +70,15 @@ module.exports = function(grunt) {
       }
     },
 
-    'signalr-proxy': {
-      redux: {
-        assembly: path.join(__dirname, 'bin', ''),
-        typeName: '',
-        methodName: 'GenerateProxyAsync',
-        serviceUrl: '/signalr',
-        outFile: path.join(__dirname, 'lib/SignalR.js')
-      }
-    },
+    //'signalr-proxy': {
+    //  redux: {
+    //    assembly: path.join(__dirname, 'bin', ''),
+    //    typeName: '',
+    //    methodName: 'GenerateProxyAsync',
+    //    serviceUrl: '/signalr',
+    //    outFile: path.join(__dirname, 'lib/SignalR.js')
+    //  }
+    //},
 
     // Environment settings
     'env': {

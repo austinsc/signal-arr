@@ -12,8 +12,8 @@ describe('WebSocketTransport', function() {
       .then(client => {
         expect(client.connection.transport.name).to.be.equal('webSockets');
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        done();
       })
-      .then(() => done())
       .catch(err => {
         console.error('ERROR', err);
         expect(true).to.be.equal(false);
