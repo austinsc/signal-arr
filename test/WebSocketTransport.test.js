@@ -25,18 +25,19 @@ describe('WebSocketTransport', function() {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client.start()
       .then(client => {
-        console.log(`Connection state after initiating connection: ${client.connection.state}`);
-        expect(client.connection.state).to.be.equal(CLIENT_STATES.connected);
+        console.log(`Connection state after initiating connection: ${client.state}`);
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
         setTimeout(() => {
           client.connection.transport.stop();
-          expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
-          console.log(`State of client after disconnection: ${client.state}`);
-          setTimeout(() => done(), 1000);
+          setTimeout(() => {
+            expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
+            console.log(`State of client after disconnection: ${client.state}`);
+            done();
+          }, 1000);
         }, 500);
       })
       .catch(err => {
-        console.error('ERROR', err);
-        expect(true).to.be.equal(false);
+        expect(err).to.be.empty;
         done();
       })
   })

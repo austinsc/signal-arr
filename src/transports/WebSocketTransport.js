@@ -25,19 +25,27 @@ export default class WebSocketTransport extends Transport {
 
       let url = this.connection._client.config.url.replace(/http(s)?:/, 'ws:');
       this._logger.info(`Connecting to ${url}`);
-      url += `/connect?transport=webSockets&connectionToken=${this.connection._connectionToken}`;
-      this._socket = new WebSocket(url);
+      url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this.connection._connectionToken)}`;
+      url += '&tid=' + Math.floor(Math.random() * 11);
 
-      this._socket.onopen = () => {
-        this._logger.info(`*${this.constructor.name}* connection opened.`);
-        this.connection._client._setState(CLIENT_STATES.connected);
-        resolve();
+      this._socket = new WebSocket(url);
+      this._socket.onopen = e => {
+        if(e.type === 'open') {
+          this._logger.info(`*${this.constructor.name}* connection opened.`);
+          this.connection._client._setState(CLIENT_STATES.connected);
+        }
+      };
+      this._socket.onmessage = e => {
+        this.connection._processMessages(e.data);
+      };
+      this._socket.onerror = e => {
+        this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);
+      };
+      this._socket.onclose = e => {
+        this.connection._client._setState(CLIENT_STATES.disconnected);
       };
 
-      this._socket.onerror = (err) => {
-        reject(err);
-      }
-
+      resolve();
     });
   }
 
@@ -47,11 +55,9 @@ export default class WebSocketTransport extends Transport {
   }
 
   stop() {
-    if(this._socket && this.connection._openedWebSocket) {
+    if(this._socket) {
       this._socket.close();
-      this.connection._abortRequest = true;
     }
-
   }
 }
 
