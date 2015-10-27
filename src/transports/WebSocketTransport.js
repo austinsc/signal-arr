@@ -10,6 +10,16 @@ export default class WebSocketTransport extends Transport {
     super('webSockets', connection);
   }
 
+  _send(data) {
+    return new Promise((resolve, reject) => {
+      if(!this._socket) {
+        return reject(new Error('The WebSocket has not yet been initialized.'));
+      }
+      this._socket.send(JSON.stringify(data));
+      resolve();
+    })
+  }
+
   start() {
     return new Promise((resolve, reject) => {
 
