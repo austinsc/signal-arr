@@ -40,5 +40,21 @@ describe('WebSocketTransport', function() {
         expect(err).to.be.empty;
         done();
       })
+
+  });
+  it('Can successfully send messages to the server.', function(done) {
+    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+    client.start()
+      .then(client => {
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        setTimeout(() => {
+          client.connection.transport._send({type: 1, value: 'Jack Sparrow!'})
+        }, 1000);
+      })
+      .then(() => done())
+      .catch(err => {
+        expect(err).to.be.empty;
+        done();
+      })
   })
 });
