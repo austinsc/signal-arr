@@ -1,4 +1,3 @@
-//import {w3cwebsocket} from 'websocket/lib/browser';
 import Transport from './Transport';
 import {expect} from 'chai';
 import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
