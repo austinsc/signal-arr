@@ -50,7 +50,7 @@ export default class Client extends EventEmitter {
    * @returns {Promise} that resolves once the connection has closed successfully.
    */
   stop(force = false) {
-
+    this._connection._disconnect();
   }
 
   error(callback) {
@@ -113,7 +113,7 @@ export default class Client extends EventEmitter {
       .query({clientProtocol: 1.5})
       .use(PromiseMaker)
       .promise()
-      .then(data => this.connection = this.config.hubClient
+      .then(data => this._connection = this.config.hubClient
         ? new HubConnection(this, data)
         : new Connection(this, data)
     );

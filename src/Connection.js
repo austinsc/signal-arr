@@ -1,9 +1,6 @@
 import async from 'async';
 import Logdown from 'logdown';
-import request from 'superagent';
-import last from 'lodash.last';
 import takeRight from 'lodash.takeright';
-import PromiseMaker from './PromiseMaker';
 import {expandResponse} from './Utilities';
 import {AvailableTransports} from './transports';
 import {CLIENT_EVENTS, CLIENT_STATES} from './Constants';
@@ -55,32 +52,17 @@ export default class Connection {
         this.transport = transport;
         this._client._setState(CLIENT_STATES.connected);
         this._connectingMessageBuffer.drain();
-      })
+      });
+  }
+
+  _disconnect() {
+    if(this.transport) {
+      this.transport.stop();
+    }
   }
 
   _timestampLatestMessage() {
     this._lastMessageAt = new Date().getTime();
-  }
-
-  _beat() {
-
-  }
-
-  _checkKeepAlive() {
-    let currentKeepAliveData = this._keepAliveData, timeElapsed;
-
-    if(this._client.state === CLIENT_STATES.connected) {
-      timeElapsed = new Date().getTime() - this._lastMessageAt;
-      if(timeElapsed >= this._keepAliveData.timeout) {
-        this.info('Current keep alive has timed out. Notifying the current transport that the connection has been lost.');
-        this._client.state = CLIENT_STATES.disconnected;
-      }
-    }
-  }
-
-  _startHeartBeat() {
-    this._lastActiveAt = new Date().getTime();
-    _beat();
   }
 
   _findTransport() {
@@ -90,9 +72,10 @@ export default class Connection {
           const transportConstructor = availableTransports.filter(x => x.name === this._client.config.transport)[0];
           if(transportConstructor) {
             // If the transport specified in the config is found in the available transports, use it
-            resolve(new transportConstructor(this));
+            const transport = new transportConstructor(this);
+            transport.start().then(() => resolve(transport));
           } else {
-            reject(new Error(`The transport specified (${this._client.config.transport}) was not found among the available transports [${availableTransports.map(x => `'${x.name}'`).join(' ')}].`))
+            reject(new Error(`The transport specified (${this._client.config.transport}) was not found among the available transports [${availableTransports.map(x => `'${x.name}'`).join(' ')}].`));
           }
         } else {
           // Otherwise, Auto Negotiate the transport
@@ -112,9 +95,5 @@ export default class Connection {
     this._timestampLatestMessage();
     this._lastMessages = takeRight(this._lastMessages, 5);
     this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
-  }
-
-  _lastMessage() {
-    return last(this._lastMessages);
   }
 }

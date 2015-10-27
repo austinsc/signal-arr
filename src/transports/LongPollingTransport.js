@@ -1,13 +1,8 @@
 import request from 'superagent';
 import Transport from './Transport';
 import PromiseMaker from '../PromiseMaker';
-import {expandResponse} from '../Utilities';
 import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 
-function inspect(x) {
-  console.dir(x);
-  return x;
-}
 
 /**
  * The long polling transport protocol
@@ -28,11 +23,11 @@ export default class LongPollingTransport extends Transport {
       throw new Error('A polling session has already been initialized. Call `stop()` before attempting to `start()` again.');
     }
     this._logger.info(`*${this.constructor.name}* starting...`);
-    this.connection._reconnectTries = 0;
-    this.connection._reconnectTimeoutId = null;
+    this._connection._reconnectTries = 0;
+    this._connection._reconnectTimeoutId = null;
     return this._connect()
       //.then(this._startConnection.bind(this))
-      .then(() => this.connection._client._setState(CLIENT_STATES.connected))
+      .then(() => this._client._setState(CLIENT_STATES.connected))
       .then(this._poll.bind(this));
   }
 
@@ -41,27 +36,27 @@ export default class LongPollingTransport extends Transport {
    * @returns {Promise} that resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
    */
   _connect() {
-    const url = this.connection._client.config.url + '/connect';
+    const url = this._client.config.url + '/connect';
     this._logger.info(`Connecting to ${url}`);
     this._current = request
       .post(url)
       .query({clientProtocol: 1.5})
-      .query({connectionToken: this.connection._connectionToken})
+      .query({connectionToken: this._connection._connectionToken})
       .query({transport: 'longPolling'})
-      .query({connectionData: this.connection._data || ''});
+      .query({connectionData: this._connection._data || ''});
     return this._current
       .use(PromiseMaker)
       .promise()
-      .then(this.connection._processMessages.bind(this.connection));
+      .then(this._connection._processMessages.bind(this._connection));
   }
 
   _startConnection() {
     this._current = request
-      .post(this.connection._client.config.url + '/start')
+      .post(this._client.config.url + '/start')
       .query({clientProtocol: 1.5})
-      .query({connectionToken: this.connection._connectionToken})
+      .query({connectionToken: this._connection._connectionToken})
       .query({transport: 'longPolling'})
-      .query({connectionData: this.connection._data || ''});
+      .query({connectionData: this._connection._data || ''});
 
     return this._current
       .use(PromiseMaker)
@@ -75,13 +70,13 @@ export default class LongPollingTransport extends Transport {
    */
   _poll() {
     const poll = () => {
-      const {messageId, groupsToken, shouldReconnect} = this.connection._lastMessages;
+      const {messageId, groupsToken, shouldReconnect} = this._connection._lastMessages;
       this._current = request
-        .post(this.connection._client.config.url + '/poll')
+        .post(this._client.config.url + '/poll')
         .query({clientProtocol: 1.5})
-        .query({connectionToken: this.connection._connectionToken})
+        .query({connectionToken: this._connection._connectionToken})
         .query({transport: 'longPolling'})
-        .query({connectionData: this.connection._data || ''});
+        .query({connectionData: this._connection._data || ''});
       if(groupsToken) {
         this._current = this._current
           .send({messageId, groupsToken});
@@ -93,17 +88,18 @@ export default class LongPollingTransport extends Transport {
         .end((err, res) => {
           if(err && shouldReconnect) {
             return this._reconnect()
-              .then(this._poll)
+              .then(this._poll);
           }
           if(res) {
-            if(this.connection._client.state === CLIENT_STATES.reconnecting) {
-              this.connection._client._setState(CLIENT_STATES.connected);
-              this.connection._client.emit(CLIENT_EVENTS.onReconnected);
+            if(this._client.state === CLIENT_STATES.reconnecting) {
+              this._client._setState(CLIENT_STATES.connected);
+              this._client.emit(CLIENT_EVENTS.onReconnected);
             }
-            this.connection._processMessages(res.body);
+            this._connection._processMessages(res.body);
           }
-          if(!this.connection._abortRequest)
+          if(!this._connection._abortRequest) {
             this._poll();
+          }
         });
 
     };
@@ -117,8 +113,8 @@ export default class LongPollingTransport extends Transport {
    */
   _send(data) {
     return request
-      .post(this.connection._client.config.url + '/send')
-      .query({connectionToken: this.connection._connectionToken})
+      .post(this._client.config.url + '/send')
+      .query({connectionToken: this._connection._connectionToken})
       .query({transport: 'longPolling'})
       .send(`data=${JSON.stringify(data)}`)
       .set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
@@ -131,40 +127,40 @@ export default class LongPollingTransport extends Transport {
    *  @returns {Promise} that resolves once th' client has be successfully reconnected.
    */
   _reconnect() {
-    const url = this.connection._client.config.url + '/connect';
-    this.connection.client.emit(CLIENT_EVENTS.onReconnecting);
-    this.connection.client._setState(CLIENT_STATES.reconnecting);
+    const url = this._client.config.url + '/connect';
+    this._connection.client.emit(CLIENT_EVENTS.onReconnecting);
+    this._connection.client._setState(CLIENT_STATES.reconnecting);
     this._logger.info(`Attempting to reconnect to ${url}`);
-    this.connection._reconnectTries++;
+    this._connection._reconnectTries++;
     this._current = request
       .post(url)
       .query({clientProtocol: 1.5})
-      .query({connectionToken: this.connection._connectionToken})
+      .query({connectionToken: this._connection._connectionToken})
       .query({transport: 'longPolling'})
-      .query({connectionData: this.connection._data || ''});
+      .query({connectionData: this._connection._data || ''});
     return this._current
       .use(PromiseMaker)
       .promise()
-      .then(this.connection._processMessages.bind(this.connection));
+      .then(this._connection._processMessages.bind(this._connection));
   }
 
   stop() {
     clearTimeout(this._currentTimeoutId);
-    this.connection._abortRequest = true;
+    this._connection._abortRequest = true;
     if(this._current) {
       this._current.abort();
     }
-    this.connection._client.emit(CLIENT_EVENTS.onDisconnecting);
-    this._logger.info(`Disconnecting from ${this.connection._client.config.url}.`);
-    this.connection.transport = null;
-    delete this.connection.messageId;
-    delete this.connection._connectionToken;
-    delete this.connection._lastActiveAt;
-    delete this.connection._lastMessageAt;
-    delete this.connection._lastMessages;
-    delete this.connection.config;
-    this.connection._client._setState(CLIENT_STATES.disconnected);
-    this.connection._client.emit(CLIENT_EVENTS.onDisconnected);
+    this._client.emit(CLIENT_EVENTS.onDisconnecting);
+    this._logger.info(`Disconnecting from ${this._client.config.url}.`);
+    this._connection.transport = null;
+    delete this._connection.messageId;
+    delete this._connection._connectionToken;
+    delete this._connection._lastActiveAt;
+    delete this._connection._lastMessageAt;
+    delete this._connection._lastMessages;
+    delete this._connection.config;
+    this._client._setState(CLIENT_STATES.disconnected);
+    this._client.emit(CLIENT_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');
   }
 }

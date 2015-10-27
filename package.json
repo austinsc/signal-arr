@@ -55,6 +55,6 @@
     "lodash.sum": "^3.6.2",
     "lodash.takeright": "^3.0.0",
     "logdown": "^1.2.4",
-    "superagent": "^1.4.0"
+    "superagent": "fiatjaf/superagent"
   }
 }

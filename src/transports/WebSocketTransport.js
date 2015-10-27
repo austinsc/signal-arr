@@ -1,4 +1,3 @@
-import {expect} from 'chai';
 import Transport from './Transport';
 import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 
@@ -16,12 +15,11 @@ export default class WebSocketTransport extends Transport {
       }
       this._socket.send(JSON.stringify(data));
       resolve();
-    })
+    });
   }
 
   start() {
     return new Promise((resolve, reject) => {
-
       if(!WebSocket) {
         return reject(new Error('The type `WebSocket` could not be resolved.'));
       }
@@ -30,46 +28,40 @@ export default class WebSocketTransport extends Transport {
       }
 
       this._logger.info(`*${this.constructor.name}* starting...`);
-      this.connection._client._setState(CLIENT_STATES.connecting);
-      this.connection._client.emit(CLIENT_EVENTS.onStarting);
+      this._client._setState(CLIENT_STATES.connecting);
+      this._client.emit(CLIENT_EVENTS.onStarting);
 
-      let url = this.connection._client.config.url.replace(/http(s)?:/, 'ws:');
+      let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
       this._logger.info(`Connecting to ${url}`);
-      url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this.connection._connectionToken)}`;
+      url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connection._connectionToken)}`;
       url += '&tid=' + Math.floor(Math.random() * 11);
 
       this._socket = new WebSocket(url);
       this._socket.onopen = e => {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
-          this.connection._client._setState(CLIENT_STATES.connected);
-          this.connection._client.emit(CLIENT_EVENTS.onStarted);
+          this._client._setState(CLIENT_STATES.connected);
+          this._client.emit(CLIENT_EVENTS.onStarted);
+          resolve();
         }
       };
-
       this._socket.onmessage = e => {
-        this.connection._processMessages(e.data);
+        this._connection._processMessages(e.data);
       };
       this._socket.onerror = e => {
         this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);
       };
-      this._socket.onclose = e => {
-        this.connection._client._setState(CLIENT_STATES.disconnected);
-        this.connection._client.emit(CLIENT_EVENTS.onDisconnected);
+      this._socket.onclose = () => {
+        this._logger.info(`*${this.constructor.name}* connection closed.`);
+        this._client._setState(CLIENT_STATES.disconnected);
+        this._client.emit(CLIENT_EVENTS.onDisconnected);
       };
-
-      resolve();
     });
-  }
-
-
-  _reconnect() {
-
   }
 
   stop() {
     if(this._socket) {
-      this.connection._client.emit(CLIENT_EVENTS.onDisconnecting);
+      this._client.emit(CLIENT_EVENTS.onDisconnecting);
       this._socket.close();
     }
   }

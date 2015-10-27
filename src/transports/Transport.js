@@ -8,7 +8,8 @@ export default class Transport {
    */
   constructor(name, connection) {
     this.name = name;
-    this.connection = connection;
+    this._client = connection._client;
+    this._connection = connection;
     this._logger = new Logdown({prefix: `${this.name}`});
   }
 
