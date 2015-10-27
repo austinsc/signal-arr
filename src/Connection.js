@@ -58,6 +58,10 @@ export default class Connection {
       })
   }
 
+
+
+
+
   _timestampLatestMessage()
   {
     this._lastMessageAt = new Date().getTime();

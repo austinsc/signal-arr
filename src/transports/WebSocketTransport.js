@@ -32,6 +32,7 @@ export default class WebSocketTransport extends Transport {
 
       this._logger.info(`*${this.constructor.name}* starting...`);
       this.connection._client._setState(CLIENT_STATES.connecting);
+      this.connection._client.emit(CLIENT_EVENTS.onStarting);
 
       let url = this.connection._client.config.url.replace(/http(s)?:/, 'ws:');
       this._logger.info(`Connecting to ${url}`);
@@ -43,8 +44,10 @@ export default class WebSocketTransport extends Transport {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
           this.connection._client._setState(CLIENT_STATES.connected);
+          this.connection._client.emit(CLIENT_EVENTS.onStarted);
         }
       };
+
       this._socket.onmessage = e => {
         this.connection._processMessages(e.data);
       };
@@ -53,6 +56,7 @@ export default class WebSocketTransport extends Transport {
       };
       this._socket.onclose = e => {
         this.connection._client._setState(CLIENT_STATES.disconnected);
+        this.connection._client.emit(CLIENT_EVENTS.onDisconnected);
       };
 
       resolve();
@@ -66,6 +70,7 @@ export default class WebSocketTransport extends Transport {
 
   stop() {
     if(this._socket) {
+      this.connection._client.emit(CLIENT_EVENTS.onDisconnecting);
       this._socket.close();
     }
   }
