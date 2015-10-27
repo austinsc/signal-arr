@@ -1,6 +1,5 @@
-//import {w3cwebsocket} from 'websocket/lib/browser';
-import Transport from './Transport';
 import {expect} from 'chai';
+import Transport from './Transport';
 import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 
 export default class WebSocketTransport extends Transport {
