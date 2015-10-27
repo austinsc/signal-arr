@@ -41,13 +41,13 @@ export default class Connection {
   }
 
   _connect() {
-    this._client._setState(CLIENT_STATES.connecting);
+    this._client.state = CLIENT_STATES.connecting;
 
     return this._findTransport()
       .then(transport => {
         this._logger.info(`Using the *${transport.constructor.name}*.`);
         this._transport = transport;
-        this._client._setState(CLIENT_STATES.connected);
+        this._client.state = CLIENT_STATES.connected;
         this._connectingMessageBuffer.drain();
       });
   }

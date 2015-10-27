@@ -101,10 +101,14 @@ export default class Client extends EventEmitter {
     this.on(CLIENT_EVENTS.onConnected, callback);
   }
 
-  _setState(newState) {
+  set state(newState) {
     this.emit(CLIENT_EVENTS.onStateChanging, {oldState: this.state, newState});
-    this.state = newState;
+    this._state = newState;
     this.emit(CLIENT_EVENTS.onStateChanged, newState);
+  }
+
+  get state(){
+    return this._state;
   }
 
   _negotiate() {

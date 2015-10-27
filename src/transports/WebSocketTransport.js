@@ -28,7 +28,7 @@ export default class WebSocketTransport extends Transport {
       }
 
       this._logger.info(`*${this.constructor.name}* starting...`);
-      this._client._setState(CLIENT_STATES.connecting);
+      this._client.state = CLIENT_STATES.connecting;
       this._client.emit(CLIENT_EVENTS.onConnecting);
 
       let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
@@ -40,7 +40,7 @@ export default class WebSocketTransport extends Transport {
       this._socket.onopen = e => {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
-          this._client._setState(CLIENT_STATES.connected);
+          this._client.state = CLIENT_STATES.connected;
           this._client.emit(CLIENT_EVENTS.onConnected);
           resolve();
         }
@@ -53,7 +53,7 @@ export default class WebSocketTransport extends Transport {
       };
       this._socket.onclose = () => {
         this._logger.info(`*${this.constructor.name}* connection closed.`);
-        this._client._setState(CLIENT_STATES.disconnected);
+        this._client.state = CLIENT_STATES.disconnected;
         this._client.emit(CLIENT_EVENTS.onDisconnected);
       };
     });
