@@ -41,7 +41,6 @@ export default class WebSocketTransport extends Transport {
     });
   }
 
-  _messageObserver(){
 
   _reconnect() {
 
@@ -55,3 +54,4 @@ export default class WebSocketTransport extends Transport {
 
   }
 }
+
