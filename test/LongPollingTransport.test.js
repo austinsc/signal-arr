@@ -16,6 +16,7 @@ describe('LongPollingTransport', function() {
         done();
       });
   });
+
   it('Can process recieved message', function() {
     const client = new Client();
     const connection = new Connection(client);
@@ -32,6 +33,7 @@ describe('LongPollingTransport', function() {
     expect(connection._lastMessages).to.have.length(1);
     console.log(connection._lastMessages);
   });
+
   it('Can poll from server', function(done) {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client.start()
@@ -47,6 +49,7 @@ describe('LongPollingTransport', function() {
         done();
       })
   });
+
   it('Has a valid GroupsToken', function(done) {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client.start()
@@ -58,6 +61,7 @@ describe('LongPollingTransport', function() {
         done();
       })
   });
+
   it('Successfully set connection state', function(done) {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client.start()
@@ -67,6 +71,7 @@ describe('LongPollingTransport', function() {
       })
       .then(()=> done());
   });
+
   it('Successfully disconnected from server', function(done) {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client.start()

@@ -4,7 +4,7 @@
   "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/isparta cover ./node_modules/.bin/_mocha -- test --compilers js:babel/register && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "./node_modules/.bin/babel-istanbul cover ./node_modules/.bin/_mocha -- test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "browser": "./node_modules/.bin/webpack-dev-server --config ./webpack.tests.config.js "
   },
   "repository": {
@@ -36,7 +36,6 @@
     "grunt-msbuild": "^0.3.0",
     "gruntify-eslint": "^1.0.0",
     "imports-loader": "^0.6.4",
-    "isparta": "^3.1.0",
     "istanbul": "^0.4.0",
     "jit-grunt": "^0.9.1",
     "json-loader": "^0.5.3",
@@ -56,6 +55,6 @@
     "lodash.sum": "^3.6.2",
     "lodash.takeright": "^3.0.0",
     "logdown": "^1.2.4",
-    "superagent": "fiatjaf/superagent"
+    "superagent": "^1.4.0"
   }
 }
