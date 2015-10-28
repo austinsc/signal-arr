@@ -40,7 +40,6 @@ export default class Connection {
 
   _connect() {
     this._client.state = CLIENT_STATES.connecting;
-
     return this._findTransport()
       .then(transport => {
         this._logger.info(`Using the *${transport.constructor.name}*.`);
