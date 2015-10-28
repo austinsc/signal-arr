@@ -1,8 +1,8 @@
 import {expect} from 'chai';
-import Client, {CLIENT_CONFIG_DEFAULTS} from '../src/Client';
+import Client from '../src/Client';
 import Connection from '../src/Connection';
 import Transport from '../src/transports/Transport';
-import {CLIENT_STATES, CLIENT_EVENTS} from '../src/Constants';
+import {CLIENT_STATES} from '../src/Constants';
 
 function createClient() {
   return new Client({url: 'http://signalr.pwnt.co:1984/raw-connection', transport: 'LongPollingTransport'});
@@ -24,9 +24,9 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        client._connection._transport._send({type: 1, value: 'Jack Sparrow!'})
+        client._connection._transport._send({type: 1, value: 'Jack Sparrow!'});
         done();
-      })
+      });
   });
 
   it('Can process recieved message', function() {
@@ -50,8 +50,7 @@ describe('LongPollingTransport', function() {
       .then(client => {
         client._connection._transport._send({type: 4, value: 'Black Beards Crew'});
         done();
-      })
-
+      });
   });
 
   it('Successfully disconnected from server', function(done) {

@@ -46,10 +46,10 @@ export default class Client extends EventEmitter {
 
   /**
    * Stops the connection to the server
-   * @param {boolean} force the current operation to end prematurely (default: false)
+   * //@param {boolean} force the current operation to end prematurely (default: false)
    * @returns {Promise} that resolves once the connection has closed successfully.
    */
-  stop(force = false) {
+  stop() {
     this._connection._disconnect();
   }
 

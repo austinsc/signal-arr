@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/babel-istanbul cover ./node_modules/.bin/_mocha -- test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "lint": "./node_modules/.bin/grunt lint",
     "browser": "./node_modules/.bin/webpack-dev-server --config ./webpack.tests.config.js "
   },
   "repository": {
@@ -18,15 +19,15 @@
     "babel-eslint": "^4.0.5",
     "babel-istanbul": "^0.3.20",
     "babel-loader": "^5.0.0",
-    "babel-plugin-react-transform": "^1.1.1",
     "babel-runtime": "^5.8.25",
     "chai": "^3.4.0",
     "coveralls": "^2.11.4",
     "eslint": "^1.0.0",
     "eslint-plugin-babel": "^2.1.1",
-    "eslint-plugin-react": "^3.2.0",
+    "eslint-plugin-private-variables": "austinsc/javascript-private-variables",
     "exports-loader": "^0.6.2",
     "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-connect": "^0.11.2",
     "grunt-contrib-watch": "^0.6.1",

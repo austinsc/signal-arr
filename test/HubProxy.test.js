@@ -10,7 +10,7 @@ describe('HubProxy', () => {
 
   it('Can register new events', () => {
     const proxy = new HubProxy();
-    const callback = () => console.log('callback invoked');
+    const callback = () => {};
     proxy.on('test', callback);
     expect(proxy.observers).to.not.be.empty;
   });
@@ -18,7 +18,7 @@ describe('HubProxy', () => {
   it('Can count the number of observers', () => {
     const proxy = new HubProxy();
     expect(proxy.numberOfObservers()).to.be.equal(0);
-    const callback = () => console.log('callback invoked');
+    const callback = () => {};
     proxy.on('test1', callback);
     expect(proxy.numberOfObservers()).to.be.equal(1);
     proxy.on('test2', callback);

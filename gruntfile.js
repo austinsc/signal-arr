@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   var wp = require('./webpack.config.js');
   require('time-grunt')(grunt);
   require('./tasks/webpack')(grunt);
-  require('./tasks/signalr-proxy')(grunt);
+  //require('./tasks/signalr-proxy')(grunt);
   require('./tasks/webpack-dev-server')(grunt);
   require('jit-grunt')(grunt, {eslint: 'gruntify-eslint'});
 
@@ -13,7 +13,7 @@ module.exports = function(grunt) {
   grunt.config.init({
     // Run ESLint on the project
     'eslint': {
-      src: ['assets/js/**/*.js', 'assets/js/**/*.jsx']
+      src: ['src/**/*.js', 'test/**/*.js']
     },
 
     // Clean client side assets

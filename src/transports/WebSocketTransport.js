@@ -42,7 +42,6 @@ export default class WebSocketTransport extends Transport {
       url += '&tid=' + Math.floor(Math.random() * 11);
 
       this._socket = new WebSocket(url);
-      console.dir(this._socket);
       this._socket.onopen = e => {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);

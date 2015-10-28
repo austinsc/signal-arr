@@ -1,6 +1,6 @@
 import Logdown from 'logdown';
 import {expandResponse} from '../Utilities';
-import {CLIENT_EVENTS, CLIENT_STATES} from '../Constants';
+import {CLIENT_EVENTS} from '../Constants';
 import takeRight from 'lodash.takeright';
 
 export default class Transport {

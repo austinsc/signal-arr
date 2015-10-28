@@ -13,10 +13,6 @@ describe('Client', function() {
       .then(connection => {
         expect(connection).to.not.be.empty;
         done();
-      })
-      .catch(err => {
-        console.error('ERRROROROROROR');
-        expect(true).to.be.equal(false);
       });
   });
 
@@ -24,11 +20,6 @@ describe('Client', function() {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client._negotiate()
       .then(connection => connection._findTransport())
-      .then(() => done())
-      .catch(err => {
-        console.error('ERRROROROROROR', err);
-        expect(true).to.be.equal(false);
-        done();
-      });
+      .then(() => done());
   });
 });

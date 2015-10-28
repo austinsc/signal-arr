@@ -1,12 +1,11 @@
 parser: 'babel-eslint'
 
-plugins: ['babel', 'react']
+plugins: ['babel', 'private-variables']
 
 env:
-  node: false
+  node: true
   browser: true
   es6: true
-  amd: true
 
 rules:
   block-scoped-var: 2
@@ -32,38 +31,11 @@ rules:
   no-underscore-dangle: 0
   no-console: 1
   space-unary-ops: 0
-#  babel/block-scoped-var: 1
-#  babel/object-shorthand: 1
-#  babel/generator-star: 1
-#  babel/generator-star-spacing: 1
+  babel/object-shorthand: 1
   babel/new-cap: 0
-#  babel/object-curly-spacing: 1
-#  babel/space-in-brackets: 1
-  react/display-name: 1
-  react/jsx-boolean-value: 1
-  react/jsx-curly-spacing: 1
-  react/jsx-max-props-per-line: 0
-  react/jsx-no-duplicate-props: 1
-  react/jsx-no-undef: 1
-  jsx-quotes: 1
-  react/jsx-sort-prop-types: 0
-  react/jsx-sort-props: 0
-  react/jsx-uses-react: 1
-  react/jsx-uses-vars: 1
-  react/no-danger: 0
-  react/no-did-mount-set-state: 1
-  react/no-did-update-set-state: 1
-  react/no-multi-comp: 0
-  react/no-unknown-property: 1
-  react/prop-types: 1
-  react/react-in-jsx-scope: 1
-  react/require-extension: 1
-  react/self-closing-comp: 1
-  react/sort-comp: 1
-  react/wrap-multilines: 1
+  private-variables/no-access: [2, class-only]
 
 ecmaFeatures:
-  jsx: true
   modules: true
 
 globals:
@@ -74,4 +46,3 @@ globals:
   process: true
   require: true
   window: true
-  logger: true
