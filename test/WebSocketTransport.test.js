@@ -58,7 +58,7 @@ describe('WebSocketTransport', function() {
           setTimeout(() => {
             expect(client.state).to.be.equal(CLIENT_STATES.connected);
             done();
-          }, 150);
+          }, 100);
         }, 50);
       });
   } : null);

@@ -29,18 +29,18 @@ export default class WebSocketTransport extends Transport {
       }
 
       this._logger.info(`*${this.constructor.name}* starting...`);
+      let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
+      this._logger.info(`Connecting to ${url}`);
+
       if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {
+        url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._connection._connectionToken)}`;
         this._client.emit(CLIENT_EVENTS.onReconnecting);
       } else {
+        url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connection._connectionToken)}`;
         this._client.emit(CLIENT_EVENTS.onConnecting);
         this._client.state = CLIENT_STATES.connecting;
       }
-
-      let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
-      this._logger.info(`Connecting to ${url}`);
-      url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connection._connectionToken)}`;
       url += '&tid=' + Math.floor(Math.random() * 11);
-
       this._socket = new WebSocket(url);
       this._socket.onopen = e => {
         if(e.type === 'open') {
