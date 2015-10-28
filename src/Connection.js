@@ -1,6 +1,6 @@
 import async from 'async';
 import Logdown from 'logdown';
-import {AvailableTransports} from './transports';
+import {AvailableTransports} from './transports/index';
 import {CLIENT_EVENTS, CLIENT_STATES} from './Constants';
 import ConnectingMessageBuffer from './ConnectingMessageBuffer';
 
