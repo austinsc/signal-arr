@@ -42,10 +42,18 @@ export default class Connection {
     return this._keepAliveData.activated && this._transport.supportsKeepAlive;
   }
 
+  beat(){
+
+  }
+
+  startHeartbeat(){
+
+  }
+
   _checkIsAlive(){
     let keepAliveData = this._keepAliveData,
       timeElapsed;
-    if(this._client.state === CLIENT.STATES.connected){
+    if(this._client.state === CLIENT_STATES.connected){
       timeElapsed = new Date().getTime() - this._transport._lastMessageAt;
       if(timeElapsed >= keepAliveData.timeout){
         this.log('Keep alive timed out. Notifying the transport that the connection has been lost. Will attempt to reconnect');
