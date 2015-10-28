@@ -18,9 +18,11 @@ export default class Connection {
     this._connectionToken = config.ConnectionToken;
     this._connectionId = config.ConnectionId;
     this._keepAliveData = {
+      monitor: false,
       activated: !!config.KeepAliveTimeout,
       timeout: config.KeepAliveTimeout * 1000,
-      timeoutWarning: (config.KeepAliveTimeout * 1000) * (2 / 3)
+      timeoutWarning: (config.KeepAliveTimeout * 1000) * (2 / 3),
+      transportNotified: false
     };
     this._disconnectTimeout = config.DisconnectTimeout * 1000;
     this._connectionTimeout = config.ConnectionTimeout;
@@ -38,6 +40,24 @@ export default class Connection {
 
   _supportsKeepAlive() {
     return this._keepAliveData.activated && this._transport.supportsKeepAlive;
+  }
+
+  _checkIsAlive(){
+    let keepAliveData = this._keepAliveData,
+      timeElapsed;
+    if(this._client.state === CLIENT.STATES.connected){
+      timeElapsed = new Date().getTime() - this._transport._lastMessageAt;
+      if(timeElapsed >= keepAliveData.timeout){
+        this.log('Keep alive timed out. Notifying the transport that the connection has been lost. Will attempt to reconnect');
+        this._transport._reconnect();
+      } else if(timeElapsed >= keepAliveData.timeoutWarning){
+        this.log('Keep alive missed but not timed out. May have slow or unstable/dead connection.');
+        //TODO: Handle slow connection here
+        keepAliveData.connectionUnstable = true;
+      } else{
+        keepAliveData.connectionUnstable = false;
+      }
+    }
   }
 
   _connect() {

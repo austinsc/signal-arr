@@ -56,6 +56,11 @@ export default class Transport {
     this._lastMessageAt = new Date().getTime();
   }
 
+  _supportsKeepAlive() {
+    return this._keepAliveData.activated && this._transport.supportsKeepAlive;
+  }
+
+
 
 
 
