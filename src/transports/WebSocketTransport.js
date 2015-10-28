@@ -29,11 +29,11 @@ export default class WebSocketTransport extends Transport {
       }
 
       this._logger.info(`*${this.constructor.name}* starting...`);
-      this._client.state = CLIENT_STATES.connecting;
       if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {
         this._client.emit(CLIENT_EVENTS.onReconnecting);
       } else {
         this._client.emit(CLIENT_EVENTS.onConnecting);
+        this._client.state = CLIENT_STATES.connecting;
       }
 
 
@@ -70,6 +70,7 @@ export default class WebSocketTransport extends Transport {
       } else {
         this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
         this._client.state = CLIENT_STATES.reconnecting;
+        delete this._socket;
         this.start();
       }
     };

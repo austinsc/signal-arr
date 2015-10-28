@@ -46,4 +46,20 @@ describe('WebSocketTransport', function() {
         }, 1000);
       });
   } : null);
+
+  it('Handles an unexpected disconnect and reconnects sucessfully.', !process.env.CI ? function(done) {
+    createClient()
+      .start()
+      .then(client => {
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        setTimeout(() => {
+          client._connection._transport._intentionallyClosed = false;
+          client._connection._transport._socket.close();
+          setTimeout(() => {
+            expect(client.state).to.be.equal(CLIENT_STATES.connected);
+            done();
+          }, 150);
+        }, 50);
+      });
+  } : null);
 });
