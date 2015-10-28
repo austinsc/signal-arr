@@ -37,12 +37,14 @@ export default class WebSocketTransport extends Transport {
       url += '&tid=' + Math.floor(Math.random() * 11);
 
       this._socket = new WebSocket(url);
+      console.dir(this._socket);
       this._socket.onopen = e => {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
           this._client.state = CLIENT_STATES.connected;
           this._client.emit(CLIENT_EVENTS.onConnected);
           resolve();
+
         }
       };
       this._socket.onmessage = e => {
@@ -64,6 +66,19 @@ export default class WebSocketTransport extends Transport {
       this._client.emit(CLIENT_EVENTS.onDisconnecting);
       this._socket.close();
     }
+  }
+
+  _reconnect(){
+    this._logger.info('Connection to server lost. Attempting to reconnect..');
+    this._client.state = CLIENT_STATES.reconnecting;
+    this._client.emit(CLIENT_EVENTS.onReconnecting);
+
+    let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
+    this._logger.info(`Connecting to ${url}`);
+    url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connection._connectionToken)}`;
+    url += '&tid=' + Math.floor(Math.random() * 11);
+    this._socket = new WebSocket(url);
+
   }
 }
 

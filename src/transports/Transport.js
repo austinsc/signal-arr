@@ -16,12 +16,14 @@ export default class Transport {
     this._logger = new Logdown({prefix: `${this.name}`});
     this._abortRequest = false;
     this._lastMessages = [];
+
   }
 
   /**
    * Initiates a new transport and begins the connection process.
    *  @returns {Promise} that will reject due to the method needing to be overridden.
    */
+
   start() {
     return new Promise((resolve, reject) => {
       reject(new Error('Not Implemented: The `start()` function on the `Transport` class must be overridden in a derived type.'));
@@ -38,35 +40,36 @@ export default class Transport {
     });
   }
 
-  send(){
+  send() {
     return new Promise((resolve, reject) => {
       reject(new Error('Not Implemented: The `send()` function on the `Transport` class must be overridden in a derived type.'));
     });
   }
+
   _processMessages(compressedResponse) {
     const expandedResponse = expandResponse(compressedResponse);
     this._client.emit(CLIENT_EVENTS.onReceiving);
+    this._lastMessageAt = new Date().getTime();
     this._lastMessages.push(expandedResponse);
-    this._timestampLatestMessage();
     this._lastMessages = takeRight(this._lastMessages, 5);
     this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
   }
 
-  _timestampLatestMessage() {
-    this._lastMessageAt = new Date().getTime();
+  set _lastMessageAt(newTimestamp) {
+    if(this._supportsKeepAlive()) {
+      this._keepAliveTimeoutId = setTimeout(this._reconnect, this._connection._keepAliveData.timeout);
+    }
+      this._latestMessageTime = newTimestamp;
   }
+
+  get _lastMessageAt() {
+    return this._latestMessageTime;
+  }
+
 
   _supportsKeepAlive() {
-    return this._keepAliveData.activated && this._transport.supportsKeepAlive;
+    return this._connection._keepAliveData.activated && this._connection._transport && this._connection._transport.supportsKeepAlive;
   }
-
-
-
-
-
-
-
-
 
 
 }

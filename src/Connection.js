@@ -38,36 +38,6 @@ export default class Connection {
 
   }
 
-  _supportsKeepAlive() {
-    return this._keepAliveData.activated && this._transport.supportsKeepAlive;
-  }
-
-  beat(){
-
-  }
-
-  startHeartbeat(){
-
-  }
-
-  _checkIsAlive(){
-    let keepAliveData = this._keepAliveData,
-      timeElapsed;
-    if(this._client.state === CLIENT_STATES.connected){
-      timeElapsed = new Date().getTime() - this._transport._lastMessageAt;
-      if(timeElapsed >= keepAliveData.timeout){
-        this.log('Keep alive timed out. Notifying the transport that the connection has been lost. Will attempt to reconnect');
-        this._transport._reconnect();
-      } else if(timeElapsed >= keepAliveData.timeoutWarning){
-        this.log('Keep alive missed but not timed out. May have slow or unstable/dead connection.');
-        //TODO: Handle slow connection here
-        keepAliveData.connectionUnstable = true;
-      } else{
-        keepAliveData.connectionUnstable = false;
-      }
-    }
-  }
-
   _connect() {
     this._client.state = CLIENT_STATES.connecting;
 
