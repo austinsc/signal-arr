@@ -56,9 +56,9 @@ export default class Transport {
   }
 
   set _lastMessageAt(newTimestamp) {
-    //if(this._supportsKeepAlive()) {
-    //  this._keepAliveTimeoutId = setTimeout(this._reconnect, this._connection._keepAliveData.timeout);
-    //}
+    if(this._supportsKeepAlive()) {
+      this._keepAliveTimeoutId = setTimeout(this._keepAliveTimeoutDisconnect, this._connection._keepAliveData.timeout);
+    }
       this._latestMessageTime = newTimestamp;
   }
 
