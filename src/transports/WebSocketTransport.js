@@ -6,6 +6,7 @@ export default class WebSocketTransport extends Transport {
 
   constructor(connection) {
     super('webSockets', connection);
+    this._intentionallyClosed = null;
   }
 
   _send(data) {
@@ -29,7 +30,12 @@ export default class WebSocketTransport extends Transport {
 
       this._logger.info(`*${this.constructor.name}* starting...`);
       this._client.state = CLIENT_STATES.connecting;
-      this._client.emit(CLIENT_EVENTS.onConnecting);
+      if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {
+        this._client.emit(CLIENT_EVENTS.onReconnecting);
+      } else {
+        this._client.emit(CLIENT_EVENTS.onConnecting);
+      }
+
 
       let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
       this._logger.info(`Connecting to ${url}`);
@@ -41,44 +47,59 @@ export default class WebSocketTransport extends Transport {
       this._socket.onopen = e => {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
-          this._client.state = CLIENT_STATES.connected;
-          this._client.emit(CLIENT_EVENTS.onConnected);
-          resolve();
-
+          if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {
+            this._client.emit(CLIENT_EVENTS.onReconnected);
+          } else{
+            this._client.emit(CLIENT_EVENTS.onConnected);
         }
-      };
-      this._socket.onmessage = e => {
-        this._processMessages(e.data);
-      };
-      this._socket.onerror = e => {
-        this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);
-      };
-      this._socket.onclose = () => {
+        this._client.state = CLIENT_STATES.connected;
+        resolve();
+      }
+    };
+    this._socket.onmessage = e => {
+      this._processMessages(e.data);
+    };
+    this._socket.onerror = e => {
+      this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);
+    };
+    this._socket.onclose = () => {
+      if(this._intentionallyClosed) {
         this._logger.info(`*${this.constructor.name}* connection closed.`);
         this._client.state = CLIENT_STATES.disconnected;
         this._client.emit(CLIENT_EVENTS.onDisconnected);
-      };
-    });
+      } else {
+        this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
+        this._client.state = CLIENT_STATES.reconnecting;
+        this.start();
+      }
+    };
   }
 
-  stop() {
-    if(this._socket) {
-      this._client.emit(CLIENT_EVENTS.onDisconnecting);
-      this._socket.close();
-    }
+)
+  ;
+}
+
+stop()
+{
+  if(this._socket) {
+    this._client.emit(CLIENT_EVENTS.onDisconnecting);
+    this._intentionallyClosed = true;
+    this._socket.close();
   }
+}
 
-  _reconnect(){
-    this._logger.info('Connection to server lost. Attempting to reconnect..');
-    this._client.state = CLIENT_STATES.reconnecting;
-    this._client.emit(CLIENT_EVENTS.onReconnecting);
+_reconnect()
+{
+  this._logger.info('Connection to server lost. Attempting to reconnect..');
+  this._client.state = CLIENT_STATES.reconnecting;
+  this._client.emit(CLIENT_EVENTS.onReconnecting);
 
-    let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
-    this._logger.info(`Connecting to ${url}`);
-    url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connection._connectionToken)}`;
-    url += '&tid=' + Math.floor(Math.random() * 11);
-    this._socket = new WebSocket(url);
+  let url = this._client.config.url.replace(/http(s)?:/, 'ws:');
+  this._logger.info(`Connecting to ${url}`);
+  url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connection._connectionToken)}`;
+  url += '&tid=' + Math.floor(Math.random() * 11);
+  this._socket = new WebSocket(url);
 
-  }
+}
 }
 
