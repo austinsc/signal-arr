@@ -7,7 +7,6 @@ export default class WebSocketTransport extends Transport {
   constructor(connection) {
     super('webSockets', connection);
     this._intentionallyClosed = null;
-    this._reconnectTries = 0;
   }
 
   _send(data) {
@@ -48,7 +47,6 @@ export default class WebSocketTransport extends Transport {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
           if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {
             this._client.emit(CLIENT_EVENTS.onReconnected);
-            this._reconnectTries = 0;
           } else {
             this._client.emit(CLIENT_EVENTS.onConnected);
           }
@@ -69,7 +67,6 @@ export default class WebSocketTransport extends Transport {
           this._client.emit(CLIENT_EVENTS.onDisconnected);
         } else {
           this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
-          this._reconnectTries++;
           this._client.state = CLIENT_STATES.reconnecting;
           this._reconnectTimeoutId = setTimeout(this.start(), this._connection._reconnectWindow);
         }
