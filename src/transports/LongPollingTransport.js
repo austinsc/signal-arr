@@ -10,8 +10,8 @@ import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 export default class LongPollingTransport extends Transport {
   static supportsKeepAlive = false;
 
-  constructor(client) {
-    super('longPolling', client);
+  constructor(client, treaty) {
+    super('longPolling', client, treaty);
     this._maxReconnectedTimeout = 3600000;
   }
 
@@ -23,9 +23,9 @@ export default class LongPollingTransport extends Transport {
   _queryData(current) {
     return current
         .query({clientProtocol: 1.5})
-        .query({connectionToken: this._client._connectionToken})
+        .query({connectionToken: this._connectionToken})
         .query({transport: 'longPolling'})
-        .query({connectionData: this._client._data || ''});
+        .query({connectionData: this._data || ''});
   }
 
   start() {
@@ -101,7 +101,7 @@ export default class LongPollingTransport extends Transport {
             }
             this._processMessages(res.body);
           }
-          if(!this._client._transport._abortRequest) {
+          if(!this._abortRequest) {
             this._poll();
           }
         });
@@ -118,7 +118,7 @@ export default class LongPollingTransport extends Transport {
   _send(data) {
     return request
       .post(this._client._config.url + '/send')
-      .query({connectionToken: this._client._connectionToken})
+      .query({connectionToken: this._connectionToken})
       .query({transport: 'longPolling'})
       .send(`data=${JSON.stringify(data)}`)
       .set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
@@ -153,7 +153,7 @@ export default class LongPollingTransport extends Transport {
   stop() {
     clearTimeout(this._currentTimeoutId);
     clearTimeout(this._reconnectTimeoutId);
-    this._client._transport._abortRequest = true;
+    this._abortRequest = true;
     if(this._current) {
       this._current.abort();
     }

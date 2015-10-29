@@ -24,6 +24,18 @@ export default class Client extends EventEmitter {
     this._config = Object.assign({}, CLIENT_CONFIG_DEFAULTS, options || {});
     this._logger = this._config.logger;
     this.state = CLIENT_STATES.disconnected;
+    this._connectingMessageBuffer = new ConnectingMessageBuffer(this, this.emit.bind(this, CLIENT_EVENTS.onReceived));
+
+  }
+
+  set state(newState) {
+    this.emit(CLIENT_EVENTS.onStateChanging, {oldState: this.state, newState});
+    this._state = newState;
+    this.emit(CLIENT_EVENTS.onStateChanged, newState);
+  }
+
+  get state(){
+    return this._state;
   }
 
   /**
@@ -36,14 +48,20 @@ export default class Client extends EventEmitter {
     if(this.state !== CLIENT_STATES.disconnected) {
       throw new Error('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
     }
+    this.state = CLIENT_STATES.connecting;
     this.emit(CLIENT_EVENTS.onConnecting);
     return this._negotiate()
-      .then(this._connect.bind(this))
-      .then(() => {
+      .then(this._findTransport.bind(this))
+      .then(transport => {
+        this._logger.info(`Using the *${transport.constructor.name}*.`);
+        this._transport = transport;
         this.emit(CLIENT_EVENTS.onConnected);
+        this.state = CLIENT_STATES.connected;
+        this._connectingMessageBuffer.drain();
         return this;
       });
   }
+
 
   /**
    * Stops the connection to the server
@@ -51,7 +69,9 @@ export default class Client extends EventEmitter {
    * @returns {Promise} that resolves once the connection has closed successfully.
    */
   stop() {
-    this._disconnect();
+    if(this._transport) {
+      this._transport.stop();
+    }
   }
 
   error(callback) {
@@ -102,73 +122,22 @@ export default class Client extends EventEmitter {
     this.on(CLIENT_EVENTS.onConnected, callback);
   }
 
-  set state(newState) {
-    this.emit(CLIENT_EVENTS.onStateChanging, {oldState: this.state, newState});
-    this._state = newState;
-    this.emit(CLIENT_EVENTS.onStateChanged, newState);
-  }
-
-  get state(){
-    return this._state;
-  }
-
   _negotiate() {
     return request
       .get(`${this._config.url}/negotiate`)
       .query({clientProtocol: 1.5})
       .use(PromiseMaker)
-      .promise()
-      .then(treaty => {
-        this._connectionToken = treaty.ConnectionToken;
-        this._connectionId = treaty.ConnectionId;
-        this._keepAliveData = {
-          monitor: false,
-          activated: !!treaty.KeepAliveTimeout,
-          timeout: treaty.KeepAliveTimeout * 1000,
-          timeoutWarning: (treaty.KeepAliveTimeout * 1000) * (2 / 3),
-          transportNotified: false
-        };
-        this._disconnectTimeout = treaty.DisconnectTimeout * 1000;
-        this._connectionTimeout = treaty.ConnectionTimeout;
-        this._tryWebSockets = treaty.TryWebSockets;
-        this._protocolVersion = treaty.ProtocolVersion;
-        this._transportConnectTimeout = treaty.TransportConnectTimeout;
-        this._longPollDelay = treaty.LongPollDelay;
-        this._pollTimeout = treaty.ConnectionTimeout * 1000 + 10000;
-        this._reconnectWindow = (treaty.KeepAliveTimeout + treaty.DisconnectTimeout) * 1000;
-        this._connectingMessageBuffer = new ConnectingMessageBuffer(this, this.emit.bind(this, CLIENT_EVENTS.onReceived));
-        this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
-        this._lastActiveAt = new Date().getTime();
-        return this;
-      });
+      .promise();
   }
 
-  _connect() {
-    this.state = CLIENT_STATES.connecting;
-    return this._findTransport()
-      .then(transport => {
-        this._logger.info(`Using the *${transport.constructor.name}*.`);
-        this._transport = transport;
-        this.state = CLIENT_STATES.connected;
-        this._connectingMessageBuffer.drain();
-        return this;
-      });
-  }
-
-  _disconnect() {
-    if(this._transport) {
-      this._transport.stop();
-    }
-  }
-
-  _findTransport() {
+  _findTransport(treaty) {
     return new Promise((resolve, reject) => {
         const availableTransports = AvailableTransports();
         if(this._config.transport && this._config.transport !== 'auto') {
           const transportConstructor = availableTransports.filter(x => x.name === this._config.transport)[0];
           if(transportConstructor) {
-            // If the transport specified in the treaty is found in the available transports, use it
-            const transport = new transportConstructor(this);
+            // If the transport specified in the config is found in the available transports, use it
+            const transport = new transportConstructor(this, treaty);
             transport.start().then(() => resolve(transport));
           } else {
             reject(new Error(`The transport specified (${this._config.transport}) was not found among the available transports [${availableTransports.map(x => `'${x.name}'`).join(' ')}].`));
@@ -176,7 +145,7 @@ export default class Client extends EventEmitter {
         } else {
           // Otherwise, Auto Negotiate the transport
           this._logger.info(`Negotiating the transport...`);
-          async.detectSeries(availableTransports.map(x => new x(this)),
+          async.detectSeries(availableTransports.map(x => new x(this, treaty)),
             (t, c) => t.start().then(() => c(t)).catch(() => c()),
               transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
         }

@@ -4,8 +4,8 @@ import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
 
-  constructor(client) {
-    super('webSockets', client);
+  constructor(client, treaty) {
+    super('webSockets', client, treaty);
     this._intentionallyClosed = null;
   }
 
@@ -33,10 +33,10 @@ export default class WebSocketTransport extends Transport {
       this._logger.info(`Connecting to ${url}`);
 
       if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {
-        url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._client._connectionToken)}`;
+        url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this._client.emit(CLIENT_EVENTS.onReconnecting);
       } else {
-        url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._client._connectionToken)}`;
+        url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this._client.emit(CLIENT_EVENTS.onConnecting);
         this._client.state = CLIENT_STATES.connecting;
       }
@@ -68,7 +68,7 @@ export default class WebSocketTransport extends Transport {
         } else {
           this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
           this._client.state = CLIENT_STATES.reconnecting;
-          this._reconnectTimeoutId = setTimeout(this.start(), this._client._reconnectWindow);
+          this._reconnectTimeoutId = setTimeout(this.start(), this._reconnectWindow);
         }
       };
     });

@@ -16,10 +16,9 @@ describe('Client', function() {
       });
   });
 
-  it('Connects', function(done) {
+  it('Starts', function(done) {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
-    client._negotiate()
-      .then(connection => connection._findTransport())
+    client.start()
       .then(() => done());
   });
 });

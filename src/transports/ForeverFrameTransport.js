@@ -3,7 +3,7 @@ import Transport from './Transport';
 export default class ForeverFrameTransport extends Transport {
   static supportsKeepAlive = true;
 
-  constructor(client) {
-    super('foreverFrame', client);
+  constructor(client, treaty) {
+    super('foreverFrame', client, treaty);
   }
 }

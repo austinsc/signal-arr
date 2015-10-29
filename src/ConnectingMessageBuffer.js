@@ -23,8 +23,4 @@ export default class ConnectingMessageBuffer {
       }
     }
   }
-
-  clear() {
-    this.buffer = [];
-  }
 }
