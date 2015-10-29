@@ -10,8 +10,8 @@ import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 export default class LongPollingTransport extends Transport {
   static supportsKeepAlive = false;
 
-  constructor(connection) {
-    super('longPolling', connection);
+  constructor(client) {
+    super('longPolling', client);
     this._maxReconnectedTimeout = 3600000;
   }
 
@@ -23,9 +23,9 @@ export default class LongPollingTransport extends Transport {
   _queryData(current) {
     return current
         .query({clientProtocol: 1.5})
-        .query({connectionToken: this._connection._connectionToken})
+        .query({connectionToken: this._client._connectionToken})
         .query({transport: 'longPolling'})
-        .query({connectionData: this._connection._data || ''});
+        .query({connectionData: this._client._data || ''});
   }
 
   start() {
@@ -48,7 +48,7 @@ export default class LongPollingTransport extends Transport {
    * @returns {Promise} that resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
    */
   _connect() {
-    const url = this._client.config.url + '/connect';
+    const url = this._client._config.url + '/connect';
     this._logger.info(`Connecting to ${url}`);
     this._current = request
       .post(url);
@@ -61,7 +61,7 @@ export default class LongPollingTransport extends Transport {
 
   _startConnection() {
     this._current = request
-      .post(this._client.config.url + '/start');
+      .post(this._client._config.url + '/start');
     this._current = this._queryData(this._current);
     return this._current
       .use(PromiseMaker)
@@ -77,7 +77,7 @@ export default class LongPollingTransport extends Transport {
     const poll = () => {
       const {messageId, groupsToken, shouldReconnect} = this._lastMessages;
       this._current = request
-        .post(this._client.config.url + '/poll');
+        .post(this._client._config.url + '/poll');
       this._current = this._queryData(this._current);
       if(groupsToken) {
         this._current = this._current
@@ -101,7 +101,7 @@ export default class LongPollingTransport extends Transport {
             }
             this._processMessages(res.body);
           }
-          if(!this._connection._transport._abortRequest) {
+          if(!this._client._transport._abortRequest) {
             this._poll();
           }
         });
@@ -117,8 +117,8 @@ export default class LongPollingTransport extends Transport {
    */
   _send(data) {
     return request
-      .post(this._client.config.url + '/send')
-      .query({connectionToken: this._connection._connectionToken})
+      .post(this._client._config.url + '/send')
+      .query({connectionToken: this._client._connectionToken})
       .query({transport: 'longPolling'})
       .send(`data=${JSON.stringify(data)}`)
       .set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
@@ -131,9 +131,9 @@ export default class LongPollingTransport extends Transport {
    *  @returns {Promise} that resolves once th' client has be successfully reconnected.
    */
   _reconnect() {
-    const url = this._client.config.url + '/connect';
-    this._connection.client.emit(CLIENT_EVENTS.onReconnecting);
-    this._connection.client.state = CLIENT_STATES.reconnecting;
+    const url = this._client._config.url + '/connect';
+    this._client.client.emit(CLIENT_EVENTS.onReconnecting);
+    this._client.client.state = CLIENT_STATES.reconnecting;
     this._logger.info(`Attempting to reconnect to ${url}`);
     this._reconnectTries++;
     this._current = request
@@ -153,12 +153,12 @@ export default class LongPollingTransport extends Transport {
   stop() {
     clearTimeout(this._currentTimeoutId);
     clearTimeout(this._reconnectTimeoutId);
-    this._connection._transport._abortRequest = true;
+    this._client._transport._abortRequest = true;
     if(this._current) {
       this._current.abort();
     }
     this._client.emit(CLIENT_EVENTS.onDisconnecting);
-    this._logger.info(`Disconnecting from ${this._client.config.url}.`);
+    this._logger.info(`Disconnecting from ${this._client._config.url}.`);
     this._client.state = CLIENT_STATES.disconnected;
     this._client.emit(CLIENT_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');

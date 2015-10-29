@@ -12,7 +12,7 @@ export const CONNECTION_CONFIG_DEFAULTS = {
 export default class Connection {
   constructor(client, config) {
     config = Object.assign({}, CONNECTION_CONFIG_DEFAULTS, config);
-    this._client = client;
+    //this._client = client;
     this._url = config.Url;
     this._logger = config.logger;
     this._connectionToken = config.ConnectionToken;
@@ -38,43 +38,5 @@ export default class Connection {
 
   }
 
-  _connect() {
-    this._client.state = CLIENT_STATES.connecting;
-    return this._findTransport()
-      .then(transport => {
-        this._logger.info(`Using the *${transport.constructor.name}*.`);
-        this._transport = transport;
-        this._client.state = CLIENT_STATES.connected;
-        this._connectingMessageBuffer.drain();
-      });
-  }
 
-  _disconnect() {
-    if(this._transport) {
-      this._transport.stop();
-    }
-  }
-
-  _findTransport() {
-    return new Promise((resolve, reject) => {
-        const availableTransports = AvailableTransports();
-        if(this._client.config.transport && this._client.config.transport !== 'auto') {
-          const transportConstructor = availableTransports.filter(x => x.name === this._client.config.transport)[0];
-          if(transportConstructor) {
-            // If the transport specified in the config is found in the available transports, use it
-            const transport = new transportConstructor(this);
-            transport.start().then(() => resolve(transport));
-          } else {
-            reject(new Error(`The transport specified (${this._client.config.transport}) was not found among the available transports [${availableTransports.map(x => `'${x.name}'`).join(' ')}].`));
-          }
-        } else {
-          // Otherwise, Auto Negotiate the transport
-          this._logger.info(`Negotiating the transport...`);
-          async.detectSeries(availableTransports.map(x => new x(this)),
-            (t, c) => t.start().then(() => c(t)).catch(() => c()),
-              transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
-        }
-      }
-    );
-  }
 }

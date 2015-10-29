@@ -4,7 +4,7 @@ import Client, {CLIENT_CONFIG_DEFAULTS} from '../src/Client';
 describe('Client', function() {
   it('Initializes with the default configuration', function() {
     const client = new Client();
-    expect(client.config).to.be.deep.equal(CLIENT_CONFIG_DEFAULTS);
+    expect(client._config).to.be.deep.equal(CLIENT_CONFIG_DEFAULTS);
   });
 
   it('Negotiates the connection', function(done) {

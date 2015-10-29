@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import Client from '../src/Client';
-import Connection from '../src/Connection';
 import Transport from '../src/transports/Transport';
 import {CLIENT_STATES} from '../src/Constants';
 
@@ -24,13 +23,13 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        client._connection._transport._send({type: 1, value: 'Jack Sparrow!'});
+        client._transport._send({type: 1, value: 'Jack Sparrow!'});
         done();
       });
   });
 
   it('Can process recieved message', function() {
-    const transport = new Transport('longPolling', new Connection(createClient()));
+    const transport = new Transport('longPolling', createClient());
     const testMessage = {
       C: 25,
       M: {type: 1, value: 'Arrrg me mateys!'},
@@ -48,7 +47,7 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        client._connection._transport._send({type: 4, value: 'Black Beards Crew'});
+        client._transport._send({type: 4, value: 'Black Beards Crew'});
         done();
       });
   });

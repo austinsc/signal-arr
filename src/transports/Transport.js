@@ -7,12 +7,11 @@ export default class Transport {
   /**
    * Initializes the transport instance
    * @param name the name of the transport (must be the same value as the server's corresponding transport name)
-   * @param {Connection} connection the parent connection
+   * @param {Client} client the parent SignalR client
    */
-  constructor(name, connection) {
+  constructor(name, client) {
     this.name = name;
-    this._client = connection._client;
-    this._connection = connection;
+    this._client = client;
     this._logger = new Logdown({prefix: `${this.name}`});
     this._abortRequest = false;
     this._lastMessages = [];
@@ -57,7 +56,7 @@ export default class Transport {
 
   set _lastMessageAt(newTimestamp) {
     if(this._supportsKeepAlive()) {
-      this._keepAliveTimeoutId = setTimeout(this._keepAliveTimeoutDisconnect, this._connection._keepAliveData.timeout);
+      this._keepAliveTimeoutId = setTimeout(this._keepAliveTimeoutDisconnect, this._client._keepAliveData.timeout);
     }
       this._latestMessageTime = newTimestamp;
   }
@@ -68,7 +67,7 @@ export default class Transport {
 
 
   _supportsKeepAlive() {
-    return this._connection._keepAliveData.activated && this._connection._transport && this._connection._transport.supportsKeepAlive;
+    return this._client._keepAliveData && this._client._keepAliveData.activated && this.supportsKeepAlive;
   }
 
 
