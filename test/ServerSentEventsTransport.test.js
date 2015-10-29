@@ -30,4 +30,28 @@ describe('ServerSentEventsTransport', function() {
         }, 50);
       });
   });
+  it('Can successfully send messages to the server.', function(done) {
+    createClient().start()
+      .then(client => {
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        setTimeout(() => {
+          client._transport._send({type: 1, value: 'Yarg fer ServerSentMevents!'});
+          done();
+        }, 1000);
+      });
+  });
+  it('Can successfullly reconnect after a keepAliveTimeout.', function(done){
+    createClient()
+      .start()
+      .then(client => {
+        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        setTimeout(() => {
+          client._transport._keepAliveTimeoutDisconnect();
+          setTimeout(() => {
+            expect(client.state).to.be.equal(CLIENT_STATES.connected);
+            done();
+          }, 100);
+        }, 50);
+      });
+  });
 });
