@@ -4,9 +4,10 @@ import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
 
-  constructor(client, treaty) {
+  constructor(client, treaty, url) {
     super('webSockets', client, treaty);
     this._intentionallyClosed = null;
+    this._url = url;
   }
 
   _send(data) {
@@ -29,7 +30,7 @@ export default class WebSocketTransport extends Transport {
       }
 
       this._logger.info(`*${this.constructor.name}* starting...`);
-      let url = this._client._config.url.replace(/http(s)?:/, 'ws:');
+      let url = this._url.replace(/http(s)?:/, 'ws:');
       this._logger.info(`Connecting to ${url}`);
 
       if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {

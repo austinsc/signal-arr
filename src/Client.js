@@ -137,7 +137,7 @@ export default class Client extends EventEmitter {
           const transportConstructor = availableTransports.filter(x => x.name === this._config.transport)[0];
           if(transportConstructor) {
             // If the transport specified in the config is found in the available transports, use it
-            const transport = new transportConstructor(this, treaty);
+            const transport = new transportConstructor(this, treaty, this._config.url);
             transport.start().then(() => resolve(transport));
           } else {
             reject(new Error(`The transport specified (${this._config.transport}) was not found among the available transports [${availableTransports.map(x => `'${x.name}'`).join(' ')}].`));
@@ -145,7 +145,7 @@ export default class Client extends EventEmitter {
         } else {
           // Otherwise, Auto Negotiate the transport
           this._logger.info(`Negotiating the transport...`);
-          async.detectSeries(availableTransports.map(x => new x(this, treaty)),
+          async.detectSeries(availableTransports.map(x => new x(this, treaty,this._config.url)),
             (t, c) => t.start().then(() => c(t)).catch(() => c()),
               transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
         }

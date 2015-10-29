@@ -9,9 +9,10 @@ const EventSource = (window && window.EventSource) || EventSourcePolyfill;
 export default class ServerSentEventsTransport extends Transport {
   static supportsKeepAlive = true;
 
-  constructor(client, treaty) {
+  constructor(client, treaty, url) {
     super('serverSentEvents', client, treaty);
     this._intentionallyClosed = null;
+    this._url = url;
   }
   start(){
     return new Promise((resolve, reject) => {
@@ -20,7 +21,7 @@ export default class ServerSentEventsTransport extends Transport {
       }
 
       this._logger.info(`*${this.constructor.name}* starting...`);
-      let url = this._client._config.url;
+      let url = this._url;
       if(!this._intentionallyClosed && this._client.state === CLIENT_STATES.reconnecting) {
         this._logger.info(`Reconnecting to ${url}`);
         url += `/reconnect?transport=serverSentEvents&connectionToken=${encodeURIComponent(this._connectionToken)}`;
@@ -66,7 +67,7 @@ export default class ServerSentEventsTransport extends Transport {
   }
   _send(data) {
     return request
-      .post(this._client._config.url + '/send')
+      .post(this._url + '/send')
       .query({connectionToken: this._connectionToken})
       .query({transport: 'serverSentEvents'})
       .send(`data=${JSON.stringify(data)}`)
