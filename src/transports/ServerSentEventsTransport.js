@@ -1,6 +1,6 @@
 import Transport from './Transport';
 import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
-import EventSourcePolyfill from 'EventSource';
+import EventSourcePolyfill from 'eventsource';
 import request from 'superagent';
 import PromiseMaker from '../PromiseMaker';
 
