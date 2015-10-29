@@ -7,6 +7,30 @@ function createClient() {
   return new Client({url: 'http://signalr.pwnt.co:1984/raw-connection', transport: 'LongPollingTransport'});
 }
 
+function writeFakeTreaty() {
+  const treaty = {
+    connectionToken : '',
+    connectionId : 7110,
+    keepAliveData : {
+      monitor: false,
+      activated: !!1000,
+      timeout: 100000,
+      timeoutWarning: (100000 * 1000) * (2 / 3),
+      transportNotified: false
+    },
+    disconnectTimeout: 20000,
+    connectionTimeout: 20000,
+    tryWebSockets: false,
+    protocolVersion: 1.5,
+    transportConnectTimeout: 10000,
+    longPollDelay: 5000,
+    pollTimeout: 20000 * 1000 + 10000,
+    reconnectWindow: (100000 + 20000) * 1000,
+    beatInterval: (100000 - (100000 * 1000) * (2 / 3)) / 3
+  };
+  return treaty;
+}
+
 describe('LongPollingTransport', function() {
   this.timeout(15000);
 
@@ -29,7 +53,7 @@ describe('LongPollingTransport', function() {
   });
 
   it('Can process recieved message', function() {
-    const transport = new Transport('longPolling', createClient());
+    const transport = new Transport('longPolling', createClient(), writeFakeTreaty());
     const testMessage = {
       C: 25,
       M: {type: 1, value: 'Arrrg me mateys!'},

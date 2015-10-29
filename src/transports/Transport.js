@@ -18,8 +18,6 @@ export default class Transport {
     this._lastMessages = [];
     this._lastActiveAt = new Date().getTime();
     this._keepAliveData = {};
-
-    if(treaty) {
       this._connectionToken = treaty.ConnectionToken;
       this._connectionId = treaty.ConnectionId;
       this._keepAliveData = {
@@ -38,7 +36,6 @@ export default class Transport {
       this._pollTimeout = treaty.ConnectionTimeout * 1000 + 10000;
       this._reconnectWindow = (treaty.KeepAliveTimeout + treaty.DisconnectTimeout) * 1000;
       this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
-    }
   }
 
   /**
