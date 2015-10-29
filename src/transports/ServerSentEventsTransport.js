@@ -4,7 +4,7 @@ import EventSourcePolyfill from 'eventsource';
 import request from 'superagent';
 import PromiseMaker from '../PromiseMaker';
 
-const EventSource = window.EventSource || EventSourcePolyfill;
+const EventSource = (window && window.EventSource) || EventSourcePolyfill;
 
 export default class ServerSentEventsTransport extends Transport {
   static supportsKeepAlive = true;
