@@ -19,6 +19,11 @@ export const CLIENT_CONFIG_DEFAULTS = {
  * The public API for managing communications with a SignalR server
  */
 export default class Client extends EventEmitter {
+  /**
+   * Initializes th' client object wit' userdefined options. Options can include a multitude 'o properties, includin' th' ship URL,
+   * a set transport protocol th' user wishes to use, a hub client, th' timeout to use when connection, 'n loggin' mechanisms.
+   * @param options
+   */
   constructor(options) {
     super();
     this._config = Object.assign({}, CLIENT_CONFIG_DEFAULTS, options || {});
@@ -28,20 +33,28 @@ export default class Client extends EventEmitter {
 
   }
 
+  /**
+   * Accessor fer th' state property 'o th' client. Sets th' state to newState 'n automatically emits th' correct events.
+   * @param newState
+   */
   set state(newState) {
     this.emit(CLIENT_EVENTS.onStateChanging, {oldState: this.state, newState});
     this._state = newState;
     this.emit(CLIENT_EVENTS.onStateChanged, newState);
   }
 
+  /**
+   *Accessor fer th' state property 'o th' client. Returns th' current state 'o th' client.
+   * @returns {*}
+   */
   get state(){
     return this._state;
   }
 
   /**
-   * Starts the underlying connection to the server.
-   * @param {Object} options contains any updated treaty values that should be used to start the connection.
-   * @returns {Promise} that resolves once the connection is opened successfully.
+   * Starts th' underlyin' connection to th' ship.
+   * @param {Object} options contains any updated treaty values that be used to start th' connection.
+   * @returns {Promise} that resolves once th' connection be opened successfully.
    */
   start(options) {
     this._config = Object.assign(this._config, options);
@@ -64,9 +77,8 @@ export default class Client extends EventEmitter {
 
 
   /**
-   * Stops the connection to the server
-   * //@param {boolean} force the current operation to end prematurely (default: false)
-   * @returns {Promise} that resolves once the connection has closed successfully.
+   * Stops th' connection to th' ship
+   * @returns {Promise} that resolves once th' connection has closed successfully.
    */
   stop() {
     if(this._transport) {
@@ -122,6 +134,11 @@ export default class Client extends EventEmitter {
     this.on(CLIENT_EVENTS.onConnected, callback);
   }
 
+  /**
+   * Negotiates th' request to th' ship 'n returns th' consequental promise that be created as a result.
+   * @returns {*}
+   * @private
+   */
   _negotiate() {
     return request
       .get(`${this._config.url}/negotiate`)
@@ -130,6 +147,13 @@ export default class Client extends EventEmitter {
       .promise();
   }
 
+  /**
+   * Takes a treaty (result 'o _negotiate()) 'n uses that 'n th' client configuration to find th' best transport protocol to use.
+   * A user may specify a transport as well if they would like to not use th' automated selection 'o one.
+   * @param treaty
+   * @returns {Promise}
+   * @private
+   */
   _findTransport(treaty) {
     return new Promise((resolve, reject) => {
         const availableTransports = AvailableTransports();

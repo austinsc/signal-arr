@@ -4,12 +4,24 @@ import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
 
+  /**
+   * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new WebSocket transport.
+   * @param client
+   * @param treaty
+   * @param url
+   */
   constructor(client, treaty, url) {
     super('webSockets', client, treaty);
     this._intentionallyClosed = null;
     this._url = url;
   }
 
+  /**
+   * Returns a promise to send th' passed in data to th' target URL.
+   * @param data
+   * @returns {Promise}
+   * @private
+   */
   _send(data) {
     return new Promise((resolve, reject) => {
       if(!this._socket) {
@@ -20,6 +32,10 @@ export default class WebSocketTransport extends Transport {
     });
   }
 
+  /**
+   * Initates th' WebSocket connection, as well as handles onmessage, onerror, onclose, 'n onopen events.
+   * @returns {Promise}
+   */
   start() {
     return new Promise((resolve, reject) => {
       if(!WebSocket) {
@@ -74,7 +90,9 @@ export default class WebSocketTransport extends Transport {
       };
     });
   }
-
+  /**
+   * Cleanly disconnects from th' target ship.
+   */
   stop() {
     if(this._socket) {
       this._client.emit(CLIENT_EVENTS.onDisconnecting);
@@ -83,6 +101,10 @@ export default class WebSocketTransport extends Transport {
     }
   }
 
+  /**
+   * If th' keepAlive times out, closes th' connection cleanly 'n attempts to reconnect.
+   * @private
+   */
   _keepAliveTimeoutDisconnect() {
     this._client.emit(CLIENT_EVENTS.onDisconnecting);
     this._socket.close();

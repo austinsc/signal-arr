@@ -5,11 +5,16 @@ import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
 
 
 /**
- * The long polling transport protocol
+ * Th' long pollin' transport protocol.
  */
 export default class LongPollingTransport extends Transport {
   static supportsKeepAlive = false;
-
+  /**
+   * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new Longpollin' transport.
+   * @param client
+   * @param treaty
+   * @param url
+   */
   constructor(client, treaty, url) {
     super('longPolling', client, treaty);
     this._maxReconnectedTimeout = 3600000;
@@ -20,7 +25,6 @@ export default class LongPollingTransport extends Transport {
    * Initiates th' long pollin' transport protocol fer th' current connection.
    * @returns {Promise} That resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
    */
-
   _queryData(current) {
     return current
         .query({clientProtocol: 1.5})
@@ -151,6 +155,9 @@ export default class LongPollingTransport extends Transport {
 
   }
 
+  /**
+   * Clears th' timeouts 'n stops th' connection to th' ship cleanly.
+   */
   stop() {
     clearTimeout(this._currentTimeoutId);
     clearTimeout(this._reconnectTimeoutId);

@@ -5,10 +5,10 @@ import takeRight from 'lodash.takeright';
 
 export default class Transport {
   /**
-   * Initializes the transport instance
-   * @param name the name of the transport (must be the same value as the server's corresponding transport name)
-   * @param {Client} client the parent SignalR client
-   * @param treaty the response from the negotiate request created by the SignalR server
+   * Initializes th' transport instance
+   * @param name th' moniker 'o th' transport (must be th' same value as th' ship's correspondin' transport moniker)
+   * @param {Client} client th' parent SignalR client
+   * @param treaty th' response from th' negotiate request created by th' SignalR ship
    */
   constructor(name, client, treaty) {
     this.name = name;
@@ -39,8 +39,8 @@ export default class Transport {
   }
 
   /**
-   * Initiates a new transport and begins the connection process.
-   *  @returns {Promise} that will reject due to the method needing to be overridden.
+   * Initiates a new transport 'n begins th' connection process.
+   *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
    */
   start() {
     return new Promise((resolve, reject) => {
@@ -49,8 +49,8 @@ export default class Transport {
   }
 
   /**
-   * Haults the current connection and safely disconnects.
-   *  @returns {Promise} that will reject due to the method needing to be overridden.
+   * Haults th' current connection 'n safely disconnects.
+   *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
    */
   stop() {
     return new Promise((resolve, reject) => {
@@ -64,6 +64,12 @@ export default class Transport {
     });
   }
 
+  /**
+   * Private method that takes a passed in compressed message (recieved from th' ship or other service), 'n decompresses it fer readability 'n use.
+   * Messages be also pushed into a buffer 'n timestamped as well.
+   * @param compressedResponse
+   * @private
+   */
   _processMessages(compressedResponse) {
     const expandedResponse = expandResponse(compressedResponse);
     this._client.emit(CLIENT_EVENTS.onReceiving);
@@ -73,6 +79,11 @@ export default class Transport {
     this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
   }
 
+  /**
+   * Accessor fer th' timestampin' th' last message recieved. Initiates a keepAlive timeout if keepAlive be supported by th' current transport type.
+   * @param newTimestamp
+   * @private
+   */
   set _lastMessageAt(newTimestamp) {
     if(this._supportsKeepAlive()) {
       this._keepAliveTimeoutId = setTimeout(this._keepAliveTimeoutDisconnect, this._keepAliveData.timeout);
@@ -80,10 +91,20 @@ export default class Transport {
     this._latestMessageTime = newTimestamp;
   }
 
+  /**
+   * Accessor that returns th' latest message's timestamp.
+   * @returns {*}
+   * @private
+   */
   get _lastMessageAt() {
     return this._latestMessageTime;
   }
 
+  /**
+   * Determines if th' current transport supports keepAlive functionality.
+   * @returns {*|ServerSentEventsTransport.supportsKeepAlive|LongPollingTransport.supportsKeepAlive|NullTransport.supportsKeepAlive|WebSocketTransport.supportsKeepAlive}
+   * @private
+   */
   _supportsKeepAlive() {
     return this._keepAliveData.activated && this.supportsKeepAlive;
   }

@@ -5,15 +5,27 @@ import request from 'superagent';
 import PromiseMaker from '../PromiseMaker';
 
 const EventSource = (window && window.EventSource) || EventSourcePolyfill;
-
+/**
+ * The ServerSentEvents transport protocol.
+ */
 export default class ServerSentEventsTransport extends Transport {
   static supportsKeepAlive = true;
-
+  /**
+   * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new ServerSentEvents transport.
+   * @param client
+   * @param treaty
+   * @param url
+   */
   constructor(client, treaty, url) {
     super('serverSentEvents', client, treaty);
     this._intentionallyClosed = null;
     this._url = url;
   }
+
+  /**
+   * Initates th' ServerSentEvents connection, as well as handles onmessage, onerror,  'n onopen events.
+   * @returns {Promise}
+   */
   start(){
     return new Promise((resolve, reject) => {
       if(this._eventSource && this._intentionallyClosed) {
@@ -55,6 +67,10 @@ export default class ServerSentEventsTransport extends Transport {
       };
     });
   }
+
+  /**
+   * Cleanly disconnects from th' target ship.
+   */
   stop(){
     if(this._eventSource){
       this._client.emit(CLIENT_EVENTS.onDisconnecting);
@@ -65,6 +81,13 @@ export default class ServerSentEventsTransport extends Transport {
       this._client.emit(CLIENT_EVENTS.onDisconnected);
     }
   }
+
+  /**
+   * Returns a promise that resolves when a message be sent with th' passed in data to th' target URL.
+   * @param data
+   * @returns {Promise}
+   * @private
+   */
   _send(data) {
     return request
       .post(this._url + '/send')
@@ -75,6 +98,10 @@ export default class ServerSentEventsTransport extends Transport {
       .use(PromiseMaker)
       .promise();
   }
+  /**
+   * If th' keepAlive times out, closes th' connection cleanly 'n attempts to reconnect.
+   * @private
+   */
   _keepAliveTimeoutDisconnect(){
     this._client.emit(CLIENT_EVENTS.onDisconnecting);
     this._intentionallyClosed = false;
