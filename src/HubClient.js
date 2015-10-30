@@ -1,33 +1,25 @@
-import Client from './Client';
+import Client, {CLIENT_CONFIG_DEFAULTS} from './Client';
+import HubProxy from './HubProxy';
+
+
 
 export const HUB_CLIENT_CONFIG_DEFAULTS = {
-  url: '/signalr',
-  logging: false,
   logger: new Logdown({prefix: 'SignalR Hub-Client'}),
-  hubClient: true,
-  totalTransportConnectTimeout: 10000
+  hubClient: true
 };
 
-export default class HubClient extends Client{
-  constructor(options){
+export default class HubClient extends Client {
+  constructor(options) {
     super(options);
-    this._config = Object.assign({}, HUB_CLIENT_CONFIG_DEFAULTS, options || {});
+    this._config = Object.assign({}, CLIENT_CONFIG_DEFAULTS, HUB_CLIENT_CONFIG_DEFAULTS, options || {});
     // Object to store hub proxies for this connection
-    this._proxies = {};
-    this._invocationCallbackId = 0;
-    this._invocationCallbacks = {};
+    this.proxies = {};
+    this.invocationCallbackId = 0;
+    this.invocationCallbacks = {};
   }
 
-  _expandClientHubInvocation(compressedClientHubInvocation) {
-    return {
-      Hub: compressedClientHubInvocation.H,
-      Method: compressedClientHubInvocation.M,
-      Args: compressedClientHubInvocation.A,
-      State: compressedClientHubInvocation.S
-    };
-  }
   createHubProxy(hubName) {
     const hubNameLower = hubName.toLowerCase();
-    return proxy = this._proxies[hubNameLower] || (this._proxies[hubNameLower] = new HubProxy(this, hubNameLower));
+    return proxy = this.proxies[hubNameLower] || (this.proxies[hubNameLower] = new HubProxy(this, hubNameLower));
   }
 }

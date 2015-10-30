@@ -1,13 +1,15 @@
 import {isEmpty, isFunction, isUndefined, extend} from 'lodash';
-import {EventEmitter} from './EventEmitter';
+import Logdown from 'logdown';
+import Protocol from './Protocol';
+import EventEmitter from './EventEmitter';
 
-export class HubProxy extends EventEmitter {
+export default class HubProxy extends EventEmitter {
   constructor(client, hubName) {
     //super();
     this._state = {};
     this._client = client;
     this._hubName = hubName;
-    this._logger = this._client._logger;
+    this._logger = new Logdown({prefix: hubName});
   }
 
   /// <summary>Invokes a server hub method with the given arguments.</summary>
@@ -17,40 +19,40 @@ export class HubProxy extends EventEmitter {
       H: this._hubName,
       M: methodName,
       A: args.map(a => (isFunction(a) || isUndefined(a)) ? null : a),
-      I: this._client._invocationCallbackId
+      I: this._client.invocationCallbackId
     };
 
     const callback = minResult => {
-      const result = this._maximizeHubResponse(minResult);
+      return new Promise((resolve, reject) => {
+        const result = Protocol.expandServerHubResponse(minResult);
 
-      // Update the hub state
-      extend(this._state, result.State);
+        // Update the hub state
+        extend(this._state, result.State);
 
-      if(result.Progress) {
-        // TODO: Progress in promises?
-      } else if(result.Error) {
-        // Server hub method threw an exception, log it & reject the deferred
-        if(result.StackTrace) {
-          this._logger.error(`${result.Error}\n${result.StackTrace}.`);
+        if(result.Progress) {
+          // TODO: Progress in promises?
+        } else if(result.Error) {
+          // Server hub method threw an exception, log it & reject the deferred
+          if(result.StackTrace) {
+            this._logger.error(`${result.Error}\n${result.StackTrace}.`);
+          }
+          // result.ErrorData is only set if a HubException was thrown
+          const source = result.IsHubException ? 'HubException' : 'Exception';
+          const error = new Error(result.Error);
+          error.source = source;
+          error.data = result.ErrorData;
+          this._logger.error(`${this._hubName}.${methodName} failed to execute. Error: ${error.message}`);
+          reject(error);
+        } else {
+          // Server invocation succeeded, resolve the deferred
+          this._logger.info(`Invoked ${this._hubName}\.${methodName}`);
+          return resolve(result.Result);
         }
-
-        // result.ErrorData is only set if a HubException was thrown
-        const source = result.IsHubException ? 'HubException' : 'Exception';
-        const error = new Error(result.Error);
-        error.source = source;
-        error.data = result.ErrorData;
-
-        this._logger.error(`${this._hubName}.${methodName} failed to execute. Error: ${error.message}`);
-        reject(error);
-      } else {
-        // Server invocation succeeded, resolve the deferred
-        this._logger.info(`Invoked ${this._hubName}\.${methodName}`);
-        return result.Result;
-      }
+      });
     };
 
-   this._client._invocationCallbacks[this._client._invocationCallbackId.toString()] = {scope: this, method: callback};
-   this._client._invocationCallbackId += 1;
+    this._client.invocationCallbacks[this._client.invocationCallbackId.toString()] = {scope: this, method: callback};
+    this._client.invocationCallbackId += 1;
 
     if(!isEmpty(this.state)) {
       data.S = this.state;
@@ -60,19 +62,5 @@ export class HubProxy extends EventEmitter {
     return this._client.send(data);
   }
 
-  _maximizeHubResponse(minHubResponse) {
-    return {
-      State: minHubResponse.S,
-      Result: minHubResponse.R,
-      Progress: minHubResponse.P && {
-        Id: minHubResponse.P.I,
-        Data: minHubResponse.P.D
-      },
-      Id: minHubResponse.I,
-      IsHubException: minHubResponse.H,
-      Error: minHubResponse.E,
-      StackTrace: minHubResponse.T,
-      ErrorData: minHubResponse.D
-    };
-  }
+
 }
