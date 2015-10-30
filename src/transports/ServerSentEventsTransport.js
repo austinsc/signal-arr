@@ -4,7 +4,7 @@ import EventSourcePolyfill from 'eventsource';
 import request from 'superagent';
 import PromiseMaker from '../PromiseMaker';
 
-const EventSource = (window && window.EventSource) || EventSourcePolyfill;
+const EventSource = (typeof window !== 'undefined' && window.EventSource) || EventSourcePolyfill;
 /**
  * The ServerSentEvents transport protocol.
  */
