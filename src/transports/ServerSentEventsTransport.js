@@ -10,6 +10,7 @@ const EventSource = (typeof window !== 'undefined' && window.EventSource) || Eve
  */
 export default class ServerSentEventsTransport extends Transport {
   static supportsKeepAlive = true;
+
   /**
    * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new ServerSentEvents transport.
    * @param client
