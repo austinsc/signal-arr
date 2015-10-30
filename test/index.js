@@ -5,5 +5,5 @@ require('./LongPollingTransport.test.js');
 require('./WebSocketTransport.test');
 require('./Client.test.js');
 require('./Connection.test.js');
-require('./HubProxy.test.js');
+//require('./HubProxy.test.js');
 require('./ServerSentEventsTransport.test');
