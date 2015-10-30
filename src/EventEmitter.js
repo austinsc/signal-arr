@@ -5,16 +5,25 @@ export default class EventEmitter {
     this.observers = {};
   }
 
+  /**
+   *Pushes an event to the passed in listener.
+   * @param event
+   * @param listener
+   */
   on(event, listener) {
     this.observers[event] = this.observers[event] || [];
     this.observers[event].push(listener);
   }
 
+  /**
+   * Removes an event from a passed in listener.
+   * @param event
+   * @param listener
+   */
   off(event, listener) {
     if (!this.observers[event]) {
       return;
     }
-
     this.observers[event].forEach(() => {
       if (! listener) {
         delete this.observers[event];
@@ -27,6 +36,11 @@ export default class EventEmitter {
     });
   }
 
+  /**
+   * Emits the passed in event to all observers.
+   * @param event
+   * @param args
+   */
   emit(event, ...args) {
     if (!this.observers[event]) {
       return;
@@ -35,6 +49,9 @@ export default class EventEmitter {
     this.observers[event].forEach(observer => observer(...args));
   }
 
+  /**
+   * Returns the true number of current observers.
+   */
   numberOfObservers() {
     return sum(this.observers, o => o.length);
   }
