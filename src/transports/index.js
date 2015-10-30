@@ -1,5 +1,4 @@
 import ServerSentEventsTransport from './ServerSentEventsTransport';
-import ForeverFrameTransport from './ForeverFrameTransport';
 import LongPollingTransport from './LongPollingTransport';
 import WebSocketTransport from './WebSocketTransport';
 import NullTransport from './NullTransport';
@@ -47,7 +46,6 @@ export function AvailableTransports() {
 
   return [
     WebSocketTransport,
-    ForeverFrameTransport,
     ServerSentEventsTransport,
     LongPollingTransport,
     NullTransport

@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import Client from '../src/Client';
-import Transport from '../src/transports/Transport';
 import {CLIENT_STATES} from '../src/Constants';
 
 function createClient() {
