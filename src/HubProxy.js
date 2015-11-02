@@ -5,7 +5,7 @@ import EventEmitter from './EventEmitter';
 
 export default class HubProxy extends EventEmitter {
   constructor(client, hubName) {
-    //super();
+    super();
     this._state = {};
     this._client = client;
     this._hubName = hubName;
