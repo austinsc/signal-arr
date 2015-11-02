@@ -34,7 +34,7 @@ describe('ServerSentEventsTransport', function() {
       .then(client => {
         expect(client.state).to.be.equal(CLIENT_STATES.connected);
         setTimeout(() => {
-          client._transport._send({type: 1, value: 'Yarg fer ServerSentMevents!'});
+          client.send({type: 1, value: 'Yarg fer ServerSentMevents!'});
           done();
         }, 1000);
       });

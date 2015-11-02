@@ -36,7 +36,7 @@ describe('HubClient', function() {
       .start()
       .then(client => {
         expect(client.proxies).to.not.be.empty;
-        client._transport._send({'H':'demo','M':'DynamicInvoke','A':['done'],'I':0,'S':{}});
+        client.send({'H':'demo','M':'DynamicInvoke','A':['done'],'I':0,'S':{}});
       });
   });
 });

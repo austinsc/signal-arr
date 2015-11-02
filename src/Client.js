@@ -85,6 +85,11 @@ export default class Client extends EventEmitter {
       this._transport.stop();
     }
   }
+  send(data){
+    if(this._transport){
+      this._transport.send(data);
+    }
+  }
 
   error(callback) {
     this.on(CLIENT_EVENTS.onError, callback);

@@ -120,7 +120,7 @@ export default class LongPollingTransport extends Transport {
    *  @params {data} data contains th' information that th' client wishes to send to th' ship.
    *  @returns {Promise} that resolves once th' message has be sent..
    */
-  _send(data) {
+  send(data) {
     return request
       .post(this._url + '/send')
       .query({connectionToken: this._connectionToken})

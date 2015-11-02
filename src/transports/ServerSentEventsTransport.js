@@ -89,7 +89,7 @@ export default class ServerSentEventsTransport extends Transport {
    * @returns {Promise}
    * @private
    */
-  _send(data) {
+  send(data) {
     return request
       .post(this._url + '/send')
       .query({connectionToken: this._connectionToken})

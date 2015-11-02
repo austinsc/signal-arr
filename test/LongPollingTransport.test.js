@@ -47,7 +47,7 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        client._transport._send({type: 1, value: 'Jack Sparrow!'});
+        client.send({type: 1, value: 'Jack Sparrow!'});
         done();
       });
   });
@@ -71,7 +71,7 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        client._transport._send({type: 4, value: 'Black Beards Crew'});
+        client.send({type: 4, value: 'Black Beards Crew'});
         done();
       });
   });

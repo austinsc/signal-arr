@@ -26,6 +26,6 @@
  - [ ] Move Starting, Started, Stopping, Stopped states to `Client`
  - [ ] Move Connecting, Connected, Disconnecting, Disconnected, Reconnecting, Reconnected to `Connection`
  - [ ] Wrap `Connection` lifetime events with the `Client` public API
- - [ ] Create a `Client.send(data)` function on the Client, and compress/serialize the data for transport
+ - [x] Create a `Client.send(data)` function on the Client, and compress/serialize the data for transport
  - [ ] Write tests for invoking server side hub methods
  - [ ] Write tests for server invoked client functions 

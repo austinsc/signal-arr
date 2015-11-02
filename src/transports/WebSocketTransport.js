@@ -22,7 +22,7 @@ export default class WebSocketTransport extends Transport {
    * @returns {Promise}
    * @private
    */
-  _send(data) {
+  send(data) {
     return new Promise((resolve, reject) => {
       if(!this._socket) {
         return reject(new Error('The WebSocket has not yet been initialized.'));
