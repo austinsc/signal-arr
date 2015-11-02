@@ -18,33 +18,27 @@ export default class HubClient extends Client {
     this.invocationCallbackId = 0;
     this.invocationCallbacks = {};
 
-    this.connecting(function (minData) {
-     let data;
+    this.connecting((minData) => {
+      let data;
       data = Protocol.expandClientHubInvocation(minData);
-     //Creating the hubProxy during the connecting event.
+      //Creating the hubProxy during the connecting event.
+      this.logger.info(`Connecting event initiated; creating proxy for ${data.Hub}`);
       this.createHubProxy(data.Hub);
     });
 
-    this.received(function(minData) {
-      let data, foundProxy;
+    this.received((minData) => {
       if(!minData) {
         return;
       }
-      data = Protocol.expandClientHubInvocation(minData);
+      const data = Protocol.expandClientHubInvocation(minData);
       //Search proxies for message's hubProxy.
-      this._logger.info(`Message received. Looking for ${data.Hub} proxy to invoke client-side method.`);
-      for(let proxy in this.proxies){
-        if(proxy._hubName === data.Hub) {
-          this._logger.info('Hub proxy found, invoking method.');
-          proxy.invoke(data.Method, data);
-          foundProxy = true;
-        } else {
-          foundProxy = false;
-        }
-      }
-      //Proxy not found for hub.
-      if(!foundProxy){
-        this._logger.error(`Proxy for ${data.Hub} not found.`);
+      this.logger.info(`Message received. Looking for ${data.Hub} proxy to invoke client-side method.`);
+      const proxy = this.proxies[data.Hub];
+      if(proxy) {
+        this.logger.info('Hub proxy found, invoking method.');
+        proxy.invoke(data.Method, data);
+      } else {
+        this.logger.error(`Proxy for ${data.Hub} not found.`);
       }
     });
   }
