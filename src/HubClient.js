@@ -18,9 +18,11 @@ export default class HubClient extends Client {
     this.invocationCallbackId = 0;
     this.invocationCallbacks = {};
 
-    this.connecting(function (hubName) {
+    this.connecting(function (minData) {
+     let data;
+      data = Protocol.expandClientHubInvocation(minData);
      //Creating the hubProxy during the connecting event.
-      this.createHubProxy(hubName);
+      this.createHubProxy(data.Hub);
     });
 
     this.received(function(minData) {
@@ -33,13 +35,17 @@ export default class HubClient extends Client {
       this._logger.info(`Message received. Looking for ${data.Hub} proxy to invoke client-side method.`);
       for(let proxy in this.proxies){
         if(proxy._hubName === data.Hub) {
+          this._logger.info('Hub proxy found, invoking method.');
           proxy.invoke(data.Method, data);
           foundProxy = true;
         } else {
           foundProxy = false;
         }
       }
-      //Proxy not found for hub, creating one..
+      //Proxy not found for hub.
+      if(!foundProxy){
+        this._logger.error(`Proxy for ${data.Hub} not found.`);
+      }
     });
   }
 
