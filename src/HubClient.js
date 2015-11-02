@@ -1,3 +1,4 @@
+import Logdown from 'logdown';
 import Client, {CLIENT_CONFIG_DEFAULTS} from './Client';
 import {isUndefined, extend} from 'lodash';
 import HubProxy from './HubProxy';
@@ -18,34 +19,37 @@ export default class HubClient extends Client {
     this.invocationCallbackId = 0;
     this.invocationCallbacks = {};
 
-    this.connecting((minData) => {
-      let data;
-      data = Protocol.expandClientHubInvocation(minData);
-      //Creating the hubProxy during the connecting event.
-      this.logger.info(`Connecting event initiated; creating proxy for ${data.Hub}`);
-      this.createHubProxy(data.Hub);
+    this.connecting(() => {
+      this._logger.info(`Registering Hub Proxies...`);
+      this._registerHubProxies();
     });
 
     this.received((minData) => {
-      if(!minData) {
+      if(!minData || !minData.length) {
         return;
       }
       const data = Protocol.expandClientHubInvocation(minData);
       //Search proxies for message's hubProxy.
-      this.logger.info(`Message received. Looking for ${data.Hub} proxy to invoke client-side method.`);
+      this._logger.info(`Message received. Looking for ${data.Hub} proxy to invoke client-side method.`);
       const proxy = this.proxies[data.Hub];
       if(proxy) {
-        this.logger.info('Hub proxy found, invoking method.');
-        proxy.invoke(data.Method, data);
+        this._logger.info('Hub proxy found, invoking method.');
+        const func = proxy.funcs[data.Method];
+        if(func) {
+          func.apply(data.State, ...data.Args);
+        } else {
+          this._logger.info(`Client function not found for method \`${data.Method}\` on hub \`${data.Hub}\`.`);
+        }
+
       } else {
-        this.logger.error(`Proxy for ${data.Hub} not found.`);
+        this._logger.error(`Proxy for ${data.Hub} not found.`);
       }
     });
   }
 
   createHubProxy(hubName) {
     const hubNameLower = hubName.toLowerCase();
-    return proxy = this.proxies[hubNameLower] || (this.proxies[hubNameLower] = new HubProxy(this, hubNameLower));
+    return this.proxies[hubNameLower] || (this.proxies[hubNameLower] = new HubProxy(this, hubNameLower));
   }
 
 }

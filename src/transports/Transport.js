@@ -71,8 +71,8 @@ export default class Transport {
    * @private
    */
   _processMessages(compressedResponse) {
+    this._client.emit(CLIENT_EVENTS.onReceiving, compressedResponse);
     const expandedResponse = expandResponse(compressedResponse);
-    this._client.emit(CLIENT_EVENTS.onReceiving);
     this._lastMessageAt = new Date().getTime();
     this._lastMessages.push(expandedResponse);
     this._lastMessages = takeRight(this._lastMessages, 5);
