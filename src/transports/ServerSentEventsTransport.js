@@ -35,7 +35,7 @@ export default class ServerSentEventsTransport extends Transport {
 
       this._logger.info(`*${this.constructor.name}* starting...`);
       let url = this._url;
-      if(!this._intentionallyClosed && this._state === CONNECTION_STATES.reconnecting) {
+      if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
         this._logger.info(`Reconnecting to ${url}`);
         url += `/reconnect?transport=serverSentEvents&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this.emit(CONNECTION_EVENTS.onReconnecting);
@@ -43,7 +43,7 @@ export default class ServerSentEventsTransport extends Transport {
         this._logger.info(`Connecting to ${url}`);
         url += `/connect?transport=serverSentEvents&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this.emit(CONNECTION_EVENTS.onConnecting);
-        this._state = CONNECTION_STATES.connecting;
+        this.state = CONNECTION_STATES.connecting;
       }
       url += '&tid=' + Math.floor(Math.random() * 11);
 
@@ -51,12 +51,12 @@ export default class ServerSentEventsTransport extends Transport {
       this._eventSource.onopen = e => {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
-          if(!this._intentionallyClosed && this._state === CONNECTION_STATES.reconnecting) {
+          if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
             this.emit(CONNECTION_EVENTS.onReconnected);
           } else {
             this.emit(CONNECTION_EVENTS.onConnected);
           }
-          this._state = CONNECTION_STATES.connected;
+          this.state = CONNECTION_STATES.connected;
           resolve();
         }
       };
@@ -78,7 +78,7 @@ export default class ServerSentEventsTransport extends Transport {
       this._intentionallyClosed = true;
       this._eventSource.close();
       this._logger.info(`*${this.constructor.name}* connection closed.`);
-      this._state = CONNECTION_STATES.disconnected;
+      this.state = CONNECTION_STATES.disconnected;
       this.emit(CONNECTION_EVENTS.onDisconnected);
     }
   }
@@ -108,7 +108,7 @@ export default class ServerSentEventsTransport extends Transport {
     this._intentionallyClosed = false;
     this._eventSource.close();
     this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
-    this._state = CONNECTION_STATES.reconnecting;
+    this.state = CONNECTION_STATES.reconnecting;
     this._reconnectTimeoutId = setTimeout(this.start(), this._reconnectWindow);
   }
 }

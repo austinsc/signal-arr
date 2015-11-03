@@ -23,8 +23,8 @@
 ### TODO
 
  - [ ] Finalize `Client` level API
- - [ ] Move Starting, Started, Stopping, Stopped states to `Client`
- - [ ] Move Connecting, Connected, Disconnecting, Disconnected, Reconnecting, Reconnected to `Connection`
+ - [x] Move Starting, Started, Stopping, Stopped states to `Client`
+ - [x] Move Connecting, Connected, Disconnecting, Disconnected, Reconnecting, Reconnected to `Connection`
  - [ ] Wrap `Connection` lifetime events with the `Client` public API
  - [x] Create a `Client.send(data)` function on the Client, and compress/serialize the data for transport
  - [ ] Write tests for invoking server side hub methods

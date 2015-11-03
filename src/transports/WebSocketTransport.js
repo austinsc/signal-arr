@@ -49,25 +49,25 @@ export default class WebSocketTransport extends Transport {
       let url = this._url.replace(/http(s)?:/, 'ws:');
       this._logger.info(`Connecting to ${url}`);
 
-      if(!this._intentionallyClosed && this._state === CONNECTION_EVENTS.reconnecting) {
+      if(!this._intentionallyClosed && this.state === CONNECTION_EVENTS.reconnecting) {
         url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this.emit(CONNECTION_EVENTS.onReconnecting);
       } else {
         url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this.emit(CONNECTION_EVENTS.onConnecting);
-        this._state = CONNECTION_STATES.connecting;
+        this.state = CONNECTION_STATES.connecting;
       }
       url += '&tid=' + Math.floor(Math.random() * 11);
       this._socket = new WebSocket(url);
       this._socket.onopen = e => {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
-          if(!this._intentionallyClosed && this._state === CONNECTION_STATES.reconnecting) {
+          if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
             this.emit(CONNECTION_EVENTS.onReconnected);
           } else {
             this.emit(CONNECTION_EVENTS.onConnected);
           }
-          this._state = CONNECTION_STATES.connected;
+          this.state = CONNECTION_STATES.connected;
           resolve();
         }
       };
@@ -80,11 +80,11 @@ export default class WebSocketTransport extends Transport {
       this._socket.onclose = () => {
         if(this._intentionallyClosed) {
           this._logger.info(`*${this.constructor.name}* connection closed.`);
-          this._state = CONNECTION_STATES.disconnected;
+          this.state = CONNECTION_STATES.disconnected;
           this.emit(CONNECTION_EVENTS.onDisconnected);
         } else {
           this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
-          this._state = CONNECTION_STATES.reconnecting;
+          this.state = CONNECTION_STATES.reconnecting;
           this._reconnectTimeoutId = setTimeout(this.start(), this._reconnectWindow);
         }
       };

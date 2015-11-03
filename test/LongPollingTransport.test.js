@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import Client from '../src/Client';
 import Transport from '../src/transports/Transport';
-import {CLIENT_STATES} from '../src/Constants';
+import {CONNECTION_STATES} from '../src/Constants';
 
 function createClient() {
   return new Client({url: 'http://signalr.pwnt.co:1984/raw-connection', transport: 'LongPollingTransport'});
@@ -38,7 +38,8 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        //debugger;
+        expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
         done();
       });
   });
@@ -80,10 +81,10 @@ describe('LongPollingTransport', function() {
     createClient()
       .start()
       .then(client => {
-        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
         setTimeout(() => {
           client.stop();
-          expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
+          expect(client._transport.state).to.be.equal(CONNECTION_STATES.disconnected);
           setTimeout(() => done(), 1000);
         }, 500);
       });

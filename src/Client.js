@@ -111,10 +111,6 @@ export default class Client extends EventEmitter {
     this.on(CLIENT_EVENTS.onStopped, callback);
   }
 
-  connectionSlow(callback) {
-    this.on(CLIENT_EVENTS.onConnectionSlow, callback);
-  }
-
   receiving(callback) {
     this.on(CLIENT_EVENTS.onReceiving, callback);
   }

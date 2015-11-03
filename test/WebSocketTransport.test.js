@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import Client from '../src/Client';
-import {CLIENT_STATES} from '../src/Constants';
+import {CONNECTION_STATES} from '../src/Constants';
 
 function createClient() {
   return new Client({url: 'http://signalr.pwnt.co:1984/raw-connection', transport: 'WebSocketTransport'});
@@ -14,7 +14,7 @@ describe('WebSocketTransport', function() {
       .start()
       .then(client => {
         expect(client._transport.name).to.be.equal('webSockets');
-        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
         done();
         return client;
       });
@@ -24,11 +24,11 @@ describe('WebSocketTransport', function() {
     createClient()
       .start()
       .then(client => {
-        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
         setTimeout(() => {
           client.stop();
           setTimeout(() => {
-            expect(client.state).to.be.equal(CLIENT_STATES.disconnected);
+            expect(client._transport.state).to.be.equal(CONNECTION_STATES.disconnected);
             done();
           }, 50);
         }, 50);
@@ -39,7 +39,7 @@ describe('WebSocketTransport', function() {
   it('Can successfully send messages to the server.', !process.env.CI ? function(done) {
     createClient().start()
       .then(client => {
-        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
         setTimeout(() => {
           client.send({type: 1, value: 'Jack Sparrow!'});
           done();
@@ -51,12 +51,12 @@ describe('WebSocketTransport', function() {
     createClient()
       .start()
       .then(client => {
-        expect(client.state).to.be.equal(CLIENT_STATES.connected);
+        expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
         setTimeout(() => {
           client._transport._intentionallyClosed = false;
           client._transport._socket.close();
           setTimeout(() => {
-            expect(client.state).to.be.equal(CLIENT_STATES.connected);
+            expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
             done();
           }, 100);
         }, 50);

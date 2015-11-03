@@ -41,7 +41,8 @@ export default class LongPollingTransport extends Transport {
     return this._connect()
       //.then(this._startConnection.bind(this))
       .then(() => {
-        this._state = CONNECTION_STATES.connected;
+        this.state = CONNECTION_STATES.connected;
+        this.emit(CONNECTION_EVENTS.onConnected);
         this._reconnectTries = 0;
         this._reconnectTimeoutId = null;
       })
@@ -55,6 +56,7 @@ export default class LongPollingTransport extends Transport {
   _connect() {
     const url = this._url + '/connect';
     this._logger.info(`Connecting to ${url}`);
+    this.emit(CONNECTION_EVENTS.onConnecting);
     this._current = request
       .post(url);
     this._current = this._queryData(this._current);
@@ -99,8 +101,8 @@ export default class LongPollingTransport extends Transport {
               .then(this._poll);
           }
           if(res) {
-            if(this._state === CONNECTION_STATES.reconnecting) {
-              this._state = CONNECTION_STATES.connected;
+            if(this.state === CONNECTION_STATES.reconnecting) {
+              this.state = CONNECTION_STATES.connected;
               this.emit(CONNECTION_EVENTS.onReconnected);
               this._reconnectTries = 0;
             }
@@ -138,7 +140,7 @@ export default class LongPollingTransport extends Transport {
   _reconnect() {
     const url = this._url + '/connect';
     this.emit(CONNECTION_EVENTS.onReconnecting);
-    this._state = CONNECTION_STATES.reconnecting;
+    this.state = CONNECTION_STATES.reconnecting;
     this._logger.info(`Attempting to reconnect to ${url}`);
     this._reconnectTries++;
     this._current = request
@@ -167,7 +169,7 @@ export default class LongPollingTransport extends Transport {
     }
     this.emit(CONNECTION_EVENTS.onDisconnecting);
     this._logger.info(`Disconnecting from ${this._url}.`);
-    this._state = CONNECTION_STATES.disconnected;
+    this.state = CONNECTION_STATES.disconnected;
     this.emit(CONNECTION_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');
   }
