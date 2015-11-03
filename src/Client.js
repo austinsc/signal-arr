@@ -4,7 +4,7 @@ import request from 'superagent';
 import PromiseMaker from './PromiseMaker';
 import EventEmitter from './EventEmitter';
 import ConnectingMessageBuffer from './ConnectingMessageBuffer';
-import {CLIENT_STATES, CLIENT_EVENTS} from './Constants';
+import {CLIENT_STATES, CLIENT_EVENTS, CONNECTION_EVENTS} from './Constants';
 import {AvailableTransports} from './transports/index';
 
 export const CLIENT_CONFIG_DEFAULTS = {
