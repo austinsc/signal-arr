@@ -19,7 +19,7 @@ export default class HubClient extends Client {
     this.invocationCallbackId = 0;
     this.invocationCallbacks = {};
 
-    this.connecting(() => {
+    this.starting(() => {
       this._logger.info(`Registering Hub Proxies...`);
       this._registerHubProxies();
     });
