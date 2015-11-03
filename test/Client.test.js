@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import Client, {CLIENT_CONFIG_DEFAULTS} from '../src/Client';
+import {CLIENT_STATES} from '../src/Constants';
 
 describe('Client', function() {
   it('Initializes with the default configuration', function() {
@@ -19,6 +20,10 @@ describe('Client', function() {
   it('Starts', function(done) {
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
     client.start()
-      .then(() => done());
+      .then(client => {
+        expect(client.state).to.be.equal(CLIENT_STATES.started);
+        done();
+      });
   });
 });
+
