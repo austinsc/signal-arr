@@ -30,8 +30,8 @@ describe('WebSocketTransport', function() {
           setTimeout(() => {
             expect(client._transport.state).to.be.equal(CONNECTION_STATES.disconnected);
             done();
-          }, 50);
-        }, 50);
+          }, 100);
+        }, 100);
       });
 
   } : null);

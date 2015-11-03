@@ -4,7 +4,7 @@ import {CONNECTION_EVENTS, CONNECTION_STATES, CLIENT_EVENTS} from '../Constants'
 import takeRight from 'lodash.takeright';
 import EventEmitter from '../EventEmitter';
 
-export default class Transport extends EventEmitter{
+export default class Transport extends EventEmitter {
   /**
    * Initializes th' transport instance
    * @param name th' moniker 'o th' transport (must be th' same value as th' ship's correspondin' transport moniker)
@@ -21,24 +21,24 @@ export default class Transport extends EventEmitter{
     this._lastMessages = [];
     this._lastActiveAt = new Date().getTime();
     this._keepAliveData = {};
-      this._connectionToken = treaty.ConnectionToken;
-      this._connectionId = treaty.ConnectionId;
-      this._keepAliveData = {
-        monitor: false,
-        activated: !!treaty.KeepAliveTimeout,
-        timeout: treaty.KeepAliveTimeout * 1000,
-        timeoutWarning: (treaty.KeepAliveTimeout * 1000) * (2 / 3),
-        transportNotified: false
-      };
-      this._disconnectTimeout = treaty.DisconnectTimeout * 1000;
-      this._connectionTimeout = treaty.ConnectionTimeout;
-      this._tryWebSockets = treaty.TryWebSockets;
-      this._protocolVersion = treaty.ProtocolVersion;
-      this._transportConnectTimeout = treaty.TransportConnectTimeout;
-      this._longPollDelay = treaty.LongPollDelay;
-      this._pollTimeout = treaty.ConnectionTimeout * 1000 + 10000;
-      this._reconnectWindow = (treaty.KeepAliveTimeout + treaty.DisconnectTimeout) * 1000;
-      this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
+    this._connectionToken = treaty.ConnectionToken;
+    this._connectionId = treaty.ConnectionId;
+    this._keepAliveData = {
+      monitor: false,
+      activated: !!treaty.KeepAliveTimeout,
+      timeout: treaty.KeepAliveTimeout * 1000,
+      timeoutWarning: (treaty.KeepAliveTimeout * 1000) * (2 / 3),
+      transportNotified: false
+    };
+    this._disconnectTimeout = treaty.DisconnectTimeout * 1000;
+    this._connectionTimeout = treaty.ConnectionTimeout;
+    this._tryWebSockets = treaty.TryWebSockets;
+    this._protocolVersion = treaty.ProtocolVersion;
+    this._transportConnectTimeout = treaty.TransportConnectTimeout;
+    this._longPollDelay = treaty.LongPollDelay;
+    this._pollTimeout = treaty.ConnectionTimeout * 1000 + 10000;
+    this._reconnectWindow = (treaty.KeepAliveTimeout + treaty.DisconnectTimeout) * 1000;
+    this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
   }
 
   /**
@@ -50,21 +50,26 @@ export default class Transport extends EventEmitter{
       reject(new Error('Not Implemented: The `start()` function on the `Transport` class must be overridden in a derived type.'));
     });
   }
+
   /**
    * Accessor fer th' state property 'o th' transport. Sets th' state to newState 'n automatically emits th' correct events.
    * @param newState
    */
   set state(newState) {
-    this.emit(CONNECTION_EVENTS.onStateChanging, {oldState: this.state, newState});
-    this._state = newState;
-    this.emit(CONNECTION_EVENTS.onStateChanged, newState);
+    if(!this._state) {
+      this._state = newState;
+    } else {
+      this.emit(CONNECTION_EVENTS.onStateChanging, {oldState: this.state, newState});
+      this._state = newState;
+      this.emit(CONNECTION_EVENTS.onStateChanged, newState);
+    }
   }
 
   /**
    *Accessor fer th' state property 'o th' transport. Returns th' current state 'o th' client.
    * @returns {*}
    */
-  get state(){
+  get state() {
     return this._state;
   }
 
@@ -84,40 +89,9 @@ export default class Transport extends EventEmitter{
     });
   }
 
-  disconnecting(callback) {
-    this.on(CONNECTION_EVENTS.onDisconnecting, callback);
-  }
-
-  disconnected(callback) {
-    this.on(CONNECTION_EVENTS.onDisconnected, callback);
-  }
-
-  reconnecting(callback) {
-    this.on(CONNECTION_EVENTS.onReconnecting, callback);
-  }
-
-  reconnected(callback) {
-    this.on(CONNECTION_EVENTS.onReconnected, callback);
-  }
-
-  connecting(callback) {
-    this.on(CONNECTION_EVENTS.onConnecting, callback);
-  }
-
-  connected(callback) {
-    this.on(CONNECTION_EVENTS.onConnected, callback);
-  }
-
-  receiving(callback) {
-    this.on(CONNECTION_EVENTS.onReceiving, callback);
-  }
-
-  received(callback) {
-    this.on(CONNECTION_EVENTS.onReceived, callback);
-  }
-
-  connectionSlow(callback) {
-    this.on(CLIENT_EVENTS.onConnectionSlow, callback);
+  emit(event, ...args) {
+    this._client.emit(event, ...args);
+    super.emit(event, ...args);
   }
 
   /**

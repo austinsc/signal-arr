@@ -30,13 +30,12 @@ describe('HubClient', function() {
       client.proxies.demo = client.createHubProxy('demo');
       client.proxies.demo.funcs.done = done;
     };
-
-
     client
       .start()
       .then(client => {
         expect(client.proxies).to.not.be.empty;
         client.send({'H':'demo','M':'DynamicInvoke','A':['done'],'I':0,'S':{}});
+        //done();
       });
   });
 });

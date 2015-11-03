@@ -38,9 +38,13 @@ export default class Client extends EventEmitter {
    * @param newState
    */
   set state(newState) {
-    this.emit(CLIENT_EVENTS.onStateChanging, {oldState: this.state, newState});
-    this._state = newState;
-    this.emit(CLIENT_EVENTS.onStateChanged, newState);
+    if(!this._state) {
+      this._state = newState;
+    } else {
+      this.emit(CONNECTION_EVENTS.onStateChanging, {oldState: this.state, newState});
+      this._state = newState;
+      this.emit(CONNECTION_EVENTS.onStateChanged, newState);
+    }
   }
 
   /**
@@ -127,40 +131,32 @@ export default class Client extends EventEmitter {
     this.on(CLIENT_EVENTS.onStateChanged, callback);
   }
 
-  connecting(callback){
-    this._transport.connecting(callback);
+  disconnecting(callback) {
+    this.on(CONNECTION_EVENTS.onDisconnecting, callback);
   }
 
-  connected(callback){
-    this._transport.connected(callback);
+  disconnected(callback) {
+    this.on(CONNECTION_EVENTS.onDisconnected, callback);
   }
 
-  disconnecting(callback){
-    this._transport.disconnecting(callback);
+  reconnecting(callback) {
+    this.on(CONNECTION_EVENTS.onReconnecting, callback);
   }
 
-  disconnected(callback){
-    this._transport.disconnected(callback);
+  reconnected(callback) {
+    this.on(CONNECTION_EVENTS.onReconnected, callback);
   }
 
-  reconnecting(callback){
-    this._transport.reconnecting(callback);
+  connecting(callback) {
+    this.on(CONNECTION_EVENTS.onConnecting, callback);
   }
 
-  reconnected(callback){
-    this._transport.reconnected(callback);
+  connected(callback) {
+    this.on(CONNECTION_EVENTS.onConnected, callback);
   }
 
-  connectionSlow(callback){
-    this._transport.connectionSlow(callback);
-  }
-
-  transportReceiving(callback){
-    this._transport.receiving(callback);
-  }
-
-  transportReceived(callback){
-    this._transport.received(callback);
+  connectionSlow(callback) {
+    this.on(CLIENT_EVENTS.onConnectionSlow, callback);
   }
 
   /**
