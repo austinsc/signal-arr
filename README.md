@@ -19,6 +19,8 @@
 &nbsp; &nbsp; ✓ Next generation JavaScript via [Babel](http://babeljs.io/)<br>
 &nbsp; &nbsp; ✓ Available on [NPM](https://www.npmjs.com/)<br>
 
+### WARNING: This is pre-release software. There aren't really any docs yet, and testing is incomplete. Feel free to submit a pull request if you find something that is broken.
+
 
 ### TODO
 
