@@ -1,9 +1,10 @@
 import Logdown from 'logdown';
 import {expandResponse} from '../Utilities';
-import {CLIENT_EVENTS} from '../Constants';
+import {CONNECTION_EVENTS, CONNECTION_STATES} from '../Constants';
 import takeRight from 'lodash.takeright';
+import EventEmitter from '../EventEmitter';
 
-export default class Transport {
+export default class Transport extends EventEmitter{
   /**
    * Initializes th' transport instance
    * @param name th' moniker 'o th' transport (must be th' same value as th' ship's correspondin' transport moniker)
@@ -11,6 +12,8 @@ export default class Transport {
    * @param treaty th' response from th' negotiate request created by th' SignalR ship
    */
   constructor(name, client, treaty) {
+    super();
+    this._state = CONNECTION_STATES.disconnected;
     this.name = name;
     this._client = client;
     this._logger = new Logdown({prefix: `${this.name}`});
@@ -64,6 +67,38 @@ export default class Transport {
     });
   }
 
+  disconnecting(callback) {
+    this.on(CONNECTION_EVENTS.onDisconnecting, callback);
+  }
+
+  disconnected(callback) {
+    this.on(CONNECTION_EVENTS.onDisconnected, callback);
+  }
+
+  reconnecting(callback) {
+    this.on(CONNECTION_EVENTS.onReconnecting, callback);
+  }
+
+  reconnected(callback) {
+    this.on(CONNECTION_EVENTS.onReconnected, callback);
+  }
+
+  connecting(callback) {
+    this.on(CONNECTION_EVENTS.onConnecting, callback);
+  }
+
+  connected(callback) {
+    this.on(CONNECTION_EVENTS.onConnected, callback);
+  }
+
+  receiving(callback) {
+    this.on(CONNECTION_EVENTS.onReceiving, callback);
+  }
+
+  received(callback) {
+    this.on(CONNECTION_EVENTS.onReceived, callback);
+  }
+
   /**
    * Private method that takes a passed in compressed message (recieved from th' ship or other service), 'n decompresses it fer readability 'n use.
    * Messages be also pushed into a buffer 'n timestamped as well.
@@ -71,12 +106,12 @@ export default class Transport {
    * @private
    */
   _processMessages(compressedResponse) {
-    this._client.emit(CLIENT_EVENTS.onReceiving, compressedResponse);
+    this._client.emit(CONNECTION_EVENTS.onReceiving, compressedResponse);
     const expandedResponse = expandResponse(compressedResponse);
     this._lastMessageAt = new Date().getTime();
     this._lastMessages.push(expandedResponse);
     this._lastMessages = takeRight(this._lastMessages, 5);
-    this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
+    this._client.emit(CONNECTION_EVENTS.onReceived, expandedResponse.messages);
   }
 
   /**

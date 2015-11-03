@@ -1,11 +1,19 @@
-export const CLIENT_STATES = {
+
+export const CONNECTION_STATES = {
   connecting: 0,
   connected: 1,
   reconnecting: 2,
-  disconnected: 4
+  disconnected:4
 };
 
-export const CLIENT_EVENTS = {
+export const CLIENT_STATES = {
+  starting: 8,
+  started: 16,
+  stopping: 32,
+  stopped: 64
+};
+
+export const CONNECTION_EVENTS = {
   onError: 'onError',
   onConnectionSlow: 'onConnectionSlow',
   onConnecting: 'onConnecting',
@@ -19,6 +27,19 @@ export const CLIENT_EVENTS = {
   onDisconnecting: 'onDisconnecting',
   onDisconnected: 'onDisconnected'
 };
+
+export const CLIENT_EVENTS = {
+  onStarting: 'onStarting',
+  onStarted: 'onStarted',
+  onStopping: 'onStopping',
+  onStopped: 'onStopped',
+  onError: 'onError',
+  onStateChanging: 'onStateChanging',
+  onStateChanged: 'onStateChanged',
+  onReceiving: 'onReceiving',
+  onReceived: 'onReceived'
+};
+
 
 export const RESOURCES = {
   nojQuery: 'jQuery was not found. Please ensure jQuery is referenced before the SignalR client JavaScript file.',

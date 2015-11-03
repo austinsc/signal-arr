@@ -4,7 +4,7 @@ import request from 'superagent';
 import PromiseMaker from './PromiseMaker';
 import EventEmitter from './EventEmitter';
 import ConnectingMessageBuffer from './ConnectingMessageBuffer';
-import {CLIENT_STATES, CLIENT_EVENTS} from './Constants';
+import {CLIENT_STATES, CLIENT_EVENTS, CONNECTION_EVENTS, CONNECTION_STATES} from './Constants';
 import {AvailableTransports} from './transports/index';
 
 export const CLIENT_CONFIG_DEFAULTS = {
@@ -28,7 +28,7 @@ export default class Client extends EventEmitter {
     super();
     this._config = Object.assign({}, CLIENT_CONFIG_DEFAULTS, options || {});
     this._logger = this._config.logger;
-    this.state = CLIENT_STATES.disconnected;
+    this.state = CLIENT_STATES.stopped;
     this._connectingMessageBuffer = new ConnectingMessageBuffer(this, this.emit.bind(this, CLIENT_EVENTS.onReceived));
 
   }
@@ -58,18 +58,18 @@ export default class Client extends EventEmitter {
    */
   start(options) {
     this._config = Object.assign(this._config, options);
-    if(this.state !== CLIENT_STATES.disconnected) {
+    if(this.state !== CLIENT_STATES.stopped) {
       throw new Error('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
     }
-    this.state = CLIENT_STATES.connecting;
-    this.emit(CLIENT_EVENTS.onConnecting);
+    this.state = CLIENT_STATES.starting;
+    this.emit(CLIENT_EVENTS.onStarting);
     return this._negotiate()
       .then(this._findTransport.bind(this))
       .then(transport => {
         this._logger.info(`Using the *${transport.constructor.name}*.`);
         this._transport = transport;
-        this.emit(CLIENT_EVENTS.onConnected);
-        this.state = CLIENT_STATES.connected;
+        this.emit(CLIENT_EVENTS.onStarted);
+        this.state = CLIENT_STATES.started;
         this._connectingMessageBuffer.drain();
         return this;
       });
@@ -95,6 +95,22 @@ export default class Client extends EventEmitter {
     this.on(CLIENT_EVENTS.onError, callback);
   }
 
+  starting(callback) {
+    this.on(CLIENT_EVENTS.onStarting, callback);
+  }
+
+  started(callback) {
+    this.on(CLIENT_EVENTS.onStarted, callback);
+  }
+
+  stopping(callback) {
+    this.on(CLIENT_EVENTS.onStopping, callback);
+  }
+
+  stopped(callback) {
+    this.on(CLIENT_EVENTS.onStopped, callback);
+  }
+
   connectionSlow(callback) {
     this.on(CLIENT_EVENTS.onConnectionSlow, callback);
   }
@@ -113,30 +129,6 @@ export default class Client extends EventEmitter {
 
   stateChanged(callback) {
     this.on(CLIENT_EVENTS.onStateChanged, callback);
-  }
-
-  disconnecting(callback) {
-    this.on(CLIENT_EVENTS.onDisconnecting, callback);
-  }
-
-  disconnected(callback) {
-    this.on(CLIENT_EVENTS.onDisconnected, callback);
-  }
-
-  reconnecting(callback) {
-    this.on(CLIENT_EVENTS.onReconnecting, callback);
-  }
-
-  reconnected(callback) {
-    this.on(CLIENT_EVENTS.onReconnected, callback);
-  }
-
-  connecting(callback) {
-    this.on(CLIENT_EVENTS.onConnecting, callback);
-  }
-
-  connected(callback) {
-    this.on(CLIENT_EVENTS.onConnected, callback);
   }
 
   /**

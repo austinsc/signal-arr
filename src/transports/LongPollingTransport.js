@@ -1,7 +1,7 @@
 import request from 'superagent';
 import Transport from './Transport';
 import PromiseMaker from '../PromiseMaker';
-import {CLIENT_STATES, CLIENT_EVENTS} from '../Constants';
+import {CONNECTION_STATES, CONNECTION_EVENTS} from '../Constants';
 
 
 /**
@@ -41,7 +41,7 @@ export default class LongPollingTransport extends Transport {
     return this._connect()
       //.then(this._startConnection.bind(this))
       .then(() => {
-        this._client.state = CLIENT_STATES.connected;
+        this._state = CONNECTION_STATES.connected;
         this._reconnectTries = 0;
         this._reconnectTimeoutId = null;
       })
@@ -99,9 +99,9 @@ export default class LongPollingTransport extends Transport {
               .then(this._poll);
           }
           if(res) {
-            if(this._client.state === CLIENT_STATES.reconnecting) {
-              this._client.state = CLIENT_STATES.connected;
-              this._client.emit(CLIENT_EVENTS.onReconnected);
+            if(this._state === CONNECTION_STATES.reconnecting) {
+              this._state = CONNECTION_STATES.connected;
+              this.emit(CONNECTION_EVENTS.onReconnected);
               this._reconnectTries = 0;
             }
             this._processMessages(res.body);
@@ -137,8 +137,8 @@ export default class LongPollingTransport extends Transport {
    */
   _reconnect() {
     const url = this._url + '/connect';
-    this._client.client.emit(CLIENT_EVENTS.onReconnecting);
-    this._client.client.state = CLIENT_STATES.reconnecting;
+    this.emit(CONNECTION_EVENTS.onReconnecting);
+    this._state = CONNECTION_STATES.reconnecting;
     this._logger.info(`Attempting to reconnect to ${url}`);
     this._reconnectTries++;
     this._current = request
@@ -165,10 +165,10 @@ export default class LongPollingTransport extends Transport {
     if(this._current) {
       this._current.abort();
     }
-    this._client.emit(CLIENT_EVENTS.onDisconnecting);
+    this.emit(CONNECTION_EVENTS.onDisconnecting);
     this._logger.info(`Disconnecting from ${this._url}.`);
-    this._client.state = CLIENT_STATES.disconnected;
-    this._client.emit(CLIENT_EVENTS.onDisconnected);
+    this._state = CONNECTION_STATES.disconnected;
+    this.emit(CONNECTION_EVENTS.onDisconnected);
     this._logger.info('Successfully disconnected.');
   }
 }
