@@ -25,6 +25,7 @@ export default class HubClient extends Client {
     });
 
     this.received((minData) => {
+
       if(!minData || !minData.length) {
         return;
       }

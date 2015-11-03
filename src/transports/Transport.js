@@ -102,13 +102,11 @@ export default class Transport extends EventEmitter {
    */
   _processMessages(compressedResponse) {
     this.emit(CONNECTION_EVENTS.onReceiving, compressedResponse);
-    this._client.emit(CLIENT_EVENTS.onReceiving, compressedResponse);
     const expandedResponse = expandResponse(compressedResponse);
     this._lastMessageAt = new Date().getTime();
     this._lastMessages.push(expandedResponse);
     this._lastMessages = takeRight(this._lastMessages, 5);
     this.emit(CONNECTION_EVENTS.onReceived, expandedResponse.messages);
-    this._client.emit(CLIENT_EVENTS.onReceived, expandedResponse.messages);
   }
 
   /**
