@@ -4,7 +4,7 @@ import request from 'superagent';
 import PromiseMaker from './PromiseMaker';
 import EventEmitter from './EventEmitter';
 import ConnectingMessageBuffer from './ConnectingMessageBuffer';
-import {CLIENT_STATES, CLIENT_EVENTS, CONNECTION_EVENTS, CONNECTION_STATES} from './Constants';
+import {CLIENT_STATES, CLIENT_EVENTS} from './Constants';
 import {AvailableTransports} from './transports/index';
 
 export const CLIENT_CONFIG_DEFAULTS = {
@@ -125,6 +125,42 @@ export default class Client extends EventEmitter {
 
   stateChanged(callback) {
     this.on(CLIENT_EVENTS.onStateChanged, callback);
+  }
+
+  connecting(callback){
+    this._transport.connecting(callback);
+  }
+
+  connected(callback){
+    this._transport.connected(callback);
+  }
+
+  disconnecting(callback){
+    this._transport.disconnecting(callback);
+  }
+
+  disconnected(callback){
+    this._transport.disconnected(callback);
+  }
+
+  reconnecting(callback){
+    this._transport.reconnecting(callback);
+  }
+
+  reconnected(callback){
+    this._transport.reconnected(callback);
+  }
+
+  connectionSlow(callback){
+    this._transport.connectionSlow(callback);
+  }
+
+  transportReceiving(callback){
+    this._transport.receiving(callback);
+  }
+
+  transportReceived(callback){
+    this._transport.received(callback);
   }
 
   /**
