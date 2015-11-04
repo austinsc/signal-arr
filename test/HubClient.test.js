@@ -22,7 +22,7 @@ describe('HubClient', function() {
   });
 
   it('Invokes a function defined by the client.', function(done) {
-    var client =  window.$$client = createHubClient();
+    var client = createHubClient();
 
     client._registerHubProxies = () => {
       client.proxies.demo = client.createHubProxy('demo');

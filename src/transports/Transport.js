@@ -102,7 +102,7 @@ export default class Transport extends EventEmitter {
    * Private method that takes a passed in compressed message (recieved from th' ship or other service), 'n decompresses it fer readability 'n use.
    * Messages be also pushed into a buffer 'n timestamped as well.
    * @param compressedResponse
-   * @private
+   * @protected
    */
   _processMessages(compressedResponse) {
     this.emit(CONNECTION_EVENTS.onReceiving, compressedResponse);
