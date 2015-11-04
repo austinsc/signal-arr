@@ -61,6 +61,9 @@ export default class ServerSentEventsTransport extends Transport {
         }
       };
       this._eventSource.onmessage = e => {
+        if (e.data === 'initialized') {
+          return;
+        }
         this._processMessages(e.data);
       };
       this._eventSource.onerror = e => {

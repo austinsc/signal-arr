@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export default class Protocol {
   static expandClientHubInvocation(compressedClientHubInvocation) {
     return {
@@ -21,6 +23,20 @@ export default class Protocol {
       Error: compressedServerHubResponse.E,
       StackTrace: compressedServerHubResponse.T,
       ErrorData: compressedServerHubResponse.D
+    };
+  }
+
+  static expandResponse(min) {
+    if(_.isString(min)) {
+      min = JSON.parse(min);
+    }
+    return {
+      messageId: min.C,
+      messages: min.M || [],
+      initialized: !_.isUndefined(min.S),
+      shouldReconnect: !_.isUndefined(min.T),
+      longPollDelay: min.L,
+      groupsToken: min.G
     };
   }
 }

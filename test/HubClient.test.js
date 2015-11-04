@@ -6,8 +6,6 @@ function createHubClient() {
 }
 
 describe('HubClient', function() {
-  this.timeout(15000);
-
   it('Successfully starts a Hub Connection and generates a corresponding proxy.', function(done) {
     var client = createHubClient();
 
@@ -28,18 +26,13 @@ describe('HubClient', function() {
 
     client._registerHubProxies = () => {
       client.proxies.demo = client.createHubProxy('demo');
-      client.proxies.demo.funcs.clientMethd = () => {
-        debugger;
-        done();
-      };
+      client.proxies.demo.funcs.clientMethd = done;
     };
-    client.start();
-    setTimeout(() => client.proxies.demo.invoke('MispelledClientMethod'), 1000)
-      //.then(new Promise((resolve) => setTimeout(resolve, 1000)))
-      //.then(client => {
-      //  expect(client.proxies).to.not.be.empty;
-      //  client.proxies.typeddemohub.invoke('Echo', 'poopypants');
-      //});
+    client.start()
+      .then(client => {
+        expect(client.proxies).to.not.be.empty;
+        client.proxies.demo.invoke('MispelledClientMethod');
+      });
   });
 
   it('Invokes a function defined by the server.', function(done) {
@@ -53,7 +46,7 @@ describe('HubClient', function() {
       .start()
       .then(client => {
         expect(client.proxies).to.not.be.empty;
-        client.proxies.typeddemohub.invoke('Echo', 'poopypants');
+        client.proxies.demo.invoke('InvokeDynamic', 'done');
         done();
       });
   });

@@ -1,5 +1,5 @@
 import Logdown from 'logdown';
-import {expandResponse} from '../Utilities';
+import Protocol from '../Protocol';
 import {CONNECTION_EVENTS, CONNECTION_STATES, CLIENT_EVENTS} from '../Constants';
 import takeRight from 'lodash.takeright';
 import EventEmitter from '../EventEmitter';
@@ -106,7 +106,7 @@ export default class Transport extends EventEmitter {
    */
   _processMessages(compressedResponse) {
     this.emit(CONNECTION_EVENTS.onReceiving, compressedResponse);
-    const expandedResponse = expandResponse(compressedResponse);
+    const expandedResponse = Protocol.expandResponse(compressedResponse);
     this._lastMessageAt = new Date().getTime();
     this._lastMessages = takeRight([...this._lastMessages, expandedResponse], 5);
     this.emit(CONNECTION_EVENTS.onReceived, expandedResponse.messages);
