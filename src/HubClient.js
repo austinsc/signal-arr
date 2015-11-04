@@ -1,6 +1,5 @@
 import Logdown from 'logdown';
 import Client, {CLIENT_CONFIG_DEFAULTS} from './Client';
-import {isUndefined, extend} from 'lodash';
 import HubProxy from './HubProxy';
 import Protocol from './Protocol';
 
@@ -52,5 +51,8 @@ export default class HubClient extends Client {
     const hubNameLower = hubName.toLowerCase();
     return this.proxies[hubNameLower] || (this.proxies[hubNameLower] = new HubProxy(this, hubNameLower));
   }
+
+
+
 
 }

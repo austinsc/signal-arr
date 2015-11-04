@@ -96,7 +96,7 @@ export default class LongPollingTransport extends Transport {
       this._current = this._current
         .end((err, res) => {
           if(err && shouldReconnect) {
-            return this._reconnectTimeoutId = setTimeout(_reconnect(), Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1), this._maxReconnectedTimeout))
+            return this._reconnectTimeoutId = setTimeout(this._reconnect(), Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1), this._maxReconnectedTimeout))
             //return
               .then(this._poll);
           }

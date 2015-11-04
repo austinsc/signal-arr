@@ -30,6 +30,7 @@ export default class Client extends EventEmitter {
     this._logger = this._config.logger;
     this.state = CLIENT_STATES.stopped;
     this._connectingMessageBuffer = new ConnectingMessageBuffer(this, this.emit.bind(this, CLIENT_EVENTS.onReceived));
+    this.connectionData = [];
 
   }
 
@@ -51,7 +52,7 @@ export default class Client extends EventEmitter {
    *Accessor fer th' state property 'o th' client. Returns th' current state 'o th' client.
    * @returns {*}
    */
-  get state(){
+  get state() {
     return this._state;
   }
 
@@ -89,8 +90,9 @@ export default class Client extends EventEmitter {
       this._transport.stop();
     }
   }
-  send(data){
-    if(this._transport){
+
+  send(data) {
+    if(this._transport) {
       this._transport.send(data);
     }
   }
@@ -165,11 +167,22 @@ export default class Client extends EventEmitter {
    * @private
    */
   _negotiate() {
-    return request
-      .get(`${this._config.url}/negotiate`)
-      .query({clientProtocol: 1.5})
-      .use(PromiseMaker)
-      .promise();
+    if(this._config.hubClient) {
+     // debugger;
+      this._buildConnectionData();
+      return request
+        .get(`${this._config.url}/negotiate`)
+        .query({clientProtocol: 1.5})
+        .query({connectionData: encodeURIComponent(this.connectionData['demo'])})
+        .use(PromiseMaker)
+        .promise();
+    } else {
+      return request
+        .get(`${this._config.url}/negotiate`)
+        .query({clientProtocol: 1.5})
+        .use(PromiseMaker)
+        .promise();
+    }
   }
 
   /**
@@ -194,11 +207,21 @@ export default class Client extends EventEmitter {
         } else {
           // Otherwise, Auto Negotiate the transport
           this._logger.info(`Negotiating the transport...`);
-          async.detectSeries(availableTransports.map(x => new x(this, treaty,this._config.url)),
+          async.detectSeries(availableTransports.map(x => new x(this, treaty, this._config.url)),
             (t, c) => t.start().then(() => c(t)).catch(() => c()),
-              transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
+            transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
         }
       }
     );
+  }
+
+  _buildConnectionData(){
+    let proxy, proxyData;
+    for(proxy in this.proxies){
+      this.connectionData[proxy] = proxyData = {
+        'name' : proxy._hubName
+      };
+    }
+    debugger;
   }
 }

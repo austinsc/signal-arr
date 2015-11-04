@@ -34,13 +34,7 @@ describe('HubClient', function() {
       .start()
       .then(client => {
         expect(client.proxies).to.not.be.empty;
-
-        client.send({'H': 'demo', 'M': 'DynamicInvoke', 'A': ['done'], 'I': 0, 'S': {}});
-        setTimeout(() => {
-          client.send({'H': 'demo', 'M': 'DynamicInvoke', 'A': ['done'], 'I': 0, 'S': {}});
-        }, 100);
-
-
+        client.proxies.demo.invoke('DynamicInvoke', 'done');
       });
   });
   it('Invokes a function defined by the server.', function(done) {
