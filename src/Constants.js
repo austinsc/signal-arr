@@ -1,3 +1,4 @@
+export const CLIENT_PROTOCOL_VERSION = 1.3;
 
 export const CONNECTION_STATES = {
   connecting: 0,

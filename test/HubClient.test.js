@@ -24,19 +24,24 @@ describe('HubClient', function() {
   });
 
   it('Invokes a function defined by the client.', function(done) {
-    var client = createHubClient();
+    var client =  window.$$client = createHubClient();
 
     client._registerHubProxies = () => {
       client.proxies.demo = client.createHubProxy('demo');
-      client.proxies.demo.funcs.done = done;
+      client.proxies.demo.funcs.clientMethd = () => {
+        debugger;
+        done();
+      };
     };
-    client
-      .start()
-      .then(client => {
-        expect(client.proxies).to.not.be.empty;
-        client.proxies.demo.invoke('DynamicInvoke', 'done');
-      });
+    client.start();
+    setTimeout(() => client.proxies.demo.invoke('MispelledClientMethod'), 1000)
+      //.then(new Promise((resolve) => setTimeout(resolve, 1000)))
+      //.then(client => {
+      //  expect(client.proxies).to.not.be.empty;
+      //  client.proxies.typeddemohub.invoke('Echo', 'poopypants');
+      //});
   });
+
   it('Invokes a function defined by the server.', function(done) {
     var client = createHubClient();
 
@@ -48,7 +53,7 @@ describe('HubClient', function() {
       .start()
       .then(client => {
         expect(client.proxies).to.not.be.empty;
-        client.proxies.demo.invoke('DynamicInvoke', 'poop');
+        client.proxies.typeddemohub.invoke('Echo', 'poopypants');
         done();
       });
   });

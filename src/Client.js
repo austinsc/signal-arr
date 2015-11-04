@@ -4,7 +4,7 @@ import request from 'superagent';
 import PromiseMaker from './PromiseMaker';
 import EventEmitter from './EventEmitter';
 import ConnectingMessageBuffer from './ConnectingMessageBuffer';
-import {CLIENT_STATES, CLIENT_EVENTS, CONNECTION_EVENTS} from './Constants';
+import {CLIENT_STATES, CLIENT_EVENTS, CONNECTION_EVENTS, CLIENT_PROTOCOL_VERSION} from './Constants';
 import {AvailableTransports} from './transports/index';
 
 export const CLIENT_CONFIG_DEFAULTS = {
@@ -164,25 +164,14 @@ export default class Client extends EventEmitter {
   /**
    * Negotiates th' request to th' ship 'n returns th' consequental promise that be created as a result.
    * @returns {*}
-   * @private
+   * @protected
    */
   _negotiate() {
-    if(this._config.hubClient) {
-     // debugger;
-      this._buildConnectionData();
-      return request
-        .get(`${this._config.url}/negotiate`)
-        .query({clientProtocol: 1.5})
-        .query({connectionData: encodeURIComponent(this.connectionData['demo'])})
-        .use(PromiseMaker)
-        .promise();
-    } else {
-      return request
-        .get(`${this._config.url}/negotiate`)
-        .query({clientProtocol: 1.5})
-        .use(PromiseMaker)
-        .promise();
-    }
+    return request
+      .get(`${this._config.url}/negotiate`)
+      .query({clientProtocol: CLIENT_PROTOCOL_VERSION})
+      .use(PromiseMaker)
+      .promise();
   }
 
   /**
@@ -213,15 +202,5 @@ export default class Client extends EventEmitter {
         }
       }
     );
-  }
-
-  _buildConnectionData(){
-    let proxy, proxyData;
-    for(proxy in this.proxies){
-      this.connectionData[proxy] = proxyData = {
-        'name' : proxy._hubName
-      };
-    }
-    debugger;
   }
 }

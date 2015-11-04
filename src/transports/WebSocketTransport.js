@@ -57,6 +57,9 @@ export default class WebSocketTransport extends Transport {
         this.emit(CONNECTION_EVENTS.onConnecting);
         this.state = CONNECTION_STATES.connecting;
       }
+      if(this._client.connectionData) {
+        url += `&connectionData=${JSON.stringify(this._client.connectionData)}`;
+      }
       url += '&tid=' + Math.floor(Math.random() * 11);
       this._socket = new WebSocket(url);
       this._socket.onopen = e => {

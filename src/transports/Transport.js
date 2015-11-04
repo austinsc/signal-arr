@@ -73,6 +73,10 @@ export default class Transport extends EventEmitter {
     return this._state;
   }
 
+  get connectionToken() {
+    return this._connectionToken;
+  }
+
   /**
    * Haults th' current connection 'n safely disconnects.
    *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
@@ -104,8 +108,7 @@ export default class Transport extends EventEmitter {
     this.emit(CONNECTION_EVENTS.onReceiving, compressedResponse);
     const expandedResponse = expandResponse(compressedResponse);
     this._lastMessageAt = new Date().getTime();
-    this._lastMessages.push(expandedResponse);
-    this._lastMessages = takeRight(this._lastMessages, 5);
+    this._lastMessages = takeRight([...this._lastMessages, expandedResponse], 5);
     this.emit(CONNECTION_EVENTS.onReceived, expandedResponse.messages);
   }
 

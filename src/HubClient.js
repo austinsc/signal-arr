@@ -1,7 +1,10 @@
+import request from 'superagent';
 import Logdown from 'logdown';
+import {CLIENT_PROTOCOL_VERSION} from './Constants';
 import Client, {CLIENT_CONFIG_DEFAULTS} from './Client';
 import HubProxy from './HubProxy';
 import Protocol from './Protocol';
+import PromiseMaker from './PromiseMaker';
 
 
 export const HUB_CLIENT_CONFIG_DEFAULTS = {
@@ -17,6 +20,7 @@ export default class HubClient extends Client {
     this.proxies = {};
     this.invocationCallbackId = 0;
     this.invocationCallbacks = {};
+    this.connectionData = [];
 
     this.starting(() => {
       this._logger.info(`Registering Hub Proxies...`);
@@ -49,10 +53,29 @@ export default class HubClient extends Client {
 
   createHubProxy(hubName) {
     const hubNameLower = hubName.toLowerCase();
+    this.connectionData.push({name: hubName});
     return this.proxies[hubNameLower] || (this.proxies[hubNameLower] = new HubProxy(this, hubNameLower));
   }
 
+  start(options) {
+    return super.start(options);
+    // TODO: figure out why this is needed/not needed
+      //.then(() => request
+      //  .get(`${this._config.url}/start`)
+      //  .query({clientProtocol: CLIENT_PROTOCOL_VERSION})
+      //  .query({connectionData: JSON.stringify(this.connectionData)})
+      //  .query({connectionToken: this._transport.connectionToken})
+      //  .query({transport: this._transport.name})
+      //  .use(PromiseMaker)
+      //  .promise());
+  }
 
-
-
+  _negotiate() {
+    return request
+      .get(`${this._config.url}/negotiate`)
+      .query({clientProtocol: CLIENT_PROTOCOL_VERSION})
+      .query({connectionData: JSON.stringify(this.connectionData)})
+      .use(PromiseMaker)
+      .promise();
+  }
 }
