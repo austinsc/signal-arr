@@ -23,19 +23,19 @@ describe('HubClient', function() {
       });
   });
 
-  //it('Invokes a function defined by the client.', function(done) {
-  //  var client = createHubClient();
-  //
-  //  client._registerHubProxies = () => {
-  //    client.proxies.demo = client.createHubProxy('demo');
-  //    client.proxies.demo.funcs.clientMethd = done;
-  //  };
-  //  client.start()
-  //    .then(client => {
-  //      expect(client.proxies).to.not.be.empty;
-  //      client.proxies.demo.invoke('MispelledClientMethod');
-  //    });
-  //});
+  it('Invokes a function defined by the client.', !process.env.CI ? function(done) {
+    var client = createHubClient();
+
+    client._registerHubProxies = () => {
+      client.proxies.demo = client.createHubProxy('demo');
+      client.proxies.demo.funcs.clientMethd = done;
+    };
+    client.start()
+      .then(client => {
+        expect(client.proxies).to.not.be.empty;
+        client.proxies.demo.invoke('MispelledClientMethod');
+      });
+  } : null);
 
   it('Invokes a function defined by the server.', function(done) {
     var client = createHubClient();
