@@ -6,6 +6,8 @@ function createHubClient() {
 }
 
 describe('HubClient', function() {
+  this.timeout(5000);
+
   it('Successfully starts a Hub Connection and generates a corresponding proxy.', function(done) {
     var client = createHubClient();
 

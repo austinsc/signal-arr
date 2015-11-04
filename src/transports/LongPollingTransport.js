@@ -9,6 +9,7 @@ import {CONNECTION_STATES, CONNECTION_EVENTS} from '../Constants';
  */
 export default class LongPollingTransport extends Transport {
   static supportsKeepAlive = false;
+
   /**
    * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new Longpollin' transport.
    * @param client
@@ -27,10 +28,10 @@ export default class LongPollingTransport extends Transport {
    */
   _queryData(current) {
     return current
-        .query({clientProtocol: 1.5})
-        .query({connectionToken: this._connectionToken})
-        .query({transport: 'longPolling'})
-        .query({connectionData: this._data || ''});
+      .query({clientProtocol: 1.5})
+      .query({connectionToken: this._connectionToken})
+      .query({transport: 'longPolling'})
+      .query({connectionData: this._data || ''});
   }
 
   start() {
@@ -97,7 +98,6 @@ export default class LongPollingTransport extends Transport {
         .end((err, res) => {
           if(err && shouldReconnect) {
             return this._reconnectTimeoutId = setTimeout(this._reconnect(), Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1), this._maxReconnectedTimeout))
-            //return
               .then(this._poll);
           }
           if(res) {
@@ -106,7 +106,9 @@ export default class LongPollingTransport extends Transport {
               this.emit(CONNECTION_EVENTS.onReconnected);
               this._reconnectTries = 0;
             }
-            this._processMessages(res.body);
+            if(!_.isString(res.body)) {
+              this._processMessages(res.body);
+            }
           }
           if(!this._abortRequest) {
             this._poll();
@@ -147,7 +149,7 @@ export default class LongPollingTransport extends Transport {
       .post(url);
     this._current = this._queryData(this._current);
 
-    if((Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1)) >= this._maxReconnectedTimeout)){
+    if((Math.min(1000 * (Math.pow(2, this._reconnectTries) - 1)) >= this._maxReconnectedTimeout)) {
       this.stop();
     }
     return this._current
