@@ -1,5 +1,7 @@
 import _ from 'lodash';
-
+/**
+ * A utility tavern that contains methods fer decompressin'/compressin' incomin' 'n outgoin' messages.
+ */
 export default class Protocol {
   static expandClientHubInvocation(compressedClientHubInvocation) {
     return {
