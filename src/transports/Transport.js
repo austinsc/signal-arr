@@ -1,6 +1,6 @@
 import Logdown from 'logdown';
 import Protocol from '../Protocol';
-import {CONNECTION_EVENTS, CONNECTION_STATES, CLIENT_EVENTS} from '../Constants';
+import {CONNECTION_EVENTS, CONNECTION_STATES} from '../Constants';
 import takeRight from 'lodash.takeright';
 import EventEmitter from '../EventEmitter';
 
@@ -19,10 +19,10 @@ export default class Transport extends EventEmitter {
     this._logger = new Logdown({prefix: `${this.name}`});
     this._abortRequest = false;
     this._lastMessages = [];
-    this._lastActiveAt = new Date().getTime();
     this._keepAliveData = {};
     this._connectionToken = treaty.ConnectionToken;
     this._connectionId = treaty.ConnectionId;
+    this._reconnectWindow = (treaty.KeepAliveTimeout + treaty.DisconnectTimeout) * 1000;
     this._keepAliveData = {
       monitor: false,
       activated: !!treaty.KeepAliveTimeout,
@@ -30,15 +30,6 @@ export default class Transport extends EventEmitter {
       timeoutWarning: (treaty.KeepAliveTimeout * 1000) * (2 / 3),
       transportNotified: false
     };
-    this._disconnectTimeout = treaty.DisconnectTimeout * 1000;
-    this._connectionTimeout = treaty.ConnectionTimeout;
-    this._tryWebSockets = treaty.TryWebSockets;
-    this._protocolVersion = treaty.ProtocolVersion;
-    this._transportConnectTimeout = treaty.TransportConnectTimeout;
-    this._longPollDelay = treaty.LongPollDelay;
-    this._pollTimeout = treaty.ConnectionTimeout * 1000 + 10000;
-    this._reconnectWindow = (treaty.KeepAliveTimeout + treaty.DisconnectTimeout) * 1000;
-    this._beatInterval = (this._keepAliveData.timeout - this._keepAliveData.timeoutWarning) / 3;
   }
 
   /**
@@ -73,6 +64,10 @@ export default class Transport extends EventEmitter {
     return this._state;
   }
 
+  /**
+   * Accessor fer th' connection token 'o th' transport. Returns th' current connection token 'o th' client.
+   * @returns {*}
+   */
   get connectionToken() {
     return this._connectionToken;
   }
@@ -87,12 +82,21 @@ export default class Transport extends EventEmitter {
     });
   }
 
+  /**
+   * Sends a message to th' connected ship.
+   * @returns {Promise} thta gunna reject due to th' method needin' to be overridden.
+   */
   send() {
     return new Promise((resolve, reject) => {
       reject(new Error('Not Implemented: The `send()` function on the `Transport` class must be overridden in a derived type.'));
     });
   }
 
+  /**
+   * Emits an event at both th' Transport 'n Client levels without needin' to invoke both emits seperately.
+   * @param event Th' event that be to be emitted.
+   * @param args Arguments that correspond to th' event.
+   */
   emit(event, ...args) {
     this._client.emit(event, ...args);
     super.emit(event, ...args);

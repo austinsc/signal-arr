@@ -10,7 +10,6 @@ export default class HubProxy extends EventEmitter {
     this._client = client;
     this._hubName = hubName;
     this._logger = new Logdown({prefix: hubName});
-
     this.funcs = {};
     this.server = {};
   }

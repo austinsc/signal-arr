@@ -11,8 +11,15 @@ export const HUB_CLIENT_CONFIG_DEFAULTS = {
   logger: new Logdown({prefix: 'SignalR Hub-Client'}),
   hubClient: true
 };
-
+/**
+ *Th' Client that be used fer Hub connections.
+ */
 export default class HubClient extends Client {
+  /**
+   *Uses passed in configuration settin's to initialize th' HubClient. Attatches event handlers that handle client invocations sent from th' ship,
+   * as well as registerin' th' proxies fer each Hub on startup.
+   * @param options
+   */
   constructor(options) {
     super(options);
     this._config = Object.assign({}, CLIENT_CONFIG_DEFAULTS, HUB_CLIENT_CONFIG_DEFAULTS, options || {});
@@ -51,12 +58,22 @@ export default class HubClient extends Client {
     });
   }
 
+  /**
+   * Creates a new hub proxy based on th' actual hub moniker.
+   * @param hubName
+   * @returns {*|HubProxy} If th' proxy already exists, it return that individual proxy, else it creates a new one.
+   */
   createHubProxy(hubName) {
     const hubNameLower = hubName.toLowerCase();
     this.connectionData.push({name: hubName});
     return this.proxies[hubNameLower] || (this.proxies[hubNameLower] = new HubProxy(this, hubNameLower));
   }
 
+  /**
+   * Calls th' base client's start method, initializin' th' connection. Currently unknown if extra code be needed.
+   * @param options Th' configuration to start th' client wit'.
+   * @returns {Promise}
+   */
   start(options) {
     return super.start(options);
     // TODO: figure out why this is needed/not needed
@@ -70,6 +87,11 @@ export default class HubClient extends Client {
     //  .promise());
   }
 
+  /**
+   *Overridden negotiate method that adds connectionData to th' initial query. ConnectionData holds th' names 'o th' current connected hubs.
+   * @returns {*}
+   * @private
+   */
   _negotiate() {
     return request
       .get(`${this._config.url}/negotiate`)

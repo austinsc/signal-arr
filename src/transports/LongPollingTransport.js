@@ -35,6 +35,10 @@ export default class LongPollingTransport extends Transport {
       .query({connectionData: this._data || ''});
   }
 
+  /**
+   *Initiates th' connection after th' LongPollin'Transport transport type be declared via th' initial negotiation.
+   * @returns {Promise.<T>}
+   */
   start() {
     if(this._pollTimeoutId) {
       throw new Error('A polling session has already been initialized. Call `stop()` before attempting to `start()` again.');

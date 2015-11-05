@@ -91,6 +91,10 @@ export default class Client extends EventEmitter {
     }
   }
 
+  /**
+   * Sends a message to th' connected ship if th' transport be valid.
+   * @param data Th' message to send.
+   */
   send(data) {
     if(this._transport) {
       this._transport.send(data);
