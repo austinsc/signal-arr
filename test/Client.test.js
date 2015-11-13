@@ -54,7 +54,7 @@ describe('Client', function() {
         if(starting && started) {
           done();
         }
-    });
+      });
   });
   it('Can handle events: Stopping and Stopped', function(done) {
     let stopping = false;
@@ -70,13 +70,13 @@ describe('Client', function() {
       .then(client => {
         client.stop();
         setTimeout(() => {
-          if(stopping && stopped){
+          if(stopping && stopped) {
             done();
           }
         }, 100);
       });
   });
-  it('Can handle events: onStateChanging and onStateChanged', function(done){
+  it('Can handle events: onStateChanging and onStateChanged', function(done) {
     let stateChanging = false;
     let stateChanged = false;
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
@@ -87,11 +87,31 @@ describe('Client', function() {
       stateChanged = true;
     });
     client.start()
-    .then(() => {
-      if(stateChanging && stateChanged){
-        done();
-      }
+      .then(() => {
+        if(stateChanging && stateChanged) {
+          done();
+        }
+      });
+  });
+  it('Can handle events: onReceiving and onReceived', function(done) {
+    let received = false;
+    let receiving = false;
+    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+    client.receiving(() => {
+      receiving = true;
     });
+    client.received(() => {
+      received = true;
+    });
+    client.start()
+      .then(() => {
+        client.send({type: 1, value: 'Jack Sparrow!'});
+        setTimeout(() => {
+          if(receiving && received) {
+            done();
+          }
+        }, 500);
+      });
   });
 });
 

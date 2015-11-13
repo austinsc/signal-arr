@@ -64,6 +64,7 @@ export default class Client extends EventEmitter {
   start(options) {
     this._config = Object.assign(this._config, options);
     if(this.state !== CLIENT_STATES.stopped) {
+      this.emit(CLIENT_EVENTS.onError);
       throw new Error('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
     }
     this.emit(CLIENT_EVENTS.onStarting);
