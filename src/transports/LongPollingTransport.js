@@ -62,6 +62,7 @@ export default class LongPollingTransport extends Transport {
   _connect() {
     const url = this._url + '/connect';
     this._logger.info(`Connecting to ${url}`);
+    this.state = CONNECTION_STATES.connecting;
     this.emit(CONNECTION_EVENTS.onConnecting);
     this._current = request
       .post(url);
