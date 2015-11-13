@@ -42,12 +42,11 @@ describe('Client', function() {
     let starting = false;
     let started = false;
     const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+
     client.starting(() => {
-      client._logger.info('Starting true');
       starting = true;
     });
     client.started(() => {
-      client._logger.info('Started true');
       started = true;
     });
     client.start()
@@ -78,7 +77,21 @@ describe('Client', function() {
       });
   });
   it('Can handle events: onStateChanging and onStateChanged', function(done){
-
+    let stateChanging = false;
+    let stateChanged = false;
+    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+    client.stateChanging(() => {
+      stateChanging = true;
+    });
+    client.stateChanged(() => {
+      stateChanged = true;
+    });
+    client.start()
+    .then(() => {
+      if(stateChanging && stateChanged){
+        done();
+      }
+    });
   });
 });
 
