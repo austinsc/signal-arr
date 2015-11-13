@@ -51,9 +51,9 @@ describe('Client', function() {
     });
     client.start()
       .then(() => {
-        if(starting && started) {
-          done();
-        }
+        expect(starting).to.be.equal(true);
+        expect(started).to.be.equal(true);
+        done();
       });
   });
   it('Can handle events: Stopping and Stopped', function(done) {
@@ -70,9 +70,9 @@ describe('Client', function() {
       .then(client => {
         client.stop();
         setTimeout(() => {
-          if(stopping && stopped) {
-            done();
-          }
+          expect(stopping).to.be.equal(true);
+          expect(stopped).to.be.equal(true);
+          done();
         }, 100);
       });
   });
@@ -88,9 +88,9 @@ describe('Client', function() {
     });
     client.start()
       .then(() => {
-        if(stateChanging && stateChanged) {
-          done();
-        }
+        expect(stateChanging).to.be.equal(true);
+        expect(stateChanged).to.be.equal(true);
+        done();
       });
   });
   it('Can handle events: onReceiving and onReceived', function(done) {
@@ -107,9 +107,9 @@ describe('Client', function() {
       .then(() => {
         client.send({type: 1, value: 'Jack Sparrow!'});
         setTimeout(() => {
-          if(receiving && received) {
-            done();
-          }
+          expect(receiving).to.be.equal(true);
+          expect(received).to.be.equal(true);
+          done();
         }, 500);
       });
   });
