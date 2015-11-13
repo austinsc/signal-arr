@@ -66,8 +66,8 @@ export default class Client extends EventEmitter {
     if(this.state !== CLIENT_STATES.stopped) {
       throw new Error('The SignalR client is in an invalid state. You only need to call `start()` once and it cannot be called while reconnecting.');
     }
-    this.state = CLIENT_STATES.starting;
     this.emit(CLIENT_EVENTS.onStarting);
+    this.state = CLIENT_STATES.starting;
     return this._negotiate()
       .then(this._findTransport.bind(this))
       .then(transport => {
@@ -87,7 +87,12 @@ export default class Client extends EventEmitter {
    */
   stop() {
     if(this._transport) {
+      this.state = CLIENT_STATES.stopping;
+      this.emit(CLIENT_EVENTS.onStopping);
       this._transport.stop();
+      this.state = CLIENT_STATES.stopped;
+      this.emit(CLIENT_EVENTS.onStopped);
+      this._logger.info('Client stopped');
     }
   }
 

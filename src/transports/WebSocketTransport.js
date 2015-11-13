@@ -49,7 +49,7 @@ export default class WebSocketTransport extends Transport {
       let url = this._url.replace(/http(s)?:/, 'ws:');
       this._logger.info(`Connecting to ${url}`);
 
-      if(!this._intentionallyClosed && this.state === CONNECTION_EVENTS.reconnecting) {
+      if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
         url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this.emit(CONNECTION_EVENTS.onReconnecting);
       } else {
