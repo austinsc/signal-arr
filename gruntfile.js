@@ -9,6 +9,7 @@ module.exports = function(grunt) {
   require('./tasks/webpack-dev-server')(grunt);
   require('jit-grunt')(grunt, {eslint: 'gruntify-eslint'});
 
+
   // Build the grunt config
   grunt.config.init({
     // Run ESLint on the project

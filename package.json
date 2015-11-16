@@ -1,6 +1,6 @@
 {
   "name": "signal-arr",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
   "main": "dist/index.js",
   "scripts": {
