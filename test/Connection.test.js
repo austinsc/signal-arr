@@ -47,27 +47,27 @@ describe('Connection', function() {
         }, 100);
       });
   });
-  it('Can handle events: Reconnecting and Reconnected', function(done) {
-    let reconnecting = false;
-    let reconnected = false;
-    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
-    client.reconnecting(() => {
-      reconnecting = true;
-    });
-    client.reconnected(() => {
-      reconnected = true;
-    });
-    client.start()
-      .then(client => {
-        setTimeout(() => {
-          client._transport._intentionallyClosed = false;
-          client._transport._socket.close();
-          setTimeout(() => {
-            expect(reconnecting).to.be.equal(true);
-            expect(reconnected).to.be.equal(true);
-            done();
-          }, 100);
-        }, 50);
-      });
-  });
+  //it('Can handle events: Reconnecting and Reconnected', function(done) {
+  //  let reconnecting = false;
+  //  let reconnected = false;
+  //  const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+  //  client.reconnecting(() => {
+  //    reconnecting = true;
+  //  });
+  //  client.reconnected(() => {
+  //    reconnected = true;
+  //  });
+  //  client.start()
+  //    .then(client => {
+  //      setTimeout(() => {
+  //        client._transport._intentionallyClosed = false;
+  //        client._transport._socket.close();
+  //        setTimeout(() => {
+  //          expect(reconnecting).to.be.equal(true);
+  //          expect(reconnected).to.be.equal(true);
+  //          done();
+  //        }, 100);
+  //      }, 50);
+  //    });
+  //});
 });
