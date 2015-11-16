@@ -61,11 +61,11 @@ module.exports = {
     console: true
   },
   entry: {
-    main: 'index.js',
+    index: 'index.js',
     test: 'mocha!' + path.join(__dirname, 'test', 'index.js')
   },
   output: {
-    path: path.join(__dirname, 'lib'),
+    path: path.join(__dirname, 'dist'),
     publicPath: '/',
     filename: '[name].js',
     sourceMapFilename: '[file].map',

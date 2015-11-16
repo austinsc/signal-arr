@@ -254,6 +254,7 @@ en/
 fr/
 es/
 de/
+dist/
 
 # Generated Output
 *-compiled.js

@@ -5,6 +5,7 @@ node_js:
 env:
   - CI=true
 script:
+  - npm run build
   - npm run test
   - npm run lint
 cache:
@@ -17,6 +18,7 @@ deploy:
     secure: Q4/2UHycR266AMWLopIq31Um/6RS2V5QX2cA30qrgUnKqmxVBsdsrA82zOTaCTJ85zxtGsTllGzJsyG2FbLozZRDXf3eSuB2DDaOXHEynBG1x3ozvtS3FuDd+32R2utjqrGWapfszm/N+xdKDB8b8fORpfYZj1l/cxrgYMk7JjwiM8IZcbzORKqMwsG5KHJjH/NqM/PGDG5TAWOATkNKtYGdagf/gdIOKCaj9XORD+LZ79QEgsYDE/V5SSACy2fW2lIrtC+9wx4uF5aCcz6MDQQJVbY9jKjjcqLDOmbq04TcnP6tYVMeiYNcjSjj4WTEJpwgzw3mnBDPAFRdB7XdochGFncqBjcp5Va0e9EaEEcRP3ADQwMrCaMFPmoJd/7Ote3FxSnPw8O6Nc+JGWspc5l7LwrBRd89PR2vk9e0AmJfp6wzMJLLdBXMsnE4L+3lOtvyK3OBqgnobD34nojuz7uLi7NE16/b7hlOthUI7VfU1f/Ie3beQasmi90nxDM+A6gjBu0enJnMV2nRKcU6wpvoQ5j8M/5i6mkwkdaDza7uU4StTYSq5sRPAL+4f26OAc8oN7OeQQQv/EdkBVZxWM+byAV4YrAyhCyXd7LZsQKGM5NO9XU8Npo7iSHn+mikGKMEeIG2KpIQRUJsl0+DxiAi5wlRYekLCXFkSuRZAmc=
   on:
     tags: true
+  skip_cleanup: true
 notifications:
   webhooks:
     urls:

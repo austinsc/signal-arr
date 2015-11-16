@@ -2,8 +2,9 @@
   "name": "signal-arr",
   "version": "0.0.10",
   "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "./node_modules/.bin/grunt webpack:build",
     "test": "./node_modules/.bin/babel-istanbul cover ./node_modules/.bin/_mocha -- test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "lint": "./node_modules/.bin/grunt lint",
     "browser": "./node_modules/.bin/webpack-dev-server --config ./webpack.tests.config.js "
