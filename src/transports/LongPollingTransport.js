@@ -73,14 +73,14 @@ export default class LongPollingTransport extends Transport {
       .then(this._processMessages.bind(this));
   }
 
-  _startConnection() {
-    this._current = request
-      .post(this._url + '/start');
-    this._current = this._queryData(this._current);
-    return this._current
-      .use(PromiseMaker)
-      .promise();
-  }
+  //_startConnection() {
+  //  this._current = request
+  //    .post(this._url + '/start');
+  //  this._current = this._queryData(this._current);
+  //  return this._current
+  //    .use(PromiseMaker)
+  //    .promise();
+  //}
 
   /**
    * Initiates a poll to th' ship 'n hold th' poll open 'til th' ship be able to send new information.
