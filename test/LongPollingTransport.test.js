@@ -9,9 +9,9 @@ function createClient() {
 
 function writeFakeTreaty() {
   const treaty = {
-    connectionToken : '',
-    connectionId : 7110,
-    keepAliveData : {
+    connectionToken: '',
+    connectionId: 7110,
+    keepAliveData: {
       monitor: false,
       activated: !!1000,
       timeout: 100000,
@@ -87,6 +87,17 @@ describe('LongPollingTransport', function() {
           expect(client._transport.state).to.be.equal(CONNECTION_STATES.disconnected);
           setTimeout(() => done(), 1000);
         }, 500);
+      });
+  });
+
+  it('Successfully reconnects after lost connection', function(done) {
+    createClient()
+      .start()
+      .then(client => {
+          expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
+          client._transport._reconnect();
+          expect(client._transport._reconnectTries).to.be.equal(1);
+          done();
       });
   });
 });
