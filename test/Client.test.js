@@ -1,7 +1,6 @@
 import {expect} from 'chai';
 import Client, {CLIENT_CONFIG_DEFAULTS} from '../src/Client';
 import {CLIENT_STATES} from '../src/Constants';
-import Logdown from 'logdown';
 
 describe('Client', function() {
   it('Initializes with the default configuration', function() {

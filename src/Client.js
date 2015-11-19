@@ -107,66 +107,146 @@ export default class Client extends EventEmitter {
     }
   }
 
+  /**
+   * A connnection and client event handler that is listening for an 'onError' event.
+   * Event is emitted when an error is thrown.
+   * @param callback Contains the error message. //TODO: Implement error events
+   */
   error(callback) {
     this.on(CLIENT_EVENTS.onError, callback);
   }
 
+  /**
+   * A client event handler that is listening for a 'onStarting' event.
+   * Event is emitted when the client begins initialization.
+   * @param callback
+   */
   starting(callback) {
     this.on(CLIENT_EVENTS.onStarting, callback);
   }
 
+  /**
+   * A client event handler that is listening for a 'onStarted' event.
+   * Event is emitted once the client has secured a connection successfully.
+   * @param callback
+   */
   started(callback) {
     this.on(CLIENT_EVENTS.onStarted, callback);
   }
 
+  /**
+   * A client event handler that is listening for a 'onStopping' event.
+   * Event is emitted once the client has initiated a disconnect.
+   * @param callback
+   */
   stopping(callback) {
     this.on(CLIENT_EVENTS.onStopping, callback);
   }
 
+  /**
+   * A client event handler that is listening for a 'onStopped' event.
+   * Event is emitted once the client has successfully disconnected from the server.
+   * @param callback
+   */
   stopped(callback) {
     this.on(CLIENT_EVENTS.onStopped, callback);
   }
 
+  /**
+   * A connection and client event handler that is listening for a 'onReceiving' event.
+   * Event is emitted whenever a message is received by the client from the server. (Message is in compressed, raw form from server).
+   * @param callback Contains the compressed message data that the client is currently receiving.
+   */
   receiving(callback) {
     this.on(CLIENT_EVENTS.onReceiving, callback);
   }
 
+  /**
+   * A connection and client event handler that is listening for a 'onReceived' event.
+   * Event is emitted whenever a message is received by the client from the server. (Message is decompressed by client, making it more managable).
+   * @param callback Contains the received decompressed message data.
+   */
   received(callback) {
     this.on(CLIENT_EVENTS.onReceived, callback);
   }
 
+  /**
+   * A connection and client event handler that is listening for a 'onStateChanging' event.
+   * Event is emitted whenever the client's state or the connection's state is in the process of changing.
+   * @param callback Contains both the old and new state.
+   */
   stateChanging(callback) {
     this.on(CLIENT_EVENTS.onStateChanging, callback);
   }
 
+  /**
+   * A connection and client event handler that is listening for a 'onStateChanged' event.
+   * Event is emitted whenever the client's state or the connection's state has changed.
+   * @param callback Contains the new state.
+   */
   stateChanged(callback) {
     this.on(CLIENT_EVENTS.onStateChanged, callback);
   }
 
+  /**
+   * A connection event handler that is listening for a 'onDisconnecting' event.
+   * Event is emitted once the connection is in the process of stopping, initiated by the user, or automatically if the connection is lost unexpectedly.
+   * @param callback
+   */
   disconnecting(callback) {
     this.on(CONNECTION_EVENTS.onDisconnecting, callback);
   }
 
+  /**
+   * A connection event handler that is listening for a 'onDisconnected' event.
+   * Event is emitted once the connection has been completely haulted by the uesr, or has been lost unexpectedly.
+   * @param callback
+   */
   disconnected(callback) {
     this.on(CONNECTION_EVENTS.onDisconnected, callback);
   }
 
+  /**
+   * A connection event handler that is listening for a 'onReconnecting' event.
+   * Event is emitted if the connection has been lost unexpectedly and is automatically attempting to reconnect.
+   * @param callback
+   */
   reconnecting(callback) {
     this.on(CONNECTION_EVENTS.onReconnecting, callback);
   }
 
+  /**
+   * A connection event handler that is listening for a 'onReconnected' event.
+   * Event is emitted if the connection has been successfully re-established after an unexpected disconnect.
+   * @param callback
+   */
   reconnected(callback) {
     this.on(CONNECTION_EVENTS.onReconnected, callback);
   }
 
+  /**
+   * A connection event listener that is listening for a 'onConnecting' event.
+   * Event is emitted if the user has used the client to try and negotiate a connection to a server.
+   * @param callback
+   */
   connecting(callback) {
     this.on(CONNECTION_EVENTS.onConnecting, callback);
   }
 
+  /**
+   * A connection event listener that is listening for a 'onConnected' event.
+   * Event is emitted if the connection to the server was successfully established.
+   * @param callback
+   */
   connected(callback) {
     this.on(CONNECTION_EVENTS.onConnected, callback);
   }
 
+  /**
+   * A connection event listener that is listeing for a 'onConnectionSlow' event.
+   * Currently not implemented.
+   * @param callback
+   */
   connectionSlow(callback) {
     this.on(CLIENT_EVENTS.onConnectionSlow, callback);
   }
