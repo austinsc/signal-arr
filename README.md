@@ -2,7 +2,6 @@
 
 ![awesome](https://img.shields.io/badge/Awesome-Yes-brightgreen.svg?style=flat-square)
 [![NPM version](http://img.shields.io/npm/v/signal-arr.svg?style=flat-square)](http://npmjs.org/signal-arr)
-[![License](http://img.shields.io/github/license/RoviSys/signal-arr.svg?style=flat-square)](https://github.com/RoviSys/signal-arr/blob/master/LICENSE.txt)
 [![Build Status](http://img.shields.io/travis/RoviSys/signal-arr/master.svg?style=flat-square)](https://travis-ci.org/RoviSys/signal-arr)
 [![Code Coverage](http://img.shields.io/coveralls/RoviSys/signal-arr/master.svg?style=flat-square)](https://coveralls.io/github/RoviSys/signal-arr)
 [![Dependency Status](http://img.shields.io/david/RoviSys/signal-arr.svg?style=flat-square)](https://david-dm.org/RoviSys/signal-arr#info=dependencies)
@@ -22,12 +21,9 @@
 ### WARNING: This is pre-release software. There aren't really any docs yet, and testing is incomplete. Feel free to submit a pull request if you find something that is broken.
 
 
-### TODO
+### Getting Started
 
- - [ ] Finalize `Client` level API
- - [x] Move Starting, Started, Stopping, Stopped states to `Client`
- - [x] Move Connecting, Connected, Disconnecting, Disconnected, Reconnecting, Reconnected to `Connection`
- - [x] Wrap `Connection` lifetime events with the `Client` public API
- - [x] Create a `Client.send(data)` function on the Client, and compress/serialize the data for transport
- - [x] Write tests for invoking server side hub methods
- - [x] Write tests for server invoked client functions 
+```bash
+npm install signal-arr --save
+
+```

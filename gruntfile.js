@@ -1,7 +1,7 @@
 /*global:require,module*/
 module.exports = function(grunt) {
   var _ = require('lodash');
-  var path = require('path');
+  var webpack = require('webpack');
   var wp = require('./webpack.config.js');
   require('time-grunt')(grunt);
   require('./tasks/webpack')(grunt);
@@ -47,7 +47,16 @@ module.exports = function(grunt) {
     // webpack build to disk tasks
     'webpack': {
       test: require('./webpack.tests.config'),
-      build: wp,
+      build: _.merge({}, wp, {
+        plugins: [
+          new webpack.optimize.DedupePlugin(),
+          new webpack.optimize.UglifyJsPlugin({
+            compress: {
+              warnings: false
+            }
+          })
+        ]
+      }),
       watch: _.merge({}, wp, {watch: true, keepalive: true})
     },
 
