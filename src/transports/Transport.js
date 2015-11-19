@@ -35,6 +35,7 @@ export default class Transport extends EventEmitter {
   /**
    * Initiates a new transport 'n begins th' connection process.
    *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
+   *  @abstract
    */
   start() {
     return new Promise((resolve, reject) => {
@@ -75,6 +76,7 @@ export default class Transport extends EventEmitter {
   /**
    * Haults th' current connection 'n safely disconnects.
    *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
+   *  @abstract
    */
   stop() {
     return new Promise((resolve, reject) => {
@@ -85,6 +87,7 @@ export default class Transport extends EventEmitter {
   /**
    * Sends a message to th' connected ship.
    * @returns {Promise} thta gunna reject due to th' method needin' to be overridden.
+   * @abstract
    */
   send() {
     return new Promise((resolve, reject) => {
