@@ -2,8 +2,17 @@ import {isEmpty, isFunction, isUndefined, extend} from 'lodash';
 import Logdown from 'logdown';
 import Protocol from './Protocol';
 import EventEmitter from './EventEmitter';
-
+/**
+ * A proxy that can be used to invoke methods server-side.
+ * @class
+ */
 export default class HubProxy extends EventEmitter {
+  /**
+   * Initializes the proxy given the current client and the hub that the client is connected to.
+   * @param client
+   * @param hubName
+   * @constructor
+   */
   constructor(client, hubName) {
     super();
     this._state = {};
@@ -14,8 +23,13 @@ export default class HubProxy extends EventEmitter {
     this.server = {};
   }
 
-  /// <summary>Invokes a server hub method with the given arguments.</summary>
-  /// <param name="methodName" type="String">The name of the server hub method.</param>
+  /**
+   * Invokes a server hub method with the given arguments.
+   * @param methodName The name of the server hub method
+   * @param args The arguments to pass into the server hub method.
+   * @returns {*}
+   * @function
+   */
   invoke(methodName, ...args) {
     let data = {
       H: this._hubName,
