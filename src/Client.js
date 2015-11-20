@@ -41,7 +41,8 @@ export default class Client extends EventEmitter {
    * Accessor fer th' state property 'o th' client. Sets th' state to newState 'n automatically emits th' correct events.
    * @param newState
    * @public
-   * @emits {CLIENT_EVENTS.stateChanging, CLIENT_EVENTS.stateChanged)
+   * @emits stateChanging
+   * @emits stateChanged
    */
   set state(newState) {
     if(!this._state) {
@@ -67,9 +68,9 @@ export default class Client extends EventEmitter {
    * @returns {Promise} that resolves once th' connection be opened successfully.
    * @public
    * @function
-   * @emits CLIENT_EVENTS.starting
-   * @emits CLIENT_EVENTS.started
-   * @emits CLIENT_EVENTS.error
+   * @emits starting
+   * @emits started
+   * @emits error
    */
   start(options) {
     this._config = Object.assign(this._config, options);
@@ -97,8 +98,8 @@ export default class Client extends EventEmitter {
    * @returns {Promise} that resolves once th' connection has closed successfully.
    * @public
    * @function
-   * @emits CLIENT_EVENTS.stopping
-   * @emits CLIENT_EVENTS.stopped
+   * @emits stopping
+   * @emits stopped
    */
   stop() {
     if(this._transport) {
