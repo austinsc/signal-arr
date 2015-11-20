@@ -18,7 +18,7 @@ export const CLIENT_CONFIG_DEFAULTS = {
 /**
  * The public API for managing communications with a SignalR server
  * @class
- * @access public
+ * @public
  */
 export default class Client extends EventEmitter {
   /**
@@ -40,14 +40,16 @@ export default class Client extends EventEmitter {
   /**
    * Accessor fer th' state property 'o th' client. Sets th' state to newState 'n automatically emits th' correct events.
    * @param newState
+   * @public
+   * @emits {CLIENT_EVENTS.onStateChanging, CLIENT_EVENTS.onStateChanged)
    */
   set state(newState) {
     if(!this._state) {
       this._state = newState;
     } else {
-      this.emit(CONNECTION_EVENTS.onStateChanging, {oldState: this.state, newState});
+      this.emit(CLIENT_EVENTS.onStateChanging, {oldState: this.state, newState});
       this._state = newState;
-      this.emit(CONNECTION_EVENTS.onStateChanged, newState);
+      this.emit(CLIENT_EVENTS.onStateChanged, newState);
     }
   }
 
@@ -63,7 +65,7 @@ export default class Client extends EventEmitter {
    * Starts th' underlyin' connection to th' ship.
    * @param {Object} options contains any updated treaty values that be used to start th' connection.
    * @returns {Promise} that resolves once th' connection be opened successfully.
-   * @access public
+   * @public
    * @function
    */
   start(options) {
@@ -90,7 +92,7 @@ export default class Client extends EventEmitter {
   /**
    * Stops th' connection to th' ship
    * @returns {Promise} that resolves once th' connection has closed successfully.
-   * @access public
+   * @public
    * @function
    */
   stop() {
@@ -107,7 +109,7 @@ export default class Client extends EventEmitter {
   /**
    * Sends a message to th' connected ship if th' transport be valid.
    * @param data Th' message to send.
-   * @access public
+   * @public
    * @function
    */
   send(data) {
@@ -121,7 +123,7 @@ export default class Client extends EventEmitter {
    * Event is emitted when an error is thrown.
    * @param callback Contains the error message. //TODO: Implement error events
    * @function
-   * @access public
+   * @public
    */
   error(callback) {
     this.on(CLIENT_EVENTS.onError, callback);
@@ -132,7 +134,7 @@ export default class Client extends EventEmitter {
    * Event is emitted when the client begins initialization.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   starting(callback) {
     this.on(CLIENT_EVENTS.onStarting, callback);
@@ -143,7 +145,7 @@ export default class Client extends EventEmitter {
    * Event is emitted once the client has secured a connection successfully.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   started(callback) {
     this.on(CLIENT_EVENTS.onStarted, callback);
@@ -154,7 +156,7 @@ export default class Client extends EventEmitter {
    * Event is emitted once the client has initiated a disconnect.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   stopping(callback) {
     this.on(CLIENT_EVENTS.onStopping, callback);
@@ -165,7 +167,7 @@ export default class Client extends EventEmitter {
    * Event is emitted once the client has successfully disconnected from the server.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   stopped(callback) {
     this.on(CLIENT_EVENTS.onStopped, callback);
@@ -176,7 +178,7 @@ export default class Client extends EventEmitter {
    * Event is emitted whenever a message is received by the client from the server. (Message is in compressed, raw form from server).
    * @param callback Contains the compressed message data that the client is currently receiving.
    * @function
-   * @access public
+   * @public
    */
   receiving(callback) {
     this.on(CLIENT_EVENTS.onReceiving, callback);
@@ -187,7 +189,7 @@ export default class Client extends EventEmitter {
    * Event is emitted whenever a message is received by the client from the server. (Message is decompressed by client, making it more managable).
    * @param callback Contains the received decompressed message data.
    * @function
-   * @access public
+   * @public
    */
   received(callback) {
     this.on(CLIENT_EVENTS.onReceived, callback);
@@ -198,7 +200,7 @@ export default class Client extends EventEmitter {
    * Event is emitted whenever the client's state or the connection's state is in the process of changing.
    * @param callback Contains both the old and new state.
    * @function
-   * @access public
+   * @public
    */
   stateChanging(callback) {
     this.on(CLIENT_EVENTS.onStateChanging, callback);
@@ -209,7 +211,7 @@ export default class Client extends EventEmitter {
    * Event is emitted whenever the client's state or the connection's state has changed.
    * @param callback Contains the new state.
    * @function
-   * @access public
+   * @public
    */
   stateChanged(callback) {
     this.on(CLIENT_EVENTS.onStateChanged, callback);
@@ -220,7 +222,7 @@ export default class Client extends EventEmitter {
    * Event is emitted once the connection is in the process of stopping, initiated by the user, or automatically if the connection is lost unexpectedly.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   disconnecting(callback) {
     this.on(CONNECTION_EVENTS.onDisconnecting, callback);
@@ -230,6 +232,8 @@ export default class Client extends EventEmitter {
    * A connection event handler that is listening for a 'onDisconnected' event.
    * Event is emitted once the connection has been completely haulted by the uesr, or has been lost unexpectedly.
    * @param callback
+   * @function
+   * @public
    */
   disconnected(callback) {
     this.on(CONNECTION_EVENTS.onDisconnected, callback);
@@ -240,7 +244,7 @@ export default class Client extends EventEmitter {
    * Event is emitted if the connection has been lost unexpectedly and is automatically attempting to reconnect.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   reconnecting(callback) {
     this.on(CONNECTION_EVENTS.onReconnecting, callback);
@@ -251,7 +255,7 @@ export default class Client extends EventEmitter {
    * Event is emitted if the connection has been successfully re-established after an unexpected disconnect.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   reconnected(callback) {
     this.on(CONNECTION_EVENTS.onReconnected, callback);
@@ -262,7 +266,7 @@ export default class Client extends EventEmitter {
    * Event is emitted if the user has used the client to try and negotiate a connection to a server.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   connecting(callback) {
     this.on(CONNECTION_EVENTS.onConnecting, callback);
@@ -273,7 +277,7 @@ export default class Client extends EventEmitter {
    * Event is emitted if the connection to the server was successfully established.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   connected(callback) {
     this.on(CONNECTION_EVENTS.onConnected, callback);
@@ -284,7 +288,7 @@ export default class Client extends EventEmitter {
    * Currently not implemented.
    * @param callback
    * @function
-   * @access public
+   * @public
    */
   connectionSlow(callback) {
     this.on(CLIENT_EVENTS.onConnectionSlow, callback);
@@ -294,6 +298,7 @@ export default class Client extends EventEmitter {
    * Negotiates th' request to th' ship 'n returns th' consequental promise that be created as a result.
    * @returns {*}
    * @protected
+   * @function
    */
   _negotiate() {
     return request
@@ -308,6 +313,7 @@ export default class Client extends EventEmitter {
    * A user may specify a transport as well if they would like to not use th' automated selection 'o one.
    * @param treaty
    * @returns {Promise}
+   * @function
    * @private
    */
   _findTransport(treaty) {
