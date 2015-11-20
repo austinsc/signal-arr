@@ -38,11 +38,11 @@ export default class ServerSentEventsTransport extends Transport {
       if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
         this._logger.info(`Reconnecting to ${url}`);
         url += `/reconnect?transport=serverSentEvents&connectionToken=${encodeURIComponent(this._connectionToken)}`;
-        this.emit(CONNECTION_EVENTS.onReconnecting);
+        this.emit(CONNECTION_EVENTS.reconnecting);
       }else {
         this._logger.info(`Connecting to ${url}`);
         url += `/connect?transport=serverSentEvents&connectionToken=${encodeURIComponent(this._connectionToken)}`;
-        this.emit(CONNECTION_EVENTS.onConnecting);
+        this.emit(CONNECTION_EVENTS.connecting);
         this.state = CONNECTION_STATES.connecting;
       }
       url += '&tid=' + Math.floor(Math.random() * 11);
@@ -52,7 +52,7 @@ export default class ServerSentEventsTransport extends Transport {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
           if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
-            this.emit(CONNECTION_EVENTS.onReconnected);
+            this.emit(CONNECTION_EVENTS.reconnected);
           } else {
             this.emit(CONNECTION_EVENTS.onConnected);
           }
@@ -77,12 +77,12 @@ export default class ServerSentEventsTransport extends Transport {
    */
   stop(){
     if(this._eventSource){
-      this.emit(CONNECTION_EVENTS.onDisconnecting);
+      this.emit(CONNECTION_EVENTS.disconnecting);
       this._intentionallyClosed = true;
       this._eventSource.close();
       this._logger.info(`*${this.constructor.name}* connection closed.`);
       this.state = CONNECTION_STATES.disconnected;
-      this.emit(CONNECTION_EVENTS.onDisconnected);
+      this.emit(CONNECTION_EVENTS.disconnected);
     }
   }
 
@@ -107,7 +107,7 @@ export default class ServerSentEventsTransport extends Transport {
    * @private
    */
   _keepAliveTimeoutDisconnect(){
-    this.emit(CONNECTION_EVENTS.onDisconnecting);
+    this.emit(CONNECTION_EVENTS.disconnecting);
     this._intentionallyClosed = false;
     this._eventSource.close();
     this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);

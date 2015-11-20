@@ -9,6 +9,8 @@ export default class EventEmitter {
    *Pushes an event to the passed in listener.
    * @param event
    * @param listener
+   * @function
+   * @public
    */
   on(event, listener) {
     this.observers[event] = this.observers[event] || [];
@@ -19,6 +21,8 @@ export default class EventEmitter {
    * Removes an event from a passed in listener.
    * @param event
    * @param listener
+   * @function
+   * @public
    */
   off(event, listener) {
     if (!this.observers[event]) {
@@ -40,6 +44,8 @@ export default class EventEmitter {
    * Emits the passed in event to all observers.
    * @param event
    * @param args
+   * @function
+   * @public
    */
   emit(event, ...args) {
     if (!this.observers[event]) {
@@ -51,6 +57,9 @@ export default class EventEmitter {
 
   /**
    * Returns the true number of current observers.
+   * @returns {int}
+   * @function
+   * @public
    */
   numberOfObservers() {
     return sum(this.observers, o => o.length);

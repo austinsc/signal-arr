@@ -63,7 +63,7 @@ export default class LongPollingTransport extends Transport {
     const url = this._url + '/connect';
     this._logger.info(`Connecting to ${url}`);
     this.state = CONNECTION_STATES.connecting;
-    this.emit(CONNECTION_EVENTS.onConnecting);
+    this.emit(CONNECTION_EVENTS.connecting);
     this._current = request
       .post(url);
     this._current = this._queryData(this._current);
@@ -109,7 +109,7 @@ export default class LongPollingTransport extends Transport {
           if(res) {
             if(this.state === CONNECTION_STATES.reconnecting) {
               this.state = CONNECTION_STATES.connected;
-              this.emit(CONNECTION_EVENTS.onReconnected);
+              this.emit(CONNECTION_EVENTS.reconnected);
               this._reconnectTries = 0;
             }
             if(!_.isString(res.body)) {
@@ -147,7 +147,7 @@ export default class LongPollingTransport extends Transport {
    */
   _reconnect() {
     const url = this._url + '/connect';
-    this.emit(CONNECTION_EVENTS.onReconnecting);
+    this.emit(CONNECTION_EVENTS.reconnecting);
     this.state = CONNECTION_STATES.reconnecting;
     this._logger.info(`Attempting to reconnect to ${url}`);
     this._reconnectTries++;
@@ -175,10 +175,10 @@ export default class LongPollingTransport extends Transport {
     if(this._current) {
       this._current.abort();
     }
-    this.emit(CONNECTION_EVENTS.onDisconnecting);
+    this.emit(CONNECTION_EVENTS.disconnecting);
     this._logger.info(`Disconnecting from ${this._url}.`);
     this.state = CONNECTION_STATES.disconnected;
-    this.emit(CONNECTION_EVENTS.onDisconnected);
+    this.emit(CONNECTION_EVENTS.disconnected);
     this._logger.info('Successfully disconnected.');
   }
 }

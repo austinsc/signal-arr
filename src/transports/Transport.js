@@ -35,6 +35,7 @@ export default class Transport extends EventEmitter {
   /**
    * Initiates a new transport 'n begins th' connection process.
    *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
+   *  @abstract
    */
   start() {
     return new Promise((resolve, reject) => {
@@ -50,9 +51,9 @@ export default class Transport extends EventEmitter {
     if(!this._state) {
       this._state = newState;
     } else {
-      this.emit(CONNECTION_EVENTS.onStateChanging, {oldState: this.state, newState});
+      this.emit(CONNECTION_EVENTS.stateChanging, {oldState: this.state, newState});
       this._state = newState;
-      this.emit(CONNECTION_EVENTS.onStateChanged, newState);
+      this.emit(CONNECTION_EVENTS.stateChanged, newState);
     }
   }
 
@@ -75,6 +76,7 @@ export default class Transport extends EventEmitter {
   /**
    * Haults th' current connection 'n safely disconnects.
    *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
+   *  @abstract
    */
   stop() {
     return new Promise((resolve, reject) => {
@@ -85,6 +87,7 @@ export default class Transport extends EventEmitter {
   /**
    * Sends a message to th' connected ship.
    * @returns {Promise} thta gunna reject due to th' method needin' to be overridden.
+   * @abstract
    */
   send() {
     return new Promise((resolve, reject) => {
@@ -109,11 +112,11 @@ export default class Transport extends EventEmitter {
    * @protected
    */
   _processMessages(compressedResponse) {
-    this.emit(CONNECTION_EVENTS.onReceiving, compressedResponse);
+    this.emit(CONNECTION_EVENTS.receiving, compressedResponse);
     const expandedResponse = Protocol.expandResponse(compressedResponse);
     this._lastMessageAt = new Date().getTime();
     this._lastMessages = takeRight([...this._lastMessages, expandedResponse], 5);
-    this.emit(CONNECTION_EVENTS.onReceived, expandedResponse.messages);
+    this.emit(CONNECTION_EVENTS.received, expandedResponse.messages);
   }
 
   /**
