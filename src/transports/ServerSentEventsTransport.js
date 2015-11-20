@@ -13,9 +13,10 @@ export default class ServerSentEventsTransport extends Transport {
 
   /**
    * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new ServerSentEvents transport.
-   * @param client
-   * @param treaty
-   * @param url
+   * @param {Client} client The client that will be initiating the new ServerSentEvents connection.
+   * @param {Object} treaty An object that holds the reults from the original negotiation between client-server. Contains critical connection information.
+   * @param {string} url The URL of the server the client is connecting to.
+   * @constructor
    */
   constructor(client, treaty, url) {
     super('serverSentEvents', client, treaty);
@@ -25,7 +26,14 @@ export default class ServerSentEventsTransport extends Transport {
 
   /**
    * Initates th' ServerSentEvents connection, as well as handles onmessage, onerror,  'n onopen events.
-   * @returns {Promise}
+   * @returns {Promise} Resolves when the client hasb een successfully connected to the server via a ServerSentEvents transport.
+   * @public
+   * @function
+   * @extends start
+   * @emits reconnecting
+   * @emits connecting
+   * @emits connected
+   * @emits reconnected
    */
   start(){
     return new Promise((resolve, reject) => {
@@ -74,6 +82,12 @@ export default class ServerSentEventsTransport extends Transport {
 
   /**
    * Cleanly disconnects from th' target ship.
+   * @returns {void} Method does not return a value.
+   * @function
+   * @public
+   * @extends stop
+   * @emits disconnecting
+   * @emits disconnected
    */
   stop(){
     if(this._eventSource){
@@ -88,9 +102,10 @@ export default class ServerSentEventsTransport extends Transport {
 
   /**
    * Returns a promise that resolves when a message be sent with th' passed in data to th' target URL.
-   * @param data
-   * @returns {Promise}
+   * @param {Object} data The message to send to the server.
+   * @returns {Promise} Resolves once the message has been sent successfully.
    * @private
+   * @function
    */
   send(data) {
     return request
@@ -105,6 +120,8 @@ export default class ServerSentEventsTransport extends Transport {
   /**
    * If th' keepAlive times out, closes th' connection cleanly 'n attempts to reconnect.
    * @private
+   * @returns {void} Method does not return a value.
+   * @emits disconnecting
    */
   _keepAliveTimeoutDisconnect(){
     this.emit(CONNECTION_EVENTS.disconnecting);
