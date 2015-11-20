@@ -1,4 +1,4 @@
-# SignalR.js
+# signal-arr
 
 [Project Overview](index.md)
 
@@ -6,4 +6,4 @@
 
 [gimmick:theme](yeti)
 
-[gimmick:Disqus](signalrjs-docs)
+[gimmick:Disqus](signal-arr-docs)
