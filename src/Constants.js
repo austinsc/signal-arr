@@ -30,41 +30,41 @@ export const CLIENT_STATES = {
 /**
  * A collection of all of the currently defined events that may be fired off during different stages of a connection's lifecycle.
  * @exports CONNECTION_EVENTS
- * @type {{onError: string, onConnectionSlow: string, onConnecting: string, onConnected: string, onReceiving: string, onReceived: string, onReconnecting: string, onReconnected: string, onStateChanging: string, onStateChanged: string, onDisconnecting: string, onDisconnected: string}}
+ * @type {{error: string, connectionSlow: string, connecting: string, onConnected: string, receiving: string, received: string, reconnecting: string, reconnected: string, stateChanging: string, stateChanged: string, disconnecting: string, disconnected: string}}
  * @readonly
  * @public
  */
 export const CONNECTION_EVENTS = {
-  onError: 'onError',
-  onConnectionSlow: 'onConnectionSlow',
-  onConnecting: 'onConnecting',
+  error: 'error',
+  connectionSlow: 'connectionSlow',
+  connecting: 'connecting',
   onConnected: 'onConnected',
-  onReceiving: 'onReceiving',
-  onReceived: 'onReceived',
-  onReconnecting: 'onReconnecting',
-  onReconnected: 'onReconnected',
-  onStateChanging: 'onStateChanging',
-  onStateChanged: 'onStateChanged',
-  onDisconnecting: 'onDisconnecting',
-  onDisconnected: 'onDisconnected'
+  receiving: 'receiving',
+  received: 'received',
+  reconnecting: 'reconnecting',
+  reconnected: 'reconnected',
+  stateChanging: 'stateChanging',
+  stateChanged: 'stateChanged',
+  disconnecting: 'disconnecting',
+  disconnected: 'disconnected'
 };
 /**
  * A collection of all of the currently defined events that may be fired off during the different stages of the client's lifecycle.
  * @exports CLIENT_EVENTS
- * @type {{onStarting: string, onStarted: string, onStopping: string, onStopped: string, onError: string, onStateChanging: string, onStateChanged: string, onReceiving: string, onReceived: string}}
+ * @type {{starting: string, started: string, stopping: string, stopped: string, error: string, stateChanging: string, stateChanged: string, receiving: string, received: string}}
  * @readonly
  * @public
  */
 export const CLIENT_EVENTS = {
-  onStarting: 'onStarting',
-  onStarted: 'onStarted',
-  onStopping: 'onStopping',
-  onStopped: 'onStopped',
-  onError: 'onError',
-  onStateChanging: 'onStateChanging',
-  onStateChanged: 'onStateChanged',
-  onReceiving: 'onReceiving',
-  onReceived: 'onReceived'
+  starting: 'starting',
+  started: 'started',
+  stopping: 'stopping',
+  stopped: 'stopped',
+  error: 'error',
+  stateChanging: 'stateChanging',
+  stateChanged: 'stateChanged',
+  receiving: 'receiving',
+  received: 'received'
 };
 
 /**

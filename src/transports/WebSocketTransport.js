@@ -51,10 +51,10 @@ export default class WebSocketTransport extends Transport {
 
       if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
         url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
-        this.emit(CONNECTION_EVENTS.onReconnecting);
+        this.emit(CONNECTION_EVENTS.reconnecting);
       } else {
         url += `/connect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
-        this.emit(CONNECTION_EVENTS.onConnecting);
+        this.emit(CONNECTION_EVENTS.connecting);
         this.state = CONNECTION_STATES.connecting;
       }
       if(this._client.connectionData) {
@@ -66,7 +66,7 @@ export default class WebSocketTransport extends Transport {
         if(e.type === 'open') {
           this._logger.info(`*${this.constructor.name}* connection opened.`);
           if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
-            this.emit(CONNECTION_EVENTS.onReconnected);
+            this.emit(CONNECTION_EVENTS.reconnected);
           } else {
             this.emit(CONNECTION_EVENTS.onConnected);
           }
@@ -84,7 +84,7 @@ export default class WebSocketTransport extends Transport {
         if(this._intentionallyClosed) {
           this._logger.info(`*${this.constructor.name}* connection closed.`);
           this.state = CONNECTION_STATES.disconnected;
-          this.emit(CONNECTION_EVENTS.onDisconnected);
+          this.emit(CONNECTION_EVENTS.disconnected);
         } else {
           this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
           this.state = CONNECTION_STATES.reconnecting;
@@ -98,7 +98,7 @@ export default class WebSocketTransport extends Transport {
    */
   stop() {
     if(this._socket) {
-      this.emit(CONNECTION_EVENTS.onDisconnecting);
+      this.emit(CONNECTION_EVENTS.disconnecting);
       this._intentionallyClosed = true;
       this._socket.close();
     }
@@ -109,7 +109,7 @@ export default class WebSocketTransport extends Transport {
    * @private
    */
   _keepAliveTimeoutDisconnect() {
-    this.emit(CONNECTION_EVENTS.onDisconnecting);
+    this.emit(CONNECTION_EVENTS.disconnecting);
     this._socket.close();
   }
 }
