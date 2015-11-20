@@ -19,7 +19,7 @@ export default class HubClient extends Client {
   /**
    *Uses passed in configuration settin's to initialize th' HubClient. Attatches event handlers that handle client invocations sent from th' ship,
    * as well as registerin' th' proxies fer each Hub on startup.
-   * @param options
+   * @param {Object} options The initial options defined by the user to initialize the HubClient with.
    * @constructor
    */
   constructor(options) {
@@ -62,7 +62,7 @@ export default class HubClient extends Client {
 
   /**
    * Creates a new hub proxy based on th' actual hub moniker.
-   * @param hubName
+   * @param {string} hubName The name of the hub that the proxy will be created for.
    * @returns {*|HubProxy} If th' proxy already exists, it return that individual proxy, else it creates a new one.
    * @function
    * @public
@@ -75,8 +75,8 @@ export default class HubClient extends Client {
 
   /**
    * Calls th' base client's start method, initializin' th' connection. Currently unknown if extra code be needed.
-   * @param options Th' configuration to start th' client wit'.
-   * @returns {Promise}
+   * @param {Object} options Th' configuration to start th' client wit'.
+   * @returns {Promise} Returns a promise signifying that the connection has been intialized.
    * @function
    * @public
    */
@@ -95,7 +95,7 @@ export default class HubClient extends Client {
 
   /**
    *Overridden negotiate method that adds connectionData to th' initial query. ConnectionData holds th' names 'o th' current connected hubs.
-   * @returns {*}
+   * @returns {Promise} Returns the
    * @private
    * @function
    */

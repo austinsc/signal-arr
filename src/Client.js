@@ -24,8 +24,9 @@ export default class Client extends EventEmitter {
   /**
    * Initializes th' client object wit' userdefined options. Options can include a multitude 'o properties, includin' th' ship URL,
    * a set transport protocol th' user wishes to use, a hub client, th' timeout to use when connection, 'n loggin' mechanisms.
-   * @param options
+   * @param {Object} options Defines the options that the client will initialize with.
    * @constructs
+   * @returns {Client} Returns a new client object.
    */
   constructor(options) {
     super();
@@ -39,10 +40,11 @@ export default class Client extends EventEmitter {
 
   /**
    * Accessor fer th' state property 'o th' client. Sets th' state to newState 'n automatically emits th' correct events.
-   * @param newState
+   * @param {string} newState The new state of the client.
    * @public
    * @emits stateChanging
    * @emits stateChanged
+   * @returns {void} Nothing is returned by this method.
    */
   set state(newState) {
     if(!this._state) {
@@ -56,7 +58,7 @@ export default class Client extends EventEmitter {
 
   /**
    *Accessor fer th' state property 'o th' client. Returns th' current state 'o th' client.
-   * @returns {*}
+   * @returns {*} Returns the current state.
    */
   get state() {
     return this._state;
@@ -114,10 +116,11 @@ export default class Client extends EventEmitter {
 
   /**
    * Sends a message to th' connected ship if th' transport be valid.
-   * @param data Th' message to send.
+   * @param {object} data Th' message to send.
    * @public
    * @function
-   */
+   * @returns {void} Nothing is returned by this method.
+   * */
   send(data) {
     if(this._transport) {
       this._transport.send(data);
@@ -127,9 +130,10 @@ export default class Client extends EventEmitter {
   /**
    * A connnection and client event handler that is listening for an 'error' event.
    * Event is emitted when an error is thrown.
-   * @param callback Contains the error message. //TODO: Implement error events
+   * @param {function} callback Contains the error message. //TODO: Implement error events
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   error(callback) {
     this.on(CLIENT_EVENTS.error, callback);
@@ -138,9 +142,10 @@ export default class Client extends EventEmitter {
   /**
    * A client event handler that is listening for a 'starting' event.
    * Event is emitted when the client begins initialization.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   starting(callback) {
     this.on(CLIENT_EVENTS.starting, callback);
@@ -149,9 +154,10 @@ export default class Client extends EventEmitter {
   /**
    * A client event handler that is listening for a 'started' event.
    * Event is emitted once the client has secured a connection successfully.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   started(callback) {
     this.on(CLIENT_EVENTS.started, callback);
@@ -160,9 +166,10 @@ export default class Client extends EventEmitter {
   /**
    * A client event handler that is listening for a 'stopping' event.
    * Event is emitted once the client has initiated a disconnect.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   stopping(callback) {
     this.on(CLIENT_EVENTS.stopping, callback);
@@ -171,9 +178,10 @@ export default class Client extends EventEmitter {
   /**
    * A client event handler that is listening for a 'stopped' event.
    * Event is emitted once the client has successfully disconnected from the server.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   stopped(callback) {
     this.on(CLIENT_EVENTS.stopped, callback);
@@ -182,9 +190,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection and client event handler that is listening for a 'receiving' event.
    * Event is emitted whenever a message is received by the client from the server. (Message is in compressed, raw form from server).
-   * @param callback Contains the compressed message data that the client is currently receiving.
+   * @param {function} callback Contains the compressed message data that the client is currently receiving.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   receiving(callback) {
     this.on(CLIENT_EVENTS.receiving, callback);
@@ -193,9 +202,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection and client event handler that is listening for a 'received' event.
    * Event is emitted whenever a message is received by the client from the server. (Message is decompressed by client, making it more managable).
-   * @param callback Contains the received decompressed message data.
+   * @param {function} callback Contains the received decompressed message data.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   received(callback) {
     this.on(CLIENT_EVENTS.received, callback);
@@ -204,9 +214,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection and client event handler that is listening for a 'stateChanging' event.
    * Event is emitted whenever the client's state or the connection's state is in the process of changing.
-   * @param callback Contains both the old and new state.
+   * @param {function} callback Contains both the old and new state.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   stateChanging(callback) {
     this.on(CLIENT_EVENTS.stateChanging, callback);
@@ -215,9 +226,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection and client event handler that is listening for a 'stateChanged' event.
    * Event is emitted whenever the client's state or the connection's state has changed.
-   * @param callback Contains the new state.
+   * @param {function} callback Contains the new state.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   stateChanged(callback) {
     this.on(CLIENT_EVENTS.stateChanged, callback);
@@ -226,9 +238,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection event handler that is listening for a 'disconnecting' event.
    * Event is emitted once the connection is in the process of stopping, initiated by the user, or automatically if the connection is lost unexpectedly.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   disconnecting(callback) {
     this.on(CONNECTION_EVENTS.disconnecting, callback);
@@ -237,9 +250,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection event handler that is listening for a 'disconnected' event.
    * Event is emitted once the connection has been completely haulted by the uesr, or has been lost unexpectedly.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   disconnected(callback) {
     this.on(CONNECTION_EVENTS.disconnected, callback);
@@ -248,9 +262,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection event handler that is listening for a 'reconnecting' event.
    * Event is emitted if the connection has been lost unexpectedly and is automatically attempting to reconnect.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   reconnecting(callback) {
     this.on(CONNECTION_EVENTS.reconnecting, callback);
@@ -259,9 +274,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection event handler that is listening for a 'reconnected' event.
    * Event is emitted if the connection has been successfully re-established after an unexpected disconnect.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   reconnected(callback) {
     this.on(CONNECTION_EVENTS.reconnected, callback);
@@ -270,9 +286,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection event listener that is listening for a 'connecting' event.
    * Event is emitted if the user has used the client to try and negotiate a connection to a server.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   connecting(callback) {
     this.on(CONNECTION_EVENTS.connecting, callback);
@@ -281,9 +298,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection event listener that is listening for a 'onConnected' event.
    * Event is emitted if the connection to the server was successfully established.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   connected(callback) {
     this.on(CONNECTION_EVENTS.onConnected, callback);
@@ -292,9 +310,10 @@ export default class Client extends EventEmitter {
   /**
    * A connection event listener that is listeing for a 'connectionSlow' event.
    * Currently not implemented.
-   * @param callback
+   * @param {function} callback Method that is executed once a starting event has been fired.
    * @function
    * @public
+   * @returns {void} Nothing is returned by this method.
    */
   connectionSlow(callback) {
     this.on(CLIENT_EVENTS.connectionSlow, callback);
@@ -302,7 +321,7 @@ export default class Client extends EventEmitter {
 
   /**
    * Negotiates th' request to th' ship 'n returns th' consequental promise that be created as a result.
-   * @returns {*}
+   * @returns {*} Returns the treaty for the server request.
    * @protected
    * @function
    */
@@ -317,8 +336,8 @@ export default class Client extends EventEmitter {
   /**
    * Takes a treaty (result 'o _negotiate()) 'n uses that 'n th' client configuration to find th' best transport protocol to use.
    * A user may specify a transport as well if they would like to not use th' automated selection 'o one.
-   * @param treaty
-   * @returns {Promise}
+   * @param {Object} treaty The result of the initial negotiation with the server.
+   * @returns {Promise} A promise that will automatically find the best connection type, or to use the one defined by the user.
    * @function
    * @private
    */

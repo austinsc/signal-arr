@@ -7,10 +7,11 @@ export default class EventEmitter {
 
   /**
    *Pushes an event to the passed in listener.
-   * @param event
-   * @param listener
+   * @param {Object} event The event that was fired.
+   * @param {Object} listener The listener that the fired event will be pushed to.
    * @function
    * @public
+   * @returns {void} Method does not return a value.
    */
   on(event, listener) {
     this.observers[event] = this.observers[event] || [];
@@ -19,10 +20,11 @@ export default class EventEmitter {
 
   /**
    * Removes an event from a passed in listener.
-   * @param event
-   * @param listener
+   * @param {Object} event Event to be removed from the listener.
+   * @param {Object} listener The listener the event will be removed from.
    * @function
    * @public
+   * @returns {void} Method does not return a value.
    */
   off(event, listener) {
     if (!this.observers[event]) {
@@ -42,10 +44,11 @@ export default class EventEmitter {
 
   /**
    * Emits the passed in event to all observers.
-   * @param event
-   * @param args
+   * @param {Object} event The event to be broadcasted to all available observers.
+   * @param {Object} args A variable number of objects passed in to attatch.
    * @function
    * @public
+   * @returns {void} Returns if there is no current observers for the passed in event.
    */
   emit(event, ...args) {
     if (!this.observers[event]) {
@@ -57,7 +60,7 @@ export default class EventEmitter {
 
   /**
    * Returns the true number of current observers.
-   * @returns {int}
+   * @returns {int} The current number of observers.
    * @function
    * @public
    */

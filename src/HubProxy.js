@@ -9,8 +9,8 @@ import EventEmitter from './EventEmitter';
 export default class HubProxy extends EventEmitter {
   /**
    * Initializes the proxy given the current client and the hub that the client is connected to.
-   * @param client
-   * @param hubName
+   * @param {Client} client The current HubClient that is initialized.
+   * @param {string} hubName The name of the hub that the user wishes to generate a proxy for.
    * @constructor
    */
   constructor(client, hubName) {
@@ -25,9 +25,9 @@ export default class HubProxy extends EventEmitter {
 
   /**
    * Invokes a server hub method with the given arguments.
-   * @param methodName The name of the server hub method
-   * @param args The arguments to pass into the server hub method.
-   * @returns {*}
+   * @param {string} methodName The name of the server hub method
+   * @param {Object} args The arguments to pass into the server hub method.
+   * @returns {*} The return statement invokes the send method, which sends the information the server needs to invoke the correct method.
    * @function
    */
   invoke(methodName, ...args) {

@@ -7,9 +7,10 @@ import _ from 'lodash';
 export default class Protocol {
   /**
    * Decompresses a message received from the server that is meant to contain information about invoking a method client-side.
-   * @param compressedClientHubInvocation
-   * @returns {{Hub: *, Method: (testMessage.M|{type, value}), Args: (*|string), State: (boolean|*)}}
+   * @param {Object} compressedClientHubInvocation The compressed message received from the server.
+   * @returns {Object} The decompressed message from the server. Contains client-side method invocation data.
    * @function
+   * @static
    * @public
    */
   static expandClientHubInvocation(compressedClientHubInvocation) {
@@ -23,8 +24,8 @@ export default class Protocol {
 
   /**
    * Decompresses a message received from a server hub into a more readible and workable form.
-   * @param compressedServerHubResponse
-   * @returns {{State: (boolean|*), Result: *, Progress: (*|{Id: *, Data: (string|D)}), Id: *, IsHubException: *, Error: (string|number), StackTrace: boolean, ErrorData: (string|D)}}
+   * @param {Object} compressedServerHubResponse The compressed, raw message received from the server.
+   * @returns {Object}  The decompressed message received from the server.
    * @function
    * @public
    */
@@ -46,8 +47,8 @@ export default class Protocol {
 
   /**
    * Decompresses a response from the server to a more readible and workable form.
-   * @param min
-   * @returns {{messageId: (string|number), messages: (testMessage.M|{type, value}|Array), initialized: boolean, shouldReconnect: boolean, longPollDelay: number, groupsToken: string}}
+   * @param {Object} min The message that has been received from the server.
+   * @returns {Object} The decompressed message received from the server.
    * @function
    * @public
    */
