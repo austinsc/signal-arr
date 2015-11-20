@@ -6,9 +6,10 @@ export default class WebSocketTransport extends Transport {
 
   /**
    * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new WebSocket transport.
-   * @param client
-   * @param treaty
-   * @param url
+   * @param {Client} client The client that will be initiating the new WebSocketTransport connection.
+   * @param {Object} treaty An object that holds the reults from the original negotiation between client-server. Contains critical connection information.
+   * @param {string} url The URL of the server the client is connecting to.
+   * @constructor
    */
   constructor(client, treaty, url) {
     super('webSockets', client, treaty);
@@ -18,9 +19,11 @@ export default class WebSocketTransport extends Transport {
 
   /**
    * Returns a promise to send th' passed in data to th' target URL.
-   * @param data
-   * @returns {Promise}
+   * @param {Object} data The message to send to the server.
+   * @returns {Promise} Promise that resolves once the message has been sent successfully.
    * @private
+   * @function
+   * @extends send
    */
   send(data) {
     return new Promise((resolve, reject) => {
@@ -34,7 +37,15 @@ export default class WebSocketTransport extends Transport {
 
   /**
    * Initates th' WebSocket connection, as well as handles onmessage, onerror, onclose, 'n onopen events.
-   * @returns {Promise}
+   * @returns {Promise} That resolves successfully once the client has been successfully connected to the server using the WebSocketsTransport.
+   * @public
+   * @fucntion
+   * @emits reconnecting
+   * @emits connecting
+   * @emits connected
+   * @emits reconnected
+   * @emits disconnected
+   * @extends start
    */
   start() {
     return new Promise((resolve, reject) => {
@@ -95,6 +106,11 @@ export default class WebSocketTransport extends Transport {
   }
   /**
    * Cleanly disconnects from th' target ship.
+   * @returns {void} Method does not return a value.
+   * @function
+   * @public
+   * @extends stop
+   * @emits disconnecting
    */
   stop() {
     if(this._socket) {
@@ -107,6 +123,8 @@ export default class WebSocketTransport extends Transport {
   /**
    * If th' keepAlive times out, closes th' connection cleanly 'n attempts to reconnect.
    * @private
+   * @returns {void} Method does not return a value.
+   * @emits disconnecting
    */
   _keepAliveTimeoutDisconnect() {
     this.emit(CONNECTION_EVENTS.disconnecting);
