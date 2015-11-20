@@ -7,9 +7,10 @@ import EventEmitter from '../EventEmitter';
 export default class Transport extends EventEmitter {
   /**
    * Initializes th' transport instance
-   * @param name th' moniker 'o th' transport (must be th' same value as th' ship's correspondin' transport moniker)
+   * @param {string} name th' moniker 'o th' transport (must be th' same value as th' ship's correspondin' transport moniker)
    * @param {Client} client th' parent SignalR client
-   * @param treaty th' response from th' negotiate request created by th' SignalR ship
+   * @param {Object} treaty th' response from th' negotiate request created by th' SignalR ship
+   * @constructor
    */
   constructor(name, client, treaty) {
     super();
@@ -36,6 +37,7 @@ export default class Transport extends EventEmitter {
    * Initiates a new transport 'n begins th' connection process.
    *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
    *  @abstract
+   *  @public
    */
   start() {
     return new Promise((resolve, reject) => {
@@ -45,7 +47,11 @@ export default class Transport extends EventEmitter {
 
   /**
    * Accessor fer th' state property 'o th' transport. Sets th' state to newState 'n automatically emits th' correct events.
-   * @param newState
+   * @param {string} newState The new state of the connection.
+   * @emits stateChanging
+   * @emits stateChanged
+   * @public
+   * @returns {void} This method does not return a value directly, it is used as an accessor to set a new state.
    */
   set state(newState) {
     if(!this._state) {
@@ -59,7 +65,8 @@ export default class Transport extends EventEmitter {
 
   /**
    *Accessor fer th' state property 'o th' transport. Returns th' current state 'o th' client.
-   * @returns {*}
+   * @returns {string} Returns the current state of the connection
+   * @public
    */
   get state() {
     return this._state;
@@ -67,7 +74,8 @@ export default class Transport extends EventEmitter {
 
   /**
    * Accessor fer th' connection token 'o th' transport. Returns th' current connection token 'o th' client.
-   * @returns {*}
+   * @returns {Object} Returns the current connection's transport token.
+   * @public
    */
   get connectionToken() {
     return this._connectionToken;
@@ -76,7 +84,9 @@ export default class Transport extends EventEmitter {
   /**
    * Haults th' current connection 'n safely disconnects.
    *  @returns {Promise} that gunna reject due to th' method needin' to be overridden.
+   *  @function
    *  @abstract
+   *  @public
    */
   stop() {
     return new Promise((resolve, reject) => {
@@ -87,7 +97,9 @@ export default class Transport extends EventEmitter {
   /**
    * Sends a message to th' connected ship.
    * @returns {Promise} thta gunna reject due to th' method needin' to be overridden.
+   * @function
    * @abstract
+   * @public
    */
   send() {
     return new Promise((resolve, reject) => {
@@ -97,8 +109,12 @@ export default class Transport extends EventEmitter {
 
   /**
    * Emits an event at both th' Transport 'n Client levels without needin' to invoke both emits seperately.
-   * @param event Th' event that be to be emitted.
-   * @param args Arguments that correspond to th' event.
+   * @param {Object} event Th' event that be to be emitted.
+   * @param {Object} args Arguments that correspond to th' event.
+   * @function
+   * @public
+   * @extends emit
+   * @returns {void} This method does not return a value.
    */
   emit(event, ...args) {
     this._client.emit(event, ...args);
@@ -108,8 +124,12 @@ export default class Transport extends EventEmitter {
   /**
    * Private method that takes a passed in compressed message (recieved from th' ship or other service), 'n decompresses it fer readability 'n use.
    * Messages be also pushed into a buffer 'n timestamped as well.
-   * @param compressedResponse
+   * @param {Object} compressedResponse The compressed response from the server.
+   * @emits receiving
+   * @emits received
+   * @returns {void} Method does not return a value.
    * @protected
+   * @function
    */
   _processMessages(compressedResponse) {
     this.emit(CONNECTION_EVENTS.receiving, compressedResponse);
@@ -121,8 +141,10 @@ export default class Transport extends EventEmitter {
 
   /**
    * Accessor fer th' timestampin' th' last message recieved. Initiates a keepAlive timeout if keepAlive be supported by th' current transport type.
-   * @param newTimestamp
+   * @param {Object} newTimestamp A timestamp of the last received message.
    * @private
+   * @function
+   * @returns {void} Method does not return a value.
    */
   set _lastMessageAt(newTimestamp) {
     if(this._supportsKeepAlive()) {
@@ -133,7 +155,7 @@ export default class Transport extends EventEmitter {
 
   /**
    * Accessor that returns th' latest message's timestamp.
-   * @returns {*}
+   * @returns {Object} Returns the timestamp of the last received message.
    * @private
    */
   get _lastMessageAt() {
@@ -143,6 +165,7 @@ export default class Transport extends EventEmitter {
   /**
    * Determines if th' current transport supports keepAlive functionality.
    * @returns {*|ServerSentEventsTransport.supportsKeepAlive|LongPollingTransport.supportsKeepAlive|NullTransport.supportsKeepAlive|WebSocketTransport.supportsKeepAlive}
+   * Returns true if the transport type supports keepAlive or false if it does not.
    * @private
    */
   _supportsKeepAlive() {

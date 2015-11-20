@@ -27,6 +27,7 @@ export default class Protocol {
    * @param {Object} compressedServerHubResponse The compressed, raw message received from the server.
    * @returns {Object}  The decompressed message received from the server.
    * @function
+   * @static
    * @public
    */
   static expandServerHubResponse(compressedServerHubResponse) {
@@ -50,6 +51,7 @@ export default class Protocol {
    * @param {Object} min The message that has been received from the server.
    * @returns {Object} The decompressed message received from the server.
    * @function
+   * @static
    * @public
    */
   static expandResponse(min) {

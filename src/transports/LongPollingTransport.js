@@ -7,15 +7,17 @@ import {CONNECTION_STATES, CONNECTION_EVENTS} from '../Constants';
 
 /**
  * Th' long pollin' transport protocol.
+ * @class
  */
 export default class LongPollingTransport extends Transport {
   static supportsKeepAlive = false;
 
   /**
    * Uses th' current client, treaty from th' initial negotiation, 'n target URL to construct a new Longpollin' transport.
-   * @param client
-   * @param treaty
-   * @param url
+   * @param {Client} client The current instance of the user's client.
+   * @param {Object} treaty An Object that is the result of the initial client-server negotiation. Contains vital connection information.
+   * @param {string} url The URL of the server the user wishes to connect to.
+   * @constructor
    */
   constructor(client, treaty, url) {
     super('longPolling', client, treaty);
@@ -26,6 +28,7 @@ export default class LongPollingTransport extends Transport {
   /**
    * Initiates th' long pollin' transport protocol fer th' current connection.
    * @returns {Promise} That resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
+   * @params {Promise}
    */
   _queryData(current) {
     return current
