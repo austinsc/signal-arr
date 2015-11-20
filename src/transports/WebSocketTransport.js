@@ -106,7 +106,7 @@ export default class WebSocketTransport extends Transport {
   }
   /**
    * Cleanly disconnects from th' target ship.
-   * @returns {void} Method does not return a value.
+   * @returns {Promise} Resolves once the connection has successfully halted.
    * @function
    * @public
    * @extends stop

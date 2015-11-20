@@ -28,7 +28,9 @@ export default class LongPollingTransport extends Transport {
   /**
    * Initiates th' long pollin' transport protocol fer th' current connection.
    * @returns {Promise} That resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
-   * @params {Promise}
+   * @param {Promise} current The current connection promise.
+   * @private
+   * @function
    */
   _queryData(current) {
     return current
@@ -40,7 +42,11 @@ export default class LongPollingTransport extends Transport {
 
   /**
    *Initiates th' connection after th' LongPollin'Transport transport type be declared via th' initial negotiation.
-   * @returns {Promise.<T>}
+   * @returns {Promise.<T>} Resolves once the client has successfully connected and has started to poll the server for a response.
+   * @function
+   * @public
+   * @extends start
+   * @emits connected
    */
   start() {
     if(this._pollTimeoutId) {
@@ -61,6 +67,9 @@ export default class LongPollingTransport extends Transport {
   /**
    * Initiates th' long pollin' transport protocol fer th' current connection.
    * @returns {Promise} that resolves once th' long pollin' transport has started successfully 'n has begun pollin'.
+   * @function
+   * @private
+   * @emits connecting
    */
   _connect() {
     const url = this._url + '/connect';
@@ -89,6 +98,9 @@ export default class LongPollingTransport extends Transport {
    * Initiates a poll to th' ship 'n hold th' poll open 'til th' ship be able to send new information.
    * @returns {Promise} That resolves if th' client must reconnect due to bad connection.
    * Else, th' method be called recursively after it recieves new information from th' ship.
+   * @emits reconnected
+   * @function
+   * @private
    */
   _poll() {
     const poll = () => {
@@ -130,8 +142,11 @@ export default class LongPollingTransport extends Transport {
 
   /**
    * Initiates th' long pollin' transport protocol fer th' current connection.
-   *  @params {data} data contains th' information that th' client wishes to send to th' ship.
+   *  @param {data} data contains th' information that th' client wishes to send to th' ship.
    *  @returns {Promise} that resolves once th' message has be sent..
+   *  @function
+   *  @public
+   *  @extends send
    */
   send(data) {
     return request
@@ -147,6 +162,9 @@ export default class LongPollingTransport extends Transport {
   /**
    * Initiates a reconnection to th' ship in th' case that th' connection be too slow or be lost completely.
    *  @returns {Promise} that resolves once th' client has be successfully reconnected.
+   *  @function
+   *  @private
+   *  @emits reconnecting
    */
   _reconnect() {
     const url = this._url + '/connect';
@@ -170,6 +188,12 @@ export default class LongPollingTransport extends Transport {
 
   /**
    * Clears th' timeouts 'n stops th' connection to th' ship cleanly.
+   * @returns {Promise} Resolves once the transport has successfully halted.
+   * @public
+   * @function
+   * @extends stop
+   * @emits disconnecting
+   * @emits disconnected
    */
   stop() {
     clearTimeout(this._currentTimeoutId);

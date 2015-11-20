@@ -82,7 +82,7 @@ export default class ServerSentEventsTransport extends Transport {
 
   /**
    * Cleanly disconnects from th' target ship.
-   * @returns {void} Method does not return a value.
+   * @returns {Promise} Resolves once the connection has been halted successfully.
    * @function
    * @public
    * @extends stop
