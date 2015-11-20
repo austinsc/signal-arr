@@ -1,7 +1,5 @@
 /*global:__dirname*/
-var _ = require('lodash');
 var path = require('path');
-var webpack = require('webpack');
 module.exports = {
   resolve: {
     root: path.join(__dirname, 'src'),
@@ -33,9 +31,9 @@ module.exports = {
       loader: 'babel?optional=runtime&stage=0',
       exclude: [/node_modules/, /bower_components/]
     }, /*{
-      test: /\.test\.js/i,
-      loader: 'mocha!babel?optional=runtime&stage=0'
-    }, */{
+     test: /\.test\.js/i,
+     loader: 'mocha!babel?optional=runtime&stage=0'
+     }, */{
       test: /\.json$/i,
       loader: 'json'
     }, {

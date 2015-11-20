@@ -34,6 +34,7 @@ rules:
   babel/object-shorthand: 1
   babel/new-cap: 0
   private-variables/no-access: [2, class-only]
+  valid-jsdoc: 2
 
 ecmaFeatures:
   modules: true
