@@ -1,10 +1,11 @@
-import {CLIENT_STATES,CONNECTION_STATES} from './Constants';
+import {CONNECTION_STATES} from './Constants';
 
 export default class ConnectingMessageBuffer {
   /**
    * Takes the client and drainCallback and creates an efficient buffer for buffering recieved messages.
    * @param client
    * @param drainCallback
+   * @constructor
    */
   constructor(client, drainCallback) {
     this.buffer = [];
@@ -16,6 +17,8 @@ export default class ConnectingMessageBuffer {
    * Attempts to add a passed in message to the buffer.
    * @param message
    * @returns {boolean}
+   * @function
+   * @public
    */
   tryBuffer(message) {
     if(this.client.transport === CONNECTION_STATES.connecting) {
@@ -27,6 +30,8 @@ export default class ConnectingMessageBuffer {
 
   /**
    * Drains the current buffer and removes all messages.
+   * @function
+   * @public
    */
   drain() {
     // Ensure that the connection is connected when we drain (do not want to drain while a connection is not active)
