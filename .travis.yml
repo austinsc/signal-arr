@@ -4,6 +4,7 @@ node_js:
 - node
 env:
   - CI=true
+before_script: npm install -g babel-cli
 script:
   - npm run build
   - npm run test

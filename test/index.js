@@ -1,10 +1,7 @@
-//function requireAll(r) { r.keys().forEach(r); }
-//requireAll(require.context('./', true, /\.test\.js$/));
-
-require('./LongPollingTransport.test.js');
-require('./WebSocketTransport.test');
-require('./Client.test.js');
-require('./Connection.test.js');
-require('./HubProxy.test.js');
-require('./HubClient.test.js');
+require('./Client.test');
+require('./Connection.test');
+require('./HubClient.test');
+require('./HubProxy.test');
 require('./ServerSentEventsTransport.test');
+require('./LongPollingTransport.test');
+require('./WebSocketTransport.test');
