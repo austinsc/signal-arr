@@ -15,8 +15,8 @@
     "url": "github.com/RoviSys/signal-arr"
   },
   "authors": [
-    "Stephen C. Austin",
-    "Brandon Alanskas"
+    "Stephen C. Austin <stephen.austin@rovisys.com>",
+    "Brandon Alanskas <brandon.alanskas@rovisys.com>"
   ],
   "license": "MIT",
   "devDependencies": {
