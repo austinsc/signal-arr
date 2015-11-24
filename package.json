@@ -2,11 +2,11 @@
   "name": "signal-arr",
   "version": "0.0.13",
   "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "dev": "./node_modules/.bin/babel src -s -w -d dist",
     "clean": "./node_modules/.bin/rimraf dist coverage",
-    "build": "./node_modules/.bin/babel src -s -o dist/index.js",
+    "build": "./node_modules/.bin/babel src -s -o index.js",
     "test": "./node_modules/.bin/mocha",
     "test-cov": "./node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha -- test && cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js && rimraf ./coverage",
     "lint": "./node_modules/.bin/eslint src"
