@@ -7,7 +7,8 @@
     "dev": "node_modules/.bin/babel src -s -w -d dist",
     "clean": "node_modules/.bin/rimraf dist coverage",
     "build": "./node_modules/.bin/babel src -s -o dist/index.js",
-    "test": "node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha -- test && cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js && rimraf ./coverage",
+    "test": "node_modules/.bin/mocha",
+    "test-cov": "node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha -- test && cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js && rimraf ./coverage",
     "lint": "node_modules/.bin/eslint src"
   },
   "repository": {
@@ -32,6 +33,7 @@
     "eslint": "^1.0.0",
     "eslint-plugin-babel": "^2.1.1",
     "eslint-plugin-private-variables": "austinsc/javascript-private-variables",
+    "isparta": "^4.0.0",
     "istanbul": "^0.4.0",
     "lodash": "^3.10.1",
     "mocha": "^2.2.4",

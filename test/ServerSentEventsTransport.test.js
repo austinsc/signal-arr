@@ -49,7 +49,7 @@ describe('ServerSentEventsTransport', function() {
           setTimeout(() => {
             expect(client._transport.state).to.be.equal(CONNECTION_STATES.connected);
             done();
-          }, 100);
+          }, 500);
         }, 50);
       });
   });
