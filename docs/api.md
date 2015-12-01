@@ -178,7 +178,7 @@ Event is emitted when an error is thrown.
 
 **Parameters**
 
--   `callback`  Contains the error message. //TODO: Implement error events
+-   `callback`  Contains the error message. 
 
 ## received
 

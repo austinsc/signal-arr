@@ -2,7 +2,7 @@
   "name": "signal-arr",
   "version": "0.0.13",
   "description": "A piratey version of the SignalR Javascript client without stupid jquery.",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "dev": "./node_modules/.bin/babel src -s -w -d dist",
     "clean": "./node_modules/.bin/rimraf dist coverage",
@@ -49,5 +49,14 @@
     "lodash.takeright": "^3.0.0",
     "logdown": "^1.2.4",
     "superagent": "fiatjaf/superagent"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-0"
+    ],
+    "plugins": [
+      "transform-es2015-modules-commonjs"
+    ]
   }
 }
