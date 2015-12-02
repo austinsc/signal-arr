@@ -5,6 +5,7 @@ import Client, {CLIENT_CONFIG_DEFAULTS} from './Client';
 import HubProxy from './HubProxy';
 import Protocol from './Protocol';
 import PromiseMaker from './PromiseMaker';
+import _ from 'lodash';
 
 
 export const HUB_CLIENT_CONFIG_DEFAULTS = {
