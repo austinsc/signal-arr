@@ -50,7 +50,7 @@ export default class HubClient extends Client {
           if(func) {
             const arrrrgs = Array.prototype.join(...data.Args, ', ');
             this._logger.info(`Invoking \`${data.Method}(${arrrrgs})\`. `);
-            func.apply(data.State, ...data.Args);
+            func(data.State, ...data.Args);
           } else {
             this._logger.warn(`Client function not found for method \`${data.Method}\` on hub \`${data.Hub}\`.`);
           }
