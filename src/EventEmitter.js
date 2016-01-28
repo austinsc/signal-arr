@@ -66,7 +66,6 @@ export default class EventEmitter {
    * @public
    */
   numberOfObservers() {
-    console.log(_.map(this.observers).map(x => x.length));
     if(_.map(this.observers).map(x => x.length).length === 0)
       return 0;
     else
