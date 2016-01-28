@@ -66,9 +66,11 @@ export default class EventEmitter {
    * @public
    */
   numberOfObservers() {
-    if(_.map(this.observers).map(x => x.length).length === 0)
+    if(_.map(this.observers).map(x => x.length).length === 0){
       return 0;
-    else
+    }
+    else{
       return sum(_.map(this.observers).map(x => x.length));
+    }
   }
 }
