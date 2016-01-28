@@ -1,4 +1,5 @@
 import sum from 'lodash.sum';
+import _ from 'lodash';
 
 export default class EventEmitter {
   constructor() {
@@ -65,6 +66,10 @@ export default class EventEmitter {
    * @public
    */
   numberOfObservers() {
-    return sum(this.observers, o => o.length);
+    console.log(_.map(this.observers).map(x => x.length));
+    if(_.map(this.observers).map(x => x.length).length === 0)
+      return 0;
+    else
+      return sum(_.map(this.observers).map(x => x.length));
   }
 }
