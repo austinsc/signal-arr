@@ -22,7 +22,7 @@ rules:
   no-trailing-spaces: 1
   no-use-before-define: [2, nofunc]
   no-unused-vars: 1
-  quotes: [2, single, avoid-escape]
+  quotes: [2, single, { avoidEscape: true, allowTemplateLiterals: true }]
   semi: [2, always]
   space-after-keywords: [0, never]
   space-in-brackets: [0, always]
