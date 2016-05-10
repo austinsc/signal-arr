@@ -3,6 +3,12 @@ import {expect} from 'chai';
 import Client from '../src/Client';
 import {CONNECTION_STATES} from '../src/Constants';
 
+const URL = 'http://signalr.pwnt.co:1984/raw-connection';
+const PROTOCOL_VERSION = '1.5';
+const QUERY_STRING = {
+  'access_token': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+};
+
 describe('Connection', function() {
   this.timeout(15000);
 
@@ -13,7 +19,8 @@ describe('Connection', function() {
   it('Can handle events: Connecting and Connected.', function(done) {
     let connecting = false;
     let connected = false;
-    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+    const client = new Client({url: URL, protocolVersion: PROTOCOL_VERSION});
+    client.qs = QUERY_STRING;
     client.connecting(() => {
       connecting = true;
     });
@@ -30,7 +37,8 @@ describe('Connection', function() {
   it('Can handle events: Disconnecting and Disconnected.', function(done) {
     let disconnecting = false;
     let disconnected = false;
-    const client = new Client({url: 'http://signalr.pwnt.co:1984/raw-connection'});
+    const client = new Client({url: URL, protocolVersion: PROTOCOL_VERSION});
+    client.qs = QUERY_STRING;
     client.disconnecting(() => {
       disconnecting = true;
     });

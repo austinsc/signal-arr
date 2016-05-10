@@ -52,7 +52,7 @@ export default class LongPollingTransport extends Transport {
     if(this._pollTimeoutId) {
       throw new Error('A polling session has already been initialized. Call `stop()` before attempting to `start()` again.');
     }
-    this._logger.info(`*${this.constructor.name}* starting...`);
+    console.info(`*${this.constructor.name}* starting...`);
     return this._connect()
       //.then(this._startConnection.bind(this))
       .then(() => {
@@ -73,7 +73,7 @@ export default class LongPollingTransport extends Transport {
    */
   _connect() {
     const url = this._url + '/connect';
-    this._logger.info(`Connecting to ${url}`);
+    console.info(`Connecting to ${url}`);
     this.state = CONNECTION_STATES.connecting;
     this.emit(CONNECTION_EVENTS.connecting);
     this._current = request
@@ -170,7 +170,7 @@ export default class LongPollingTransport extends Transport {
     const url = this._url + '/connect';
     this.emit(CONNECTION_EVENTS.reconnecting);
     this.state = CONNECTION_STATES.reconnecting;
-    this._logger.info(`Attempting to reconnect to ${url}`);
+    console.info(`Attempting to reconnect to ${url}`);
     this._reconnectTries++;
     this._current = request
       .post(url);
@@ -203,9 +203,9 @@ export default class LongPollingTransport extends Transport {
       this._current.abort();
     }
     this.emit(CONNECTION_EVENTS.disconnecting);
-    this._logger.info(`Disconnecting from ${this._url}.`);
+    console.info(`Disconnecting from ${this._url}.`);
     this.state = CONNECTION_STATES.disconnected;
     this.emit(CONNECTION_EVENTS.disconnected);
-    this._logger.info('Successfully disconnected.');
+    console.info('Successfully disconnected.');
   }
 }

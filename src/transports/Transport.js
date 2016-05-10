@@ -17,7 +17,7 @@ export default class Transport extends EventEmitter {
     this.state = CONNECTION_STATES.disconnected;
     this.name = name;
     this._client = client;
-    this._logger = new Logdown({prefix: `${this.name}`});
+    //this._logger = new Logdown({prefix: `${this.name}`});
     this._abortRequest = false;
     this._lastMessages = [];
     this._keepAliveData = {};
@@ -170,5 +170,62 @@ export default class Transport extends EventEmitter {
    */
   _supportsKeepAlive() {
     return this._keepAliveData.activated && this.supportsKeepAlive;
+  }
+
+
+  /**
+   * prepareQueryString
+   *
+   * Prepares and returns query string
+   *
+   * qs: query string (object|string)
+   */
+  prepareQueryString(url, qs) {
+    let appender = url.indexOf('?') !== -1 ? '&' : '?';
+    let firstChar;
+
+    if (!qs) {
+      return url;
+    }
+
+    if (typeof (qs) === 'object') {
+      let queryString = this._objectToQueryString(qs);
+      if (queryString.length > 0) {
+        queryString = appender + queryString;
+      }
+      return url + queryString;
+    }
+
+    if (typeof (qs) === 'string') {
+      firstChar = qs.charAt(0);
+
+      if (firstChar === '?' || firstChar === '&') {
+        appender = '';
+      }
+
+      return url + appender + qs;
+    }
+
+    throw new Error(Constants.invalidQueryString);
+  }
+
+  /**
+   * _objectToQueryString
+   *
+   * Converts an object of query string parameters to a string
+   *
+   * obj: parameters object
+   */
+  _objectToQueryString(obj) {
+    if (!obj || typeof (obj) !== 'object') {
+      throw new Error(Constants.notValidObject);
+    }
+
+    return Object.keys(obj).map(function(k) {
+      /*if (k === 'clientProtocol') {
+        return '';
+        }*/
+      return encodeURIComponent(k) + '=' + encodeURIComponent(obj[k])
+    }).join('&');
   }
 }
