@@ -104,7 +104,7 @@ export default class Client extends EventEmitter {
     return this._negotiate()
       .then(this._findTransport.bind(this))
       .then(transport => {
-        console.info(`Using the *${transport.constructor.name}*.`);
+        //console.info(`Using the *${transport.constructor.name}*.`);
         this._transport = transport;
         this.emit(CLIENT_EVENTS.started);
         this.state = CLIENT_STATES.started;
