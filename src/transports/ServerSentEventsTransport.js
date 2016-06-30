@@ -1,5 +1,5 @@
 import Transport from './Transport';
-import {CONNECTION_EVENTS, CONNECTION_STATES} from '../Constants';
+import {CONNECTION_EVENTS, CONNECTION_STATES, CLIENT_STATES} from '../Constants';
 import EventSourcePolyfill from 'eventsource';
 import request from 'superagent';
 import PromiseMaker from '../PromiseMaker';
@@ -80,6 +80,8 @@ export default class ServerSentEventsTransport extends Transport {
       };
       this._eventSource.onerror = e => {
         console.error(`*${this.constructor.name}* connection errored: ${e}`);
+
+        this.state = CLIENT_STATES.stopped;
       };
     });
   }
@@ -136,4 +138,5 @@ export default class ServerSentEventsTransport extends Transport {
     this._reconnectTimeoutId = setTimeout(this.start(), this._reconnectWindow);
   }
 }
+
 
