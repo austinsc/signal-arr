@@ -17,7 +17,7 @@ export default class Transport extends EventEmitter {
     this.state = CONNECTION_STATES.disconnected;
     this.name = name;
     this._client = client;
-    //this._logger = new Logdown({prefix: `${this.name}`});
+    this._logger = new Logdown({prefix: `${this.name}`});
     this._abortRequest = false;
     this._lastMessages = [];
     this._keepAliveData = {};
@@ -229,3 +229,4 @@ export default class Transport extends EventEmitter {
     }).join('&');
   }
 }
+

@@ -42,14 +42,14 @@ export default class ServerSentEventsTransport extends Transport {
         return reject(new Error('An EventSource has already been initialized. Call `stop()` before attempting to `start()` again.'));
       }
 
-      //console.info(`*${this.constructor.name}* starting...`);
+      this._logger.info(`*${this.constructor.name}* starting...`);
       let url = this._url;
       if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
-        //console.info(`Reconnecting to ${url}`);
+        this._logger.info(`Reconnecting to ${url}`);
         url += `/reconnect?transport=serverSentEvents&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this.emit(CONNECTION_EVENTS.reconnecting);
       }else {
-        //console.info(`Connecting to ${url}`);
+        this._logger.info(`Connecting to ${url}`);
         url += `/connect?transport=serverSentEvents&connectionToken=${encodeURIComponent(this._connectionToken)}`;
         this.emit(CONNECTION_EVENTS.connecting);
         this.state = CONNECTION_STATES.connecting;
@@ -62,7 +62,7 @@ export default class ServerSentEventsTransport extends Transport {
       this._eventSource = new EventSource(url);
       this._eventSource.onopen = e => {
         if(e.type === 'open') {
-          //console.info(`*${this.constructor.name}* connection opened.`);
+          this._logger.info(`*${this.constructor.name}* connection opened.`);
           if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
             this.emit(CONNECTION_EVENTS.reconnected);
           } else {
@@ -79,7 +79,7 @@ export default class ServerSentEventsTransport extends Transport {
         this._processMessages(e.data);
       };
       this._eventSource.onerror = e => {
-        //console.error(`*${this.constructor.name}* connection errored: ${e}`);
+        this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);
       };
     });
   }
@@ -98,7 +98,7 @@ export default class ServerSentEventsTransport extends Transport {
       this.emit(CONNECTION_EVENTS.disconnecting);
       this._intentionallyClosed = true;
       this._eventSource.close();
-      //console.info(`*${this.constructor.name}* connection closed.`);
+      this._logger.info(`*${this.constructor.name}* connection closed.`);
       this.state = CONNECTION_STATES.disconnected;
       this.emit(CONNECTION_EVENTS.disconnected);
     }
@@ -131,8 +131,9 @@ export default class ServerSentEventsTransport extends Transport {
     this.emit(CONNECTION_EVENTS.disconnecting);
     this._intentionallyClosed = false;
     this._eventSource.close();
-    //console.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
+    this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
     this.state = CONNECTION_STATES.reconnecting;
     this._reconnectTimeoutId = setTimeout(this.start(), this._reconnectWindow);
   }
 }
+
