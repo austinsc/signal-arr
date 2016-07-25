@@ -46,7 +46,7 @@
     "lodash.last": "^3.0.0",
     "lodash.mapvalues": "^4.0.1",
     "lodash.sum": "^4.0.0",
-    "lodash.takeright": "^4.0.0",
+    "lodash.takeright": "^4.1.0",
     "logdown": "^1.2.4",
     "superagent": "fiatjaf/superagent"
   }
