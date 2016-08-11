@@ -1,3 +1,4 @@
+import WebSocketTransport from './WebSocketTransport';
 import ServerSentEventsTransport from './ServerSentEventsTransport';
 import LongPollingTransport from './LongPollingTransport';
 import NullTransport from './NullTransport';
@@ -44,6 +45,7 @@ export function AvailableTransports() {
    */
 
   return [
+    WebSocketTransport,
     ServerSentEventsTransport,
     LongPollingTransport,
     NullTransport
