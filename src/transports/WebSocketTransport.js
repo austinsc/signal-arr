@@ -11,10 +11,11 @@ export default class WebSocketTransport extends Transport {
    * @param {string} url The URL of the server the client is connecting to.
    * @constructor
    */
-  constructor(client, treaty, url) {
+  constructor(client, treaty, url, qs) {
     super('webSockets', client, treaty);
     this._intentionallyClosed = null;
     this._url = url;
+    this._qs = qs;
   }
 
   /**
@@ -75,6 +76,10 @@ export default class WebSocketTransport extends Transport {
         url += `&connectionData=${JSON.stringify(this._client.connectionData)}`;
       }
       url += '&tid=' + Math.floor(Math.random() * 11);
+
+      // Query String
+      url = this.prepareQueryString(url, this._qs);
+      
       this._socket = new WebSocket(url);
       this._socket.onopen = e => {
         if(e.type === 'open') {
