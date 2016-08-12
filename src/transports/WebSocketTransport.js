@@ -58,6 +58,9 @@ export default class WebSocketTransport extends Transport {
 
       console.info(`*${this.constructor.name}* starting...`);
       let url = this._url.replace(/http(s)?:/, 'ws:');
+      if (url.substr(0, 5) === 'https')
+        url = this._url.replace(/http(s)?:/, 'wss:');
+      
       console.info(`Connecting to ${url}`);
 
       if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
