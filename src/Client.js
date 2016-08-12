@@ -32,7 +32,7 @@ export default class Client extends EventEmitter {
   constructor(options) {
     super();
     this._config = Object.assign({}, CLIENT_CONFIG_DEFAULTS, options || {});
-    //this._logger = this._config.logger;
+    //console = this._config.logger;
     this.state = CLIENT_STATES.stopped;
     this._connectingMessageBuffer = new ConnectingMessageBuffer(this, this.emit.bind(this, CLIENT_EVENTS.received));
     this.connectionData = [];
@@ -129,7 +129,7 @@ export default class Client extends EventEmitter {
       this._transport.stop();
       this.state = CLIENT_STATES.stopped;
       this.emit(CLIENT_EVENTS.stopped);
-      this._logger.info('Client stopped');
+      console.info('Client stopped');
     }
   }
 
@@ -375,7 +375,7 @@ export default class Client extends EventEmitter {
           }
         } else {
           // Otherwise, Auto Negotiate the transport
-          this._logger.info(`Negotiating the transport...`);
+          console.info(`Negotiating the transport...`);
           async.detectSeries(availableTransports.map(x => new x(this, treaty, this._config.url, this.qs)),
             (t, c) => t.start().then(() => c(t)).catch(() => c()),
             transport => transport ? resolve(transport) : reject('No suitable transport was found.'));

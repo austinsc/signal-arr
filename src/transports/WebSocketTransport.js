@@ -56,9 +56,9 @@ export default class WebSocketTransport extends Transport {
         return reject(new Error('A socket has already been initialized. Call `stop()` before attempting to `start()` again.'));
       }
 
-      this._logger.info(`*${this.constructor.name}* starting...`);
+      console.info(`*${this.constructor.name}* starting...`);
       let url = this._url.replace(/http(s)?:/, 'ws:');
-      this._logger.info(`Connecting to ${url}`);
+      console.info(`Connecting to ${url}`);
 
       if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
         url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
@@ -75,7 +75,7 @@ export default class WebSocketTransport extends Transport {
       this._socket = new WebSocket(url);
       this._socket.onopen = e => {
         if(e.type === 'open') {
-          this._logger.info(`*${this.constructor.name}* connection opened.`);
+          console.info(`*${this.constructor.name}* connection opened.`);
           if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
             this.emit(CONNECTION_EVENTS.reconnected);
           } else {
@@ -89,15 +89,15 @@ export default class WebSocketTransport extends Transport {
         this._processMessages(e.data);
       };
       this._socket.onerror = e => {
-        this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);
+        console.error(`*${this.constructor.name}* connection errored: ${e}`);
       };
       this._socket.onclose = () => {
         if(this._intentionallyClosed) {
-          this._logger.info(`*${this.constructor.name}* connection closed.`);
+          console.info(`*${this.constructor.name}* connection closed.`);
           this.state = CONNECTION_STATES.disconnected;
           this.emit(CONNECTION_EVENTS.disconnected);
         } else {
-          this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
+          console.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
           this.state = CONNECTION_STATES.reconnecting;
           this._reconnectTimeoutId = setTimeout(this.start(), this._reconnectWindow);
         }
