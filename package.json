@@ -31,7 +31,7 @@
     "babel-preset-stage-0": "^6.1.18",
     "chai": "^3.4.0",
     "coveralls": "^2.11.4",
-    "eslint": "^1.10.3",
+    "eslint": "^2.12.0",
     "eslint-plugin-babel": "^3.0.0",
     "eslint-plugin-private-variables": "austinsc/javascript-private-variables",
     "isparta": "^4.0.0",
