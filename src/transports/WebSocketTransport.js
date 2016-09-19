@@ -1,5 +1,5 @@
 import Transport from './Transport';
-import {CONNECTION_EVENTS, CONNECTION_STATES} from '../Constants';
+import {CONNECTION_EVENTS, CONNECTION_STATESi, CLIENT_STATES} from '../Constants';
 
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
@@ -101,6 +101,8 @@ export default class WebSocketTransport extends Transport {
       };
       this._socket.onerror = e => {
         console.error(`*${this.constructor.name}* connection errored: ${e}`);
+
+        this.state = CLIENT_STATES.stopped;
       };
       this._socket.onclose = () => {
         if(this._intentionallyClosed) {
