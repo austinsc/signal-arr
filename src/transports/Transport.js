@@ -184,7 +184,7 @@ export default class Transport extends EventEmitter {
     let appender = url.indexOf('?') !== -1 ? '&' : '?';
     let firstChar;
 
-    if (!qs) {
+    if (!qs || qs === '') {
       return url;
     }
 
