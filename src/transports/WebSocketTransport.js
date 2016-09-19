@@ -1,5 +1,5 @@
 import Transport from './Transport';
-import {CONNECTION_EVENTS, CONNECTION_STATESi, CLIENT_STATES} from '../Constants';
+import {CONNECTION_EVENTS, CONNECTION_STATES, CLIENT_STATES} from '../Constants';
 
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
