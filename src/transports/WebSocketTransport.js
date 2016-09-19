@@ -60,10 +60,12 @@ export default class WebSocketTransport extends Transport {
       console.info(`*${this.constructor.name}* starting...`);
 
       // Replace protocols: http by ws
-      let url = this._url.replace(/http:/, 'ws:');
-
-      // https by wss
-      url = this._url.replace(/https:/, 'wss:');
+      let url = '';
+      if (this._url.indexOf('http://') === 0) {
+        url = 'ws' + this._url.slice(4);
+      } else if (this._url.indexOf('https') === 0) {
+        url = 'wss' + this._url.slice(5);
+      }
       
       console.info(`Connecting to ${url}`);
 
