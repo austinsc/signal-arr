@@ -35,7 +35,7 @@
     "eslint-plugin-babel": "^3.0.0",
     "eslint-plugin-private-variables": "austinsc/javascript-private-variables",
     "isparta": "^4.0.0",
-    "istanbul": "^0.4.0",
+    "istanbul": "^0.4.4",
     "lodash": "^4.15.0",
     "mocha": "^3.0.2",
     "rimraf": "^2.5.0"
