@@ -18,7 +18,7 @@ export default class HubProxy extends EventEmitter {
     this._state = {};
     this._client = client;
     this._hubName = hubName;
-    this._logger = new Logdown({prefix: hubName});
+    //this._logger = new Logdown({prefix: hubName});
     this.funcs = {};
     this.server = {};
   }
@@ -50,18 +50,18 @@ export default class HubProxy extends EventEmitter {
         } else if(result.Error) {
           // Server hub method threw an exception, log it & reject the deferred
           if(result.StackTrace) {
-            this._logger.error(`${result.Error}\n${result.StackTrace}.`);
+            console.error(`${result.Error}\n${result.StackTrace}.`);
           }
           // result.ErrorData is only set if a HubException was thrown
           const source = result.IsHubException ? 'HubException' : 'Exception';
           const error = new Error(result.Error);
           error.source = source;
           error.data = result.ErrorData;
-          this._logger.error(`${this._hubName}.${methodName} failed to execute. Error: ${error.message}`);
+          console.error(`${this._hubName}.${methodName} failed to execute. Error: ${error.message}`);
           reject(error);
         } else {
           // Server invocation succeeded, resolve the deferred
-          this._logger.info(`Invoked ${this._hubName}\.${methodName}`);
+          console.info(`Invoked ${this._hubName}\.${methodName}`);
           return resolve(result.Result);
         }
       });
@@ -74,7 +74,7 @@ export default class HubProxy extends EventEmitter {
       data.S = this.state;
     }
 
-    this._logger.info(`Invoking ${this._hubName}\.${methodName}`);
+    console.info(`Invoking ${this._hubName}\.${methodName}`);
     return this._client.send(data);
   }
 

@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 
 export const HUB_CLIENT_CONFIG_DEFAULTS = {
-  logger: new Logdown({prefix: 'SignalR Hub-Client'}),
+  //logger: new Logdown({prefix: 'SignalR Hub-Client'}),
   hubClient: true
 };
 /**
@@ -33,7 +33,7 @@ export default class HubClient extends Client {
     this.connectionData = [];
 
     this.starting(() => {
-      this._logger.info(`Registering Hub Proxies...`);
+      console.info(`Registering Hub Proxies...`);
       this._registerHubProxies();
     });
 
@@ -45,17 +45,17 @@ export default class HubClient extends Client {
         const data = Protocol.expandClientHubInvocation(md);
         const proxy = this.proxies[data.Hub];
         if(proxy) {
-          this._logger.info(`\`${data.Hub}\` proxy found, invoking \`${data.Method}\`.`);
+          console.info(`\`${data.Hub}\` proxy found, invoking \`${data.Method}\`.`);
           const func = proxy.funcs[data.Method];
           if(func) {
             const arrrrgs = Array.prototype.join(...data.Args, ', ');
-            this._logger.info(`Invoking \`${data.Method}(${arrrrgs})\`. `);
+            console.info(`Invoking \`${data.Method}(${arrrrgs})\`. `);
             func(data.State, ...data.Args);
           } else {
-            this._logger.warn(`Client function not found for method \`${data.Method}\` on hub \`${data.Hub}\`.`);
+            console.warn(`Client function not found for method \`${data.Method}\` on hub \`${data.Hub}\`.`);
           }
         } else {
-          this._logger.error(`Proxy for ${data.Hub} not found.`);
+          console.error(`Proxy for ${data.Hub} not found.`);
         }
       });
     });

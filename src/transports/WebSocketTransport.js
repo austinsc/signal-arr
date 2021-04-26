@@ -1,5 +1,5 @@
 import Transport from './Transport';
-import {CONNECTION_EVENTS, CONNECTION_STATES} from '../Constants';
+import {CONNECTION_EVENTS, CONNECTION_STATES, CLIENT_STATES} from '../Constants';
 
 export default class WebSocketTransport extends Transport {
   static supportsKeepAlive = true;
@@ -11,10 +11,11 @@ export default class WebSocketTransport extends Transport {
    * @param {string} url The URL of the server the client is connecting to.
    * @constructor
    */
-  constructor(client, treaty, url) {
+  constructor(client, treaty, url, qs) {
     super('webSockets', client, treaty);
     this._intentionallyClosed = null;
     this._url = url;
+    this._qs = qs;
   }
 
   /**
@@ -56,9 +57,17 @@ export default class WebSocketTransport extends Transport {
         return reject(new Error('A socket has already been initialized. Call `stop()` before attempting to `start()` again.'));
       }
 
-      this._logger.info(`*${this.constructor.name}* starting...`);
-      let url = this._url.replace(/http(s)?:/, 'ws:');
-      this._logger.info(`Connecting to ${url}`);
+      console.info(`*${this.constructor.name}* starting...`);
+
+      // Replace protocols: http by ws
+      let url = '';
+      if (this._url.indexOf('http://') === 0) {
+        url = 'ws' + this._url.slice(4);
+      } else if (this._url.indexOf('https') === 0) {
+        url = 'wss' + this._url.slice(5);
+      }
+      
+      console.info(`Connecting to ${url}`);
 
       if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
         url += `/reconnect?transport=webSockets&connectionToken=${encodeURIComponent(this._connectionToken)}`;
@@ -72,10 +81,14 @@ export default class WebSocketTransport extends Transport {
         url += `&connectionData=${JSON.stringify(this._client.connectionData)}`;
       }
       url += '&tid=' + Math.floor(Math.random() * 11);
+
+      // Query String
+      url = this.prepareQueryString(url, this._qs);
+      
       this._socket = new WebSocket(url);
       this._socket.onopen = e => {
         if(e.type === 'open') {
-          this._logger.info(`*${this.constructor.name}* connection opened.`);
+          console.info(`*${this.constructor.name}* connection opened.`);
           if(!this._intentionallyClosed && this.state === CONNECTION_STATES.reconnecting) {
             this.emit(CONNECTION_EVENTS.reconnected);
           } else {
@@ -89,15 +102,17 @@ export default class WebSocketTransport extends Transport {
         this._processMessages(e.data);
       };
       this._socket.onerror = e => {
-        this._logger.error(`*${this.constructor.name}* connection errored: ${e}`);
+        console.error(`*${this.constructor.name}* connection errored: ${e}`);
+
+        this.state = CLIENT_STATES.stopped;
       };
       this._socket.onclose = () => {
         if(this._intentionallyClosed) {
-          this._logger.info(`*${this.constructor.name}* connection closed.`);
+          console.info(`*${this.constructor.name}* connection closed.`);
           this.state = CONNECTION_STATES.disconnected;
           this.emit(CONNECTION_EVENTS.disconnected);
         } else {
-          this._logger.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
+          console.info(`*${this.constructor.name}* connection closed unexpectedly... Attempting to reconnect.`);
           this.state = CONNECTION_STATES.reconnecting;
           this._reconnectTimeoutId = setTimeout(this.start(), this._reconnectWindow);
         }

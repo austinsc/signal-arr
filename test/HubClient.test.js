@@ -34,6 +34,7 @@ describe('HubClient', function() {
       .then(client => {
         expect(client.proxies).to.not.be.empty;
         client.proxies.demo.invoke('MispelledClientMethod');
+        done();
       });
   } : null);
 

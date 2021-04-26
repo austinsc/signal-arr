@@ -9,7 +9,8 @@
     "build": "./node_modules/.bin/babel src -s -o index.js",
     "test": "./node_modules/.bin/mocha",
     "test-cov": "./node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha -- test && cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js && rimraf ./coverage",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "./node_modules/.bin/eslint src",
+    "postinstall": "./node_modules/.bin/babel src --out-dir lib"
   },
   "repository": {
     "type": "git",
@@ -42,7 +43,7 @@
   },
   "dependencies": {
     "async": "^1.4.2",
-    "eventsource": "^0.1.6",
+    "eventsource": "^0.2.1",
     "lodash.last": "^3.0.0",
     "lodash.mapvalues": "^4.6.0",
     "lodash.sum": "^4.0.0",

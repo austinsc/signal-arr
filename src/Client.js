@@ -1,5 +1,5 @@
 import async from 'async';
-import Logdown from 'logdown';
+//import Logdown from 'logdown';
 import request from 'superagent';
 import PromiseMaker from './PromiseMaker';
 import EventEmitter from './EventEmitter';
@@ -9,8 +9,9 @@ import {AvailableTransports} from './transports/index';
 
 export const CLIENT_CONFIG_DEFAULTS = {
   url: '/signalr',
+  protocolVersion: '1.3',
   logging: false,
-  logger: new Logdown({prefix: 'SignalR Client'}),
+  //logger: new Logdown({prefix: 'SignalR Client'}),
   hubClient: false,
   totalTransportConnectTimeout: 10000
 };
@@ -31,7 +32,7 @@ export default class Client extends EventEmitter {
   constructor(options) {
     super();
     this._config = Object.assign({}, CLIENT_CONFIG_DEFAULTS, options || {});
-    this._logger = this._config.logger;
+    //console = this._config.logger;
     this.state = CLIENT_STATES.stopped;
     this._connectingMessageBuffer = new ConnectingMessageBuffer(this, this.emit.bind(this, CLIENT_EVENTS.received));
     this.connectionData = [];
@@ -65,6 +66,24 @@ export default class Client extends EventEmitter {
   }
 
   /**
+   * Setter for the querystring
+   */
+  set qs(queryString) {
+    this._queryString = queryString;
+    /*for (var key in queryString) {
+      this._queryString[key] = additionalQueryString[key];
+    }*/
+  }
+
+  /**
+   * Accessor fer the querystring property on the client. Returns the current querystring of the client.
+   * @returns {*} Returns the current state.
+   */
+  get qs() {
+    return this._queryString;
+  }
+
+  /**
    * Starts th' underlyin' connection to th' ship.
    * @param {Object} options contains any updated treaty values that be used to start th' connection.
    * @returns {Promise} that resolves once th' connection be opened successfully.
@@ -85,7 +104,7 @@ export default class Client extends EventEmitter {
     return this._negotiate()
       .then(this._findTransport.bind(this))
       .then(transport => {
-        this._logger.info(`Using the *${transport.constructor.name}*.`);
+        //console.info(`Using the *${transport.constructor.name}*.`);
         this._transport = transport;
         this.emit(CLIENT_EVENTS.started);
         this.state = CLIENT_STATES.started;
@@ -110,7 +129,7 @@ export default class Client extends EventEmitter {
       this._transport.stop();
       this.state = CLIENT_STATES.stopped;
       this.emit(CLIENT_EVENTS.stopped);
-      this._logger.info('Client stopped');
+      console.info('Client stopped');
     }
   }
 
@@ -328,7 +347,8 @@ export default class Client extends EventEmitter {
   _negotiate() {
     return request
       .get(`${this._config.url}/negotiate`)
-      .query({clientProtocol: CLIENT_PROTOCOL_VERSION})
+      .query({protocolVersion: this._config.protocolVersion})
+      .query(this.qs)
       .use(PromiseMaker)
       .promise();
   }
@@ -348,15 +368,15 @@ export default class Client extends EventEmitter {
           const transportConstructor = availableTransports.filter(x => x.name === this._config.transport)[0];
           if(transportConstructor) {
             // If the transport specified in the config is found in the available transports, use it
-            const transport = new transportConstructor(this, treaty, this._config.url);
+            const transport = new transportConstructor(this, treaty, this._config.url, this.qs);
             transport.start().then(() => resolve(transport));
           } else {
             reject(new Error(`The transport specified (${this._config.transport}) was not found among the available transports [${availableTransports.map(x => `'${x.name}'`).join(' ')}].`));
           }
         } else {
           // Otherwise, Auto Negotiate the transport
-          this._logger.info(`Negotiating the transport...`);
-          async.detectSeries(availableTransports.map(x => new x(this, treaty, this._config.url)),
+          console.info(`Negotiating the transport...`);
+          async.detectSeries(availableTransports.map(x => new x(this, treaty, this._config.url, this.qs)),
             (t, c) => t.start().then(() => c(t)).catch(() => c()),
             transport => transport ? resolve(transport) : reject('No suitable transport was found.'));
         }
